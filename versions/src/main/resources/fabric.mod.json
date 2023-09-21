@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "crosslib",
+  "name": "CrossPlatformLib",
+  "version": "${version}",
+  "environment": "*",
+  "authors": [
+    "Apehum"
+  ],
+  "mixins": [
+    "crosslib.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*"
+  },
+  "description": "crosslib",
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+net.minecraftforge.fml.network.NetworkDirection net.minecraftforge.fmllegacy.network.NetworkDirection
+net.minecraftforge.fml.network.NetworkEvent net.minecraftforge.fmllegacy.network.NetworkEvent
+net.minecraftforge.fml.network.NetworkRegistry net.minecraftforge.fmllegacy.network.NetworkRegistry
+net.minecraftforge.fml.network.event.EventNetworkChannel net.minecraftforge.fmllegacy.network.event.EventNetworkChannel
+
+net.minecraftforge.fml.event.server.FMLServerStartedEvent net.minecraftforge.fmlserverevents.FMLServerStartedEvent
+net.minecraftforge.fml.event.server.FMLServerStoppingEvent net.minecraftforge.fmlserverevents.FMLServerStoppingEvent
+
+net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket getName() net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket getIdentifier()
+net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket getInternalData() net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket getData()
