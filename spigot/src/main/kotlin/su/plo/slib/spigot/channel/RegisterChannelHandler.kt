@@ -3,7 +3,7 @@ package su.plo.slib.spigot.channel
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerRegisterChannelEvent
-import su.plo.slib.api.server.event.player.PlayerRegisterChannelsEvent
+import su.plo.slib.api.server.event.player.McPlayerRegisterChannelsEvent
 import su.plo.slib.spigot.SpigotServerLib
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -35,7 +35,7 @@ class RegisterChannelHandler(
             val channels = channelsUpdates.remove(player.uniqueId) ?: return@schedule
 
             val mcServerPlayer = minecraftServer.getPlayerByInstance(player)
-            PlayerRegisterChannelsEvent.invoker.onPlayerRegisterChannels(mcServerPlayer, channels)
+            McPlayerRegisterChannelsEvent.invoker.onPlayerRegisterChannels(mcServerPlayer, channels)
         }, 500L, TimeUnit.MILLISECONDS)
     }
 }

@@ -7,22 +7,42 @@ import su.plo.slib.api.resource.ResourceLoader
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
+/**
+ * Manages languages.
+ */
 interface ServerLanguages {
 
     /**
-     * Registers a new language using resources
+     * Gets or sets default language.
      *
-     * Reads **languages/list** from resources using [ResourceLoader]
+     * `en_us` by default.
      *
-     * In the **list** you should specify list of languages separated by **\n**
+     * @return Default language.
+     */
+    var defaultLanguage: String
+
+    /**
+     * Gets or sets whether crowdin is enabled.
      *
-     * After reading the list, all languages from it will be read from resources **languages/?.toml**
-     * and saved to **languageFolder/?.toml**
+     * `true` by default.
      *
+     * @return `true` if crowdin is enabled, `false` otherwise.
+     */
+    var crowdinEnabled: Boolean
+
+    /**
+     * Registers a new language using resources.
      *
-     * You can edit and create new languages in languagesFolder, they will not be overwritten or deleted
+     * Reads the language list from resources using [ResourceLoader]. The list should specify the available
+     * languages separated by '\n'. After reading the list, all languages from it will be read from resources
+     * as 'languages/?.toml' and saved to 'languagesFolder/?.toml'. Languages created or edited in the
+     * 'languagesFolder' will not be overwritten or deleted.
      *
-     * Default language is **en_us**, can be changed in server config
+     * Default language is 'en_us'
+     *
+     * @param resourceLoader   The resource loader for reading language resources.
+     * @param languagesFolder  The folder where language files will be saved.
+     * @return A CompletableFuture representing the completion of the registration process.
      */
     fun register(
         resourceLoader: ResourceLoader,
@@ -30,13 +50,16 @@ interface ServerLanguages {
     ): CompletableFuture<Void>
 
     /**
-     * Registers a new language using crowdin
+     * Registers a new language using crowdin.
      *
-     * Works as [register], but also uses crowdin as default languages source
+     * This method works similarly to [register], but it also uses crowdin as the default language source.
+     * Crowdin translations will be cached in 'languageFolder/.crowdin' for 3 days.
      *
-     * Crowdin translations will be cached in **languageFolder/.crowdin** for **3 days**
-     *
-     * Default language is **en_us**, can be changed in server config
+     * @param crowdinProjectId The crowdin project ID for translations.
+     * @param fileName         The name of the language file in crowdin (null for default).
+     * @param resourceLoader   The resource loader for reading language resources.
+     * @param languagesFolder  The folder where language files will be saved.
+     * @return A CompletableFuture representing the completion of the registration process.
      */
     fun register(
         crowdinProjectId: String,
@@ -46,43 +69,63 @@ interface ServerLanguages {
     ): CompletableFuture<Void>
 
     /**
-     * Gets server language by name or default language if not found
+     * Gets server language data by name or default language if not found.
+     *
+     * @param languageName The name of the language to retrieve.
+     * @return A map representing the server language data.
      */
     fun getServerLanguage(languageName: String?): Map<String, String>
 
     /**
-     * Gets client language by name or default language if not found
+     * Gets client language data by name or default language if not found.
+     *
+     * @param languageName The name of the language to retrieve.
+     * @return A map representing the client language data.
      */
     fun getClientLanguage(languageName: String?): Map<String, String>
 
     /**
-     * Gets default server language
+     * Gets the default server language.
+     *
+     * @return A map representing the default server language data.
      */
     val serverLanguage: Map<String, String>
         get() = getServerLanguage(null)
 
     /**
-     * Gets server language by chat holder
+     * Gets server language data based on the chat holder's language setting.
+     *
+     * @param holder The chat holder whose language setting is used.
+     * @return A map representing the server language data.
      */
-    fun getServerLanguage(holder: McChatHolder): Map<String, String> {
-        return getServerLanguage(holder.language)
-    }
+    fun getServerLanguage(holder: McChatHolder): Map<String, String> =
+        getServerLanguage(holder.language)
 
     /**
-     * Gets default client language
+     * Gets the default client language.
+     *
+     * @return A map representing the default client language data.
      */
     val clientLanguage: Map<String, String>
         get() = getClientLanguage(null)
 
     /**
-     * Gets client language by chat holder
+     * Gets client language data based on the chat holder's language setting.
+     *
+     * @param holder The chat holder whose language setting is used.
+     * @return A map representing the client language data.
      */
     fun getClientLanguage(holder: McChatHolder): Map<String, String> {
         return getClientLanguage(holder.language)
     }
 
     /**
-     * Translates text using server language
+     * Translates text using the server language.
+     *
+     * @param text   The text to be translated.
+     * @param holder The chat holder whose language setting is used.
+     * @param key    The translation key.
+     * @return A [McTextComponent] representing the translated text.
      */
     fun translate(
         text: McTranslatableText,

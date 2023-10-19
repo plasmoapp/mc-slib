@@ -5,13 +5,13 @@ import io.netty.buffer.Unpooled
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.resources.ResourceLocation
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.mod.extension.textConverter
-import su.plo.slib.mod.util.ResourceLocationCache
 import su.plo.slib.permission.PermissionSupplier
 
 //#if MC>=11701
@@ -109,9 +109,13 @@ class ModServerPlayer(
     override fun sendPacket(channel: String, data: ByteArray) {
         instance.connection.send(
             ClientboundCustomPayloadPacket(
-                ResourceLocationCache.getLocation(channel),
+                ResourceLocation(channel),
                 FriendlyByteBuf(Unpooled.wrappedBuffer(data))
             )
         )
+    }
+
+    fun addChannel(channel: String) {
+        registeredChannels.add(channel)
     }
 }

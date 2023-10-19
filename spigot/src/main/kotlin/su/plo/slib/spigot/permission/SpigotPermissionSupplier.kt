@@ -12,7 +12,7 @@ class SpigotPermissionSupplier(
     override fun hasPermission(player: Any, permission: String): Boolean {
         require(player is Player) { "player is not ${Player::class.java}" }
 
-        val permissionDefault = minecraftServer.permissionsManager.getPermissionDefault(permission)
+        val permissionDefault = minecraftServer.permissionManager.getPermissionDefault(permission)
 
         return getPermission(player, permission)
             .booleanValue(permissionDefault.getValue(player.isOp))

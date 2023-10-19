@@ -15,9 +15,9 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.entity.player.McServerPlayer
-import su.plo.slib.api.event.player.PlayerJoinEvent
-import su.plo.slib.api.event.player.PlayerQuitEvent
-import su.plo.slib.api.permission.PermissionsManager
+import su.plo.slib.api.event.player.McPlayerJoinEvent
+import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.language.CrowdinServerLanguages
 import su.plo.slib.spigot.world.SpigotServerWorld
@@ -33,9 +33,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 
 class SpigotServerLib(
-    private val loader: JavaPlugin,
-    defaultLanguage: String,
-    crowdinDisabled: Boolean
+    private val loader: JavaPlugin
 ) : McServerLib, Listener {
 
     private val worldByInstance: MutableMap<World, McServerWorld> = Maps.newConcurrentMap()
@@ -45,11 +43,11 @@ class SpigotServerLib(
 
     val backgroundExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
-    override val languages = CrowdinServerLanguages(defaultLanguage, crowdinDisabled)
+    override val languages = CrowdinServerLanguages()
     override val textConverter = BaseComponentTextConverter(languages)
 
     override val commandManager = SpigotCommandManager(this)
-    override val permissionsManager = PermissionsManager()
+    override val permissionManager = PermissionManager()
     override val channelManager = SpigotChannelManager(loader, this)
 
     override val worlds
@@ -64,14 +62,15 @@ class SpigotServerLib(
     override val version: String
         get() = Bukkit.getVersion().substringAfter("MC: ").substringBefore(")")
 
-    init {
+    fun onInitialize() {
+        commandManager.registerCommands(loader)
         loader.server.pluginManager.registerEvents(RegisterChannelHandler(this), loader)
         loader.server.pluginManager.registerEvents(this, loader)
     }
 
     fun onShutdown() {
         commandManager.clear()
-        permissionsManager.clear()
+        permissionManager.clear()
         backgroundExecutor.shutdown()
     }
 
@@ -143,14 +142,14 @@ class SpigotServerLib(
 
     @EventHandler(ignoreCancelled = true)
     fun onPlayerJoin(event: org.bukkit.event.player.PlayerJoinEvent) {
-        PlayerJoinEvent.invoker.onPlayerJoin(
+        McPlayerJoinEvent.invoker.onPlayerJoin(
             getPlayerByInstance(event.player)
         )
     }
 
     @EventHandler
     fun onPlayerQuit(event: org.bukkit.event.player.PlayerQuitEvent) {
-        PlayerQuitEvent.invoker.onPlayerQuit(
+        McPlayerQuitEvent.invoker.onPlayerQuit(
             getPlayerByInstance(event.player)
         )
         playerById.remove(event.player.uniqueId)

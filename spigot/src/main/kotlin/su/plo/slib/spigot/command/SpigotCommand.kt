@@ -3,10 +3,11 @@ package su.plo.slib.spigot.command
 import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.McCommand
+import su.plo.slib.api.server.McServerLib
 
 class SpigotCommand(
+    private val minecraftServer: McServerLib,
     private val commandManager: SpigotCommandManager,
     private val command: McCommand,
     name: String
@@ -15,7 +16,7 @@ class SpigotCommand(
     override fun execute(sender: CommandSender, commandLabel: String, args: Array<String>): Boolean {
         val source = commandManager.getCommandSource(sender)
         if (!command.hasPermission(source, args)) {
-            source.sendMessage(McTextComponent.translatable("pv.error.no_permissions"))
+            source.sendMessage(minecraftServer.permissionManager.noPermissionMessage)
             return true
         }
 

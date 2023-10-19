@@ -8,11 +8,6 @@ import su.plo.slib.mod.ModServerLib
 fun ServerPlayer.serverLevel() =
     this.level as ServerLevel
 
-fun ServerPlayer.mustToMcServerPlayer(minecraftServer: McServerLib? = null) =
-    minecraftServer?.getPlayerByInstance(this)
-        ?: ModServerLib.INSTANCE?.getPlayerByInstance(this)
-        ?: throw IllegalStateException("McServerLib is not initialized yet")
-
 fun ServerPlayer.toMcServerPlayer(minecraftServer: McServerLib? = null) =
     minecraftServer?.getPlayerByInstance(this)
-        ?: ModServerLib.INSTANCE?.getPlayerByInstance(this)
+        ?: ModServerLib.getPlayerByInstance(this)

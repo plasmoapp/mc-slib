@@ -4,66 +4,74 @@ import su.plo.slib.api.position.Pos3d
 import java.util.*
 
 /**
- * Represents a Minecraft entity
+ * Represents a Minecraft entity.
  */
 interface McEntity {
 
     /**
-     * Gets entity id
-     */
-    val id: Int
-
-    /**
-     * Gets entity unique id
+     * Gets the unique identifier of the entity.
      */
     val uuid: UUID
 
     /**
-     * Gets entity eye height
+     * Gets the entity's numerical identifier.
+     */
+    val id: Int
+
+    /**
+     * Gets the height of the entity's eyes from its base.
      */
     val eyeHeight: Double
 
     /**
-     * Gets entity hit box width
+     * Gets the width of the entity's hitbox.
      */
     val hitBoxWidth: Float
 
     /**
-     * Gets entity hit box height
+     * Gets the height of the entity's hitbox.
      */
     val hitBoxHeight: Float
 
     /**
-     * Gets position from [getInstance] to local [Pos3d] instance and returns this instance
+     * Retrieves the position of the entity.
+     *
+     * @return A [Pos3d] instance representing the entity's position.
      */
     fun getPosition(): Pos3d
 
     /**
-     * Gets position from [getInstance] to provided [Pos3d] instance and returns this instance
+     * Retrieves the entity's position and copies it to the provided [position] instance.
      *
-     * @param position to which the original values will be copied from [getInstance]
+     * @param position The [Pos3d] instance to copy the position values to.
+     * @return The provided [Pos3d] instance with updated position values.
      */
     fun getPosition(position: Pos3d): Pos3d
 
     /**
-     * Gets look angle from [getInstance] to local [Pos3d] instance and returns this instance
+     * Retrieves the entity's look angle.
+     *
+     * @return A [Pos3d] instance representing the entity's look angle.
      */
     fun getLookAngle(): Pos3d
 
     /**
-     * Gets position from [getInstance] to provided [Pos3d] instance and returns this instance
+     * Retrieves the entity's look angle and copies it to the provided [lookAngle] instance.
      *
-     * @param lookAngle to which the original values will be copied from [getInstance]
+     * @param lookAngle The [Pos3d] instance to copy the look angle values to.
+     * @return The provided [Pos3d] instance with updated look angle values.
      */
     fun getLookAngle(lookAngle: Pos3d): Pos3d
 
     /**
-     * Gets the server's implementation instance
+     * Gets the server's implementation instance for this entity.
      *
-     *  * `org.bukkit.entity.LivingEntity` for bukkit
-     *  * `net.minecraft.world.entity.Entity` for mods (fabric/forge mojmap)
+     * The return type may vary depending on the server platform:
+     *   - For Bukkit: [org.bukkit.entity.LivingEntity]
+     *   - For modded servers (Fabric/Forge): [net.minecraft.world.entity.Entity]
      *
-     * @return server's implementation object
+     * @return The server's implementation object associated with this entity.
+     * @param T The expected type of the server's implementation instance.
      */
     fun <T> getInstance(): T
 }

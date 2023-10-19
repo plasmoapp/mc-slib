@@ -1,10 +1,9 @@
 package su.plo.slib.mod.permission
 
-import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
-import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.permission.PermissionTristate
 import su.plo.slib.permission.PermissionSupplier
+import su.plo.slib.mod.ModServerLib
 
 //#if FABRIC
 import me.lucko.fabric.api.permissions.v0.Permissions
@@ -16,15 +15,14 @@ import net.fabricmc.fabric.api.util.TriState
 //#endif
 
 class ModPermissionSupplier(
-    private val minecraftServerLib: McServerLib,
-    private val minecraftServer: MinecraftServer
+    private val minecraftServerLib: ModServerLib
 ) : PermissionSupplier {
 
     override fun hasPermission(player: Any, permission: String): Boolean {
         require(player is ServerPlayer) { "player is not " + ServerPlayer::class.java }
 
-        val permissionDefault = minecraftServerLib.permissionsManager.getPermissionDefault(permission)
-        val isOp = minecraftServer.playerList.isOp(player.gameProfile)
+        val permissionDefault = minecraftServerLib.permissionManager.getPermissionDefault(permission)
+        val isOp = minecraftServerLib.minecraftServer.playerList.isOp(player.gameProfile)
 
         return getPermission(player, permission).booleanValue(permissionDefault.getValue(isOp))
     }

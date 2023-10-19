@@ -17,4 +17,8 @@ abstract class GlobalEvent<T> (
     fun unregisterListener(listener: T) {
         if (listeners.remove(listener)) invokerSupplier.apply(listeners)
     }
+
+    fun clearListeners() {
+        listeners.clear()
+    }
 }

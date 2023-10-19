@@ -9,8 +9,10 @@ import net.minecraft.world.entity.Entity
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.entity.player.McPlayer
+import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.server.entity.player.McServerPlayer
-import su.plo.slib.api.permission.PermissionsManager
+import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.language.CrowdinServerLanguages
 import su.plo.slib.mod.channel.ModChannelManager
@@ -18,6 +20,7 @@ import su.plo.slib.mod.chat.ServerComponentTextConverter
 import su.plo.slib.mod.command.ModCommandManager
 import su.plo.slib.mod.entity.ModServerEntity
 import su.plo.slib.mod.entity.ModServerPlayer
+import su.plo.slib.mod.event.server.ServerStoppingEvent
 import su.plo.slib.mod.permission.ModPermissionSupplier
 import su.plo.slib.mod.world.ModServerWorld
 import java.util.*
@@ -25,25 +28,23 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-class ModServerLib(
-    private val minecraftServer: MinecraftServer,
-    defaultLanguage: String,
-    crowdinDisabled: Boolean
-) : McServerLib {
+object ModServerLib : McServerLib {
+
+    lateinit var minecraftServer: MinecraftServer
 
     private val worldByInstance: MutableMap<ServerLevel, McServerWorld> = Maps.newConcurrentMap()
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
 
     private val backgroundExecutor = Executors.newSingleThreadScheduledExecutor()
-    private val worldCleanupTask: ScheduledFuture<*>
+    private lateinit var worldCleanupTask: ScheduledFuture<*>
 
-    private val permissionSupplier = ModPermissionSupplier(this, minecraftServer)
+    private val permissionSupplier = ModPermissionSupplier(this)
 
-    override val languages = CrowdinServerLanguages(defaultLanguage, crowdinDisabled)
+    override val languages = CrowdinServerLanguages()
     override val textConverter = ServerComponentTextConverter(languages)
 
     override val commandManager = ModCommandManager(this)
-    override val permissionsManager = PermissionsManager()
+    override val permissionManager = PermissionManager()
     override val channelManager = ModChannelManager()
 
     override val worlds
@@ -57,25 +58,6 @@ class ModServerLib(
 
     override val version: String
         get() = minecraftServer.serverVersion
-
-    init {
-        su.plo.slib.mod.ModServerLib.Companion.INSTANCE = this
-        worldCleanupTask = backgroundExecutor.scheduleAtFixedRate(
-            { worldsCleanupTick() },
-            0L,
-            30L,
-            TimeUnit.SECONDS
-        )
-
-//        PlayerQuitEvent.INSTANCE.registerListener(player -> playerById.remove(player.getUUID()));
-    }
-
-    fun onShutdown() {
-        commandManager.clear()
-        permissionsManager.clear()
-        worldCleanupTask.cancel(false)
-        backgroundExecutor.shutdown()
-    }
 
     override fun executeInMainThread(runnable: Runnable) {
         minecraftServer.execute(runnable)
@@ -116,6 +98,15 @@ class ModServerLib(
     override fun getPlayerById(playerId: UUID): McServerPlayer? =
         playerById[playerId] ?: minecraftServer.playerList.getPlayer(playerId)?.let { getPlayerByInstance(it) }
 
+    override fun getEntity(instance: Any): McServerEntity {
+        require(instance is Entity) { "instance is not " + Entity::class.java }
+
+        return ModServerEntity(
+            this,
+            instance
+        )
+    }
+
     override fun getGameProfile(playerId: UUID): McGameProfile? {
         //#if MC>=11701
         return minecraftServer.profileCache.get(playerId).orElse(null)?.let { convertGameProfile(it) }
@@ -142,15 +133,6 @@ class ModServerLib(
         )
     }
 
-    override fun getEntity(instance: Any): McServerEntity {
-        require(instance is Entity) { "instance is not " + Entity::class.java }
-
-        return ModServerEntity(
-            this,
-            instance
-        )
-    }
-
     private fun worldsCleanupTick() {
         val worlds = minecraftServer.allLevels.toSet()
 
@@ -159,7 +141,34 @@ class ModServerLib(
             .forEach { worldByInstance.remove(it) }
     }
 
-    companion object {
-        var INSTANCE: su.plo.slib.mod.ModServerLib? = null
+    private fun onPlayerQuit(player: McPlayer) {
+        playerById.remove(player.uuid)
+    }
+
+    private fun onServerStopping(server: MinecraftServer) {
+        onShutdown()
+    }
+
+    fun onInitialize(minecraftServer: MinecraftServer) {
+        this.minecraftServer = minecraftServer
+        this.worldCleanupTask = backgroundExecutor.scheduleAtFixedRate(
+            { worldsCleanupTick() },
+            0L,
+            30L,
+            TimeUnit.SECONDS
+        )
+
+        McPlayerQuitEvent.registerListener(::onPlayerQuit)
+        ServerStoppingEvent.registerListener(::onServerStopping)
+    }
+
+    private fun onShutdown() {
+        commandManager.clear()
+        permissionManager.clear()
+        worldCleanupTask.cancel(false)
+        backgroundExecutor.shutdown()
+
+        McPlayerQuitEvent.unregisterListener(::onPlayerQuit)
+        ServerStoppingEvent.unregisterListener(::onServerStopping)
     }
 }

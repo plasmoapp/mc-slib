@@ -1,19 +1,17 @@
 {
   "schemaVersion": 1,
-  "id": "crosslib",
-  "name": "CrossPlatformLib",
+  "id": "slib",
+  "name": "ServerLib",
   "version": "${version}",
   "environment": "*",
   "authors": [
     "Apehum"
   ],
-  "mixins": [
-    "crosslib.mixins.json"
-  ],
+  "mixins": [],
   "depends": {
     "fabricloader": "*"
   },
-  "description": "crosslib",
+  "description": "slib",
   "custom": {
     "modmenu": {
       "badges": [ "library" ]

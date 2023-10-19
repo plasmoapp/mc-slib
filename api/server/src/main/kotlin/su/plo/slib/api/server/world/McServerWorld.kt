@@ -2,32 +2,38 @@ package su.plo.slib.api.server.world
 
 import su.plo.slib.api.server.entity.McServerEntity
 
+/**
+ * Represents a Minecraft server world.
+ */
 interface McServerWorld {
 
     /**
-     * @return world key
+     * Gets the unique key that identifies this world.
      */
     val key: String
 
     /**
-     * Sends game event to the world
+     * Sends a game event to the world.
      *
-     * If the given [gameEvent] is invalid, minecraft:step will be sent by default
+     * If an invalid game event is provided, the default event "minecraft:step" will be sent.
      *
-     * @since minecraft 1.19?
+     * [Minecraft Game Event](https://minecraft.fandom.com/wiki/Sculk_Sensor#Redstone_emission)
      *
-     * @param gameEvent [Minecraft Game Event](https://minecraft.fandom.com/wiki/Sculk_Sensor#Redstone_emission),
-     * e.g **minecraft:step**
+     * @param entity The entity associated with the game event.
+     * @param gameEvent The name of the Minecraft game event to send, e.g., "minecraft:step".
+     * @since Minecraft version 1.19
      */
     fun sendGameEvent(entity: McServerEntity, gameEvent: String)
 
     /**
-     * Gets the server's implementation instance
+     * Gets the server's implementation instance for this world.
      *
-     *  * `org.bukkit.World` for bukkit
-     *  * `net.minecraft.server.level.ServerLevel` for mods (fabric/forge)
+     * The return type of this method may vary depending on the server platform:
+     *   - For Bukkit: [org.bukkit.World]
+     *   - For modded servers (Fabric/Forge): [net.minecraft.server.level.ServerLevel]
      *
-     * @return server's implementation object
+     * @return The server's implementation object associated with this world.
+     * @param T The expected type of the implementation object.
      */
     fun <T> getInstance(): T
 }

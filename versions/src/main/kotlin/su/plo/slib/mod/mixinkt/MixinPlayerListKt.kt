@@ -6,6 +6,6 @@ import su.plo.slib.mod.ModServerLib
 object MixinPlayerListKt {
 
     fun onRespawn(newPlayer: ServerPlayer) {
-        ModServerLib.INSTANCE?.getPlayerByInstance(newPlayer)
+        ModServerLib.getPlayerByInstance(newPlayer)
     }
 }

@@ -4,10 +4,10 @@ import su.plo.slib.api.entity.player.McPlayer
 import su.plo.slib.api.event.GlobalEvent
 
 /**
- * This event is fired once the player is joined the server
+ * An event fired when a player joins the server.
  */
-object PlayerJoinEvent
-    : GlobalEvent<PlayerJoinEvent.Callback>(
+object McPlayerJoinEvent
+    : GlobalEvent<McPlayerJoinEvent.Callback>(
     { callbacks ->
         Callback { player ->
             callbacks.forEach { callback -> callback.onPlayerJoin(player) }

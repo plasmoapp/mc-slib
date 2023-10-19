@@ -5,48 +5,64 @@ import su.plo.slib.api.command.McCommandSource
 import java.util.*
 
 /**
- * Represents a Minecraft player
+ * Represents a Minecraft player.
  *
- * Use it when you are using ONLY common module
+ * This interface is intended for use in the common module.
  *
- * For proxy use MinecraftProxyPlayer (you can also cast MinecraftPlayer to MinecraftProxyPlayer without any problem)
+ * For proxy, consider using [su.plo.slib.api.proxy.player.McProxyPlayer].
  *
- * For server use MinecraftServerPlayer (you can also cast MinecraftPlayer to MinecraftServerPlayer without any problem)
+ * For server, consider using [su.plo.slib.api.server.entity.player.McServerPlayer].
  */
 interface McPlayer : McCommandSource {
 
     /**
-     * @return true if player is online
+     * Determines whether the player is currently online.
+     *
+     * @return `true` if the player is online, `false` otherwise.
      */
     val isOnline: Boolean
 
     /**
-     * @return creates a new instance of [McGameProfile] using player info
+     * Retrieves a new instance of [McGameProfile].
+     *
+     * @return A [McGameProfile] instance representing the player's profile.
      */
     val gameProfile: McGameProfile
 
     /**
-     * @return player unique id
+     * Retrieves the unique identifier of the player.
+     *
+     * @return The UUID associated with the player.
      */
     val uuid: UUID
 
     /**
-     * @return player name
+     * Retrieves the name of the player.
+     *
+     * @return The name of the player.
      */
     val name: String
 
     /**
-     * Sends the packet to the given [channel]
+     * Sends a custom packet to the player to the specified [channel].
+     *
+     * @param channel The channel to which the packet should be sent.
+     * @param data    The byte array containing packet data.
      */
     fun sendPacket(channel: String, data: ByteArray)
 
     /**
-     * Kicks the player with the given [reason]
+     * Kicks the player from the server with the specified [reason].
+     *
+     * @param reason A [McTextComponent] representing the reason for kicking the player.
      */
     fun kick(reason: McTextComponent)
 
     /**
-     * Gets the backed entity object
+     * Gets the server's implementation instance for this player.
+     *
+     * @return The server's implementation object associated with this entity.
+     * @param T The expected type of the entity object.
      */
     fun <T> getInstance(): T
 }

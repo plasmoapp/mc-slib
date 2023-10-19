@@ -4,9 +4,9 @@ import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
-import su.plo.slib.api.server.event.command.ServerCommandsRegisterEvent
-import su.plo.slib.api.event.player.PlayerJoinEvent
-import su.plo.slib.api.event.player.PlayerQuitEvent
+import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
+import su.plo.slib.api.event.player.McPlayerJoinEvent
+import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.mod.ModServerLib
 import su.plo.slib.mod.event.server.ServerStartedEvent
 import su.plo.slib.mod.event.server.ServerStoppingEvent
@@ -38,12 +38,12 @@ import su.plo.slib.mod.channel.RegisterChannelHandler
  * todo: add this to readme
  *  make sure to create this instance AFTER channel initialization in [McChannelManager]
  */
-class ModServerEvents {
+class ModServerEvents private constructor() {
 
     //#if FABRIC
 
     init {
-        ServerLifecycleEvents.SERVER_STARTED.register { fireServerStarted(it) }
+        ServerLifecycleEvents.SERVER_STARTING.register { fireServerStarted(it) }
         ServerLifecycleEvents.SERVER_STOPPING.register { fireServerStopping(it) }
 
         ServerPlayConnectionEvents.JOIN.register { handler, _, _ -> firePlayerJoin(handler.player) }
@@ -90,6 +90,7 @@ class ModServerEvents {
     //#endif
 
     private fun fireServerStarted(minecraftServer: MinecraftServer) {
+        ModServerLib.onInitialize(minecraftServer)
         ServerStartedEvent.invoker.onServerStarted(minecraftServer)
     }
 
@@ -98,21 +99,29 @@ class ModServerEvents {
     }
 
     private fun fireRegisterCommands(dispatcher: CommandDispatcher<CommandSourceStack>) {
-        ModServerLib.INSTANCE?.let {
-            ServerCommandsRegisterEvent.invoker.onCommandsRegister(it.commandManager, it)
-            it.commandManager.registerCommands(dispatcher)
-        }
+        val minecraftServer = ModServerLib
+        val commandManager = minecraftServer.commandManager
+
+        McServerCommandsRegisterEvent.invoker.onCommandsRegister(commandManager, minecraftServer)
+        commandManager.registerCommands(dispatcher)
     }
 
     private fun firePlayerJoin(player: ServerPlayer) {
-        player.toMcServerPlayer()?.let {
-            PlayerJoinEvent.invoker.onPlayerJoin(it)
-        }
+        McPlayerJoinEvent.invoker.onPlayerJoin(player.toMcServerPlayer())
     }
 
     private fun firePlayerQuit(player: ServerPlayer) {
-        player.toMcServerPlayer()?.let {
-            PlayerQuitEvent.invoker.onPlayerQuit(it)
+        McPlayerQuitEvent.invoker.onPlayerQuit(player.toMcServerPlayer())
+    }
+
+    companion object {
+
+        private var instance: ModServerEvents? = null
+
+        @JvmStatic
+        fun initialize() {
+            if (instance == null)
+                instance = ModServerEvents()
         }
     }
 }

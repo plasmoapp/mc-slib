@@ -1,7 +1,7 @@
 package su.plo.slib.api.proxy.connection
 
 /**
- * Represents Minecraft connection
+ * Represents a Minecraft connection.
  *
  * Player<->Proxy
  *
@@ -10,7 +10,10 @@ package su.plo.slib.api.proxy.connection
 interface McProxyConnection {
 
     /**
-     * Sends packet to channel
+     * Sends a packet to the specified channel.
+     *
+     * @param channel The channel to which the packet should be sent.
+     * @param data    The byte array containing packet data.
      */
     fun sendPacket(channel: String, data: ByteArray)
 }

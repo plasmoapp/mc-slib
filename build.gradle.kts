@@ -3,8 +3,6 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 // Version
 val targetJavaVersion: String by rootProject
-val mavenGroup: String by rootProject
-val buildVersion: String by rootProject
 
 plugins {
 //    java
@@ -26,10 +24,6 @@ subprojects {
 //    apply(plugin = "com.github.johnrengelman.shadow")
     apply(plugin = "kotlin")
 
-    group = mavenGroup
-
-    version = buildVersion
-
     dependencies {
         api(kotlin("stdlib-jdk8"))
         api(rootProject.libs.kotlinx.coroutines)
@@ -45,6 +39,8 @@ subprojects {
 
     tasks {
         java {
+            withSourcesJar()
+
             toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
 
             val os: OperatingSystem = DefaultNativePlatform.getCurrentOperatingSystem()

@@ -8,6 +8,7 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.spigot.extension.textConverter
 
 class SpigotCommandManager(
@@ -16,8 +17,10 @@ class SpigotCommandManager(
 
     @Synchronized
     fun registerCommands(loader: JavaPlugin) {
+        McServerCommandsRegisterEvent.invoker.onCommandsRegister(this, minecraftServer)
+
         commandByName.forEach { (name, command) ->
-            val spigotCommand = SpigotCommand(this, command, name)
+            val spigotCommand = SpigotCommand(minecraftServer, this, command, name)
 
             val commandMap = loader.server.javaClass
                 .getDeclaredField("commandMap").also {

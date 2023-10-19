@@ -13,11 +13,13 @@ object MixinServerPlayerKt {
         var language = "en_us"
 
         val packetClass = packet::class.java
-        packetClass.fields
-            .filter { field -> field.type == String::class.java }
-            .forEach { field ->
+        packetClass.declaredFields
+            .firstOrNull { field -> field.type == String::class.java }
+            ?.let { field ->
+                field.isAccessible = true
                 language = field.get(packet) as String
             }
+
         (mcServerPlayer as ModServerPlayer).language = language
     }
 }

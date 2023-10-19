@@ -1,7 +1,7 @@
 package su.plo.slib.api.server
 
 import su.plo.slib.api.McLib
-import su.plo.slib.api.server.channel.McChannelManager
+import su.plo.slib.api.server.channel.McServerChannelManager
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.server.entity.McServerEntity
@@ -12,88 +12,110 @@ import java.util.*
 
 interface McServerLib : McLib {
 
-    /**
-     * @see McCommandManager
-     */
     override val commandManager: McCommandManager<McCommand>
 
     /***
-     * @see McChannelManager
+     * @see McServerChannelManager
      */
-    val channelManager: McChannelManager
+    val channelManager: McServerChannelManager
 
     /**
-     * Executes the task on main thread
+     * Executes the task on the main thread.
      */
     fun executeInMainThread(runnable: Runnable)
 
     /**
-     * instance [Object] can be:
+     * Gets a world by server-specific instance.
      *
-     *  * `org.bukkit.World` for bukkit
-     *  * `net.minecraft.server.level.ServerLevel` for mods (fabric/forge)
+     * The [instance] parameter represents the server-specific server instance:
+     *  - For Bukkit `org.bukkit.World`
+     *  - For modded servers (Fabric/Forge) `net.minecraft.server.level.ServerLevel`
      *
-     * @return [McServerWorld] by server's instance
+     * @param instance The server-specific world instance.
+     * @return The world.
      */
     fun getWorld(instance: Any): McServerWorld
 
     /**
-     * @return collection of all worlds
+     * Gets a collection of all worlds.
+     *
+     * @return A collection of worlds.
      */
     val worlds: Collection<McServerWorld>
 
     /**
-     * instance [Object] can be:
+     * Gets a player by their server-specific instance.
      *
-     *  * `org.bukkit.entity.Player` for bukkit
-     *  * `net.minecraft.server.level.ServerPlayer` for mods (fabric/forge)
+     * The [instance] parameter represents the server-specific player instance:
+     *  - For Bukkit: [org.bukkit.entity.Player]
+     *  - For modded servers (Fabric/Forge): [net.minecraft.server.level.ServerPlayer]
      *
-     * @return [McServerPlayer] by server's instance
+     * @param instance The server-specific player instance.
+     * @return The player.
      */
     fun getPlayerByInstance(instance: Any): McServerPlayer
 
     /**
-     * @return [McServerPlayer] by name if exists
+     * Gets a player by their name.
+     *
+     * @param name The name of the player.
+     * @return The player if found, otherwise `null`.
      */
     fun getPlayerByName(name: String): McServerPlayer?
 
     /**
-     * @return [McServerPlayer] by uuid if exists
+     * Gets a player by their unique identifier.
+     *
+     * @param playerId The unique identifier of the player.
+     * @return The player if found, otherwise `null`.
      */
     fun getPlayerById(playerId: UUID): McServerPlayer?
 
     /**
-     * @return collection of all online players
+     * Gets a collection of all players.
+     *
+     * @return A collection of players.
      */
     val players: Collection<McServerPlayer>
 
     /**
-     * @return [McGameProfile] by player's uuid if exists
+     * Gets a cached game profile by player unique identifier.
+     *
+     * @param playerId The unique identifier of the player.
+     * @return The game profile if found, otherwise `null`.
      */
     fun getGameProfile(playerId: UUID): McGameProfile?
 
     /**
-     * @return [McGameProfile] by player's name if exists
+     * Gets a cached game profile by player name.
+     *
+     * @param name The name of the player.
+     * @return The game profile if found, otherwise `null`.
      */
     fun getGameProfile(name: String): McGameProfile?
 
     /**
-     * instance [Object] can be:
+     * Creates a new [McServerEntity] instance of wrapped [instance].
      *
-     *  * `org.bukkit.entity.LivingEntity` for bukkit
-     *  * `net.minecraft.world.entity.Entity` for mods (fabric/forge mojmap)
+     * The [instance] parameter represents the server-specific player instance:
+     *  - For Bukkit: [org.bukkit.entity.LivingEntity]
+     *  - For modded servers (Fabric/Forge): [net.minecraft.world.entity.Entity]
      *
-     * @return [McServerEntity] by server's instance
+     * @return The Entity.
      */
     fun getEntity(instance: Any): McServerEntity
 
     /**
-     * @return server's port
+     * Gets the bound port of the server.
+     *
+     * @return The bound port.
      */
     val port: Int
 
     /**
-     * @return minecraft server version
+     * Gets the Minecraft version.
+     *
+     * @return The Minecraft version.
      */
     val version: String
 }

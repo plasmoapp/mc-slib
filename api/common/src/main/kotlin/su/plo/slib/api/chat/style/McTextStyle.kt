@@ -1,10 +1,17 @@
 package su.plo.slib.api.chat.style
 
+/**
+ * Minecraft text styles and formatting options that can be applied to text components.
+ *
+ * @param type       The type of text style (color, decoration, or reset).
+ * @param colorChar  The character representing the style in Minecraft text formatting codes.
+ */
 enum class McTextStyle(
     val type: Type,
     val colorChar: Char
 ) {
 
+    // Color styles
     BLACK(Type.COLOR, '0'),
     DARK_BLUE(Type.COLOR, '1'),
     DARK_GREEN(Type.COLOR, '2'),
@@ -21,21 +28,33 @@ enum class McTextStyle(
     LIGHT_PURPLE(Type.COLOR, 'd'),
     YELLOW(Type.COLOR, 'e'),
     WHITE(Type.COLOR, 'f'),
+
+    // Decoration styles
     OBFUSCATED(Type.DECORATION, 'k'),
     BOLD(Type.DECORATION, 'l'),
     STRIKETHROUGH(Type.DECORATION, 'm'),
     UNDERLINE(Type.DECORATION, 'n'),
     ITALIC(Type.DECORATION, 'o'),
+
+    // Reset style
     RESET(Type.RESET, 'r');
 
+    /**
+     * Converts the style to its legacy text formatting code representation.
+     *
+     * @return A string containing the legacy text formatting code for the style.
+     */
     override fun toString(): String {
         return String.format("%s%s", COLOR_CHAR, colorChar)
     }
 
+    /**
+     * Enumerates the types of text styles (color, decoration, or reset).
+     */
     enum class Type {
         COLOR,
         DECORATION,
-        RESET // ??
+        RESET
     }
 
     companion object {

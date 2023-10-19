@@ -9,6 +9,13 @@ abstract class ServerTextConverter<T>(
     private val languages: ServerLanguages
 ) : TranslatableTextConverter<T>() {
 
+    /**
+     * Converts a [McTextComponent] to a JSON string while considering the server languages.
+     *
+     * @param source The source [McCommandSource] to determine the server's language.
+     * @param text   The [McTextComponent] to be converted.
+     * @return A JSON string representing the converted text component.
+     */
     fun convertToJson(source: McCommandSource, text: McTextComponent): String {
         val language = languages.getServerLanguage(source)
 
@@ -25,6 +32,13 @@ abstract class ServerTextConverter<T>(
         ))
     }
 
+    /**
+     * Converts a [McTextComponent] to a server-specific implementation while considering the server languages.
+     *
+     * @param source The source [McCommandSource] to determine the server's language.
+     * @param text   The [McTextComponent] to be converted.
+     * @return A server-specific implementation of type [T] representing the converted text component.
+     */
     fun convert(source: McCommandSource, text: McTextComponent): T {
         val language = languages.getServerLanguage(source)
 

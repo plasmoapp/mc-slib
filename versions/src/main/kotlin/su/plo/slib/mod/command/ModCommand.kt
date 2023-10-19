@@ -12,12 +12,13 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import net.minecraft.commands.CommandSourceStack
-import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.McCommand
+import su.plo.slib.api.server.McServerLib
 import java.util.concurrent.CompletableFuture
 import java.util.function.Predicate
 
 class ModCommand(
+    private val minecraftServer: McServerLib,
     private val commandManager: ModCommandManager,
     private val command: McCommand
 ) : Command<CommandSourceStack>, Predicate<CommandSourceStack>, SuggestionProvider<CommandSourceStack> {
@@ -54,7 +55,7 @@ class ModCommand(
         }
 
         if (!command.hasPermission(source, args)) {
-            source.sendMessage(McTextComponent.translatable("pv.error.no_permissions"))
+            source.sendMessage(minecraftServer.permissionManager.noPermissionMessage)
             return 1
         }
 

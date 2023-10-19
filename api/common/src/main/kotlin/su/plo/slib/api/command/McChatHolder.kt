@@ -3,46 +3,46 @@ package su.plo.slib.api.command
 import su.plo.slib.api.chat.component.McTextComponent
 
 /**
- * A receiver of any kind of Minecraft messages
+ * Represents a receiver of Minecraft messages, capable of sending various types of chat messages.
  */
 interface McChatHolder {
 
     /**
-     * Gets the current language
+     * Gets the current language of the chat holder.
      */
     val language: String
 
     /**
-     * Sends the chat message
+     * Sends a chat message to the chat holder.
      *
-     * @param text chat component to send
+     * @param text The chat component to send.
      */
     fun sendMessage(text: McTextComponent)
 
     /**
-     * Sends the chat message
+     * Sends a chat message to the chat holder.
      *
-     * @param text string to send
+     * @param text The string message to send.
      */
     fun sendMessage(text: String) {
         sendMessage(McTextComponent.literal(text))
     }
 
     /**
-     * Sends the action bar message
+     * Sends an action bar message to the chat holder.
      *
-     * If [McChatHolder] doesn't support action bar, message will be sent to chat instead
+     * If the [McChatHolder] does not support the action bar, the message will be sent to the chat instead.
      *
-     * @param text chat component to send
+     * @param text The chat component to send as an action bar message.
      */
     fun sendActionBar(text: McTextComponent)
 
     /**
-     * Sends the action bar message
+     * Sends an action bar message to the chat holder.
      *
-     * If [McChatHolder] doesn't support action bar, message will be sent to chat instead
+     * If the [McChatHolder] does not support the action bar, the message will be sent to the chat instead.
      *
-     * @param text string to send
+     * @param text The string message to send as an action bar message.
      */
     fun sendActionBar(text: String) {
         sendActionBar(McTextComponent.literal(text))

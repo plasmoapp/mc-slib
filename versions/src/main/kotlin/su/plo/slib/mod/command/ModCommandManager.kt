@@ -15,7 +15,7 @@ class ModCommandManager(
     @Synchronized
     fun registerCommands(dispatcher: CommandDispatcher<CommandSourceStack>) {
         commandByName.forEach { (name, command) ->
-            val modCommand = ModCommand(this, command)
+            val modCommand = ModCommand(minecraftServer, this, command)
             modCommand.register(dispatcher, name)
         }
         this.registered = true

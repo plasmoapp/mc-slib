@@ -2,6 +2,16 @@ package su.plo.slib.api.entity.player
 
 import java.util.*
 
+/**
+ * Represents a player's Minecraft game profile.
+ *
+ * This data class stores information about a player's profile: their UUID, username,
+ * and associated properties.
+ *
+ * @param id          The unique identifier of the player.
+ * @param name        The player's username.
+ * @param properties  A list of properties associated with the player's profile.
+ */
 data class McGameProfile(
     val id: UUID,
     val name: String,

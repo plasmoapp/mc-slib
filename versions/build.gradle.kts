@@ -2,8 +2,6 @@ import gg.essential.gradle.multiversion.excludeKotlinDefaultImpls
 import gg.essential.gradle.multiversion.mergePlatformSpecifics
 import kotlinx.validation.api.publishedApiAnnotationName
 
-val mavenGroup: String by rootProject
-
 plugins {
     kotlin("jvm")
     id("gg.essential.multi-version")
@@ -11,8 +9,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-group = mavenGroup
-base.archivesName.set("crosslib-${platform.loaderStr}-${platform.mcVersionStr}")
+base.archivesName.set("slib-${platform.loaderStr}-${platform.mcVersionStr}")
 
 val shadowCommon by configurations.creating
 
@@ -33,7 +30,6 @@ dependencies {
         modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}")
         libs.fabric.permissions.also {
             modImplementation(it)
-            "include"(it)
         }
     }
 
@@ -52,6 +48,17 @@ dependencies {
 }
 
 tasks {
+    processResources {
+        filesMatching(mutableListOf("slib.mixins.json", "slib-forge.mixins.json")) {
+            expand(
+                mutableMapOf(
+                    "mcVersion" to platform.mcVersionStr,
+                    "loader" to platform.loaderStr
+                )
+            )
+        }
+    }
+
     jar {
         mergePlatformSpecifics()
 
@@ -63,8 +70,12 @@ tasks {
     shadowJar {
         configurations = listOf(shadowCommon)
 
+        exclude("META-INF/*.kotlin_module")
+
         if (platform.isForge) {
             exclude("fabric.mod.json")
+        } else {
+            exclude("slib-forge.mixins.json")
         }
     }
 

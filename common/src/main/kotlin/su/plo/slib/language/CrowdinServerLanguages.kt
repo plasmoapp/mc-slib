@@ -16,8 +16,8 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class CrowdinServerLanguages(
-    private val defaultLanguageName: String,
-    private val crowdinDisabled: Boolean
+    override var defaultLanguage: String = "en_us",
+    override var crowdinEnabled: Boolean = true
 ) : ServerLanguages {
 
     private val languages: MutableMap<String, VoiceServerLanguage> = Maps.newHashMap()
@@ -67,7 +67,7 @@ class CrowdinServerLanguages(
         languagesFolder: File
     ) {
         try {
-            if (!crowdinDisabled) {
+            if (crowdinEnabled) {
                 try {
                     downloadCrowdinTranslations(crowdinProjectId, fileName, languagesFolder)
                 } catch (e: Exception) {
@@ -173,7 +173,7 @@ class CrowdinServerLanguages(
         if (languages.isEmpty()) return
 
         val defaultLanguage = languages.getOrDefault(
-            defaultLanguageName,
+            this.defaultLanguage,
             languages[languages.keys.first()]!!
         )
 
@@ -216,7 +216,7 @@ class CrowdinServerLanguages(
     }
 
     private fun getLanguage(languageName: String?, scope: LanguageScope): Map<String, String> {
-        val language = languages[languageName?.lowercase() ?: defaultLanguageName]
+        val language = languages[languageName?.lowercase() ?: this.defaultLanguage]
         if (languageName == null && language == null) return ImmutableMap.of()
         if (language == null) return getLanguage(null, scope)
 

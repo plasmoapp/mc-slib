@@ -60,9 +60,9 @@ class ComponentTextConverter : McTextConverter<Component> {
         }
 
         //#if MC>=11900
-        return Component.translatable(text.key, args)
+        return Component.translatable(text.key, *args)
         //#else
-        //$$ return TranslatableComponent(text.key, args)
+        //$$ return TranslatableComponent(text.key, *args)
         //#endif
     }
 

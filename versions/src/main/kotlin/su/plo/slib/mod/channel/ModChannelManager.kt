@@ -4,9 +4,9 @@ import com.google.common.collect.ListMultimap
 import com.google.common.collect.Multimaps
 import io.netty.buffer.ByteBufUtil
 import net.minecraft.resources.ResourceLocation
-import su.plo.slib.api.server.channel.McChannelHandler
-import su.plo.slib.api.server.channel.McChannelManager
-import su.plo.slib.mod.extension.mustToMcServerPlayer
+import su.plo.slib.api.server.channel.McServerChannelHandler
+import su.plo.slib.api.server.channel.McServerChannelManager
+import su.plo.slib.mod.extension.toMcServerPlayer
 import java.util.*
 
 //#if FABRIC
@@ -18,18 +18,20 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 //$$ import net.minecraftforge.network.event.EventNetworkChannel
 //#endif
 
-class ModChannelManager : McChannelManager {
+class ModChannelManager : McServerChannelManager {
 
-    private val internalHandlers: ListMultimap<ResourceLocation, McChannelHandler> =
+    private val internalHandlers: ListMultimap<ResourceLocation, McServerChannelHandler> =
         Multimaps.newListMultimap(HashMap(), ::LinkedList)
 
     @Synchronized
-    override fun registerChannelHandler(channel: String, handler: McChannelHandler) {
+    override fun registerChannelHandler(channel: String, handler: McServerChannelHandler) {
         val channelKey = ResourceLocation(channel)
 
         if (internalHandlers.containsKey(channelKey)) {
             internalHandlers.put(channelKey, handler)
             return
+        } else {
+            internalHandlers.put(channelKey, handler)
         }
 
         //#if FABRIC
@@ -38,7 +40,7 @@ class ModChannelManager : McChannelManager {
 
             internalHandlers.get(channelKey)
                 .forEach { channelHandler ->
-                    channelHandler.receive(player.mustToMcServerPlayer(), messageBytes)
+                    channelHandler.receive(player.toMcServerPlayer(), messageBytes)
                 }
         }
         //#else
@@ -59,7 +61,7 @@ class ModChannelManager : McChannelManager {
 
         //$$     internalHandlers.get(channelKey)
         //$$         .forEach { channelHandler ->
-        //$$             channelHandler.receive(context.sender!!.mustToMcServerPlayer(), messageBytes)
+        //$$             channelHandler.receive(context.sender!!.toMcServerPlayer(), messageBytes)
         //$$         }
         //$$ }
         //#endif
@@ -72,6 +74,7 @@ class ModChannelManager : McChannelManager {
     //$$    /**
     //$$     * You can add your own forge channel here, if you are using channel for client-side
     //$$     */
+    //$$    @JvmStatic
     //$$    fun addForgeChannel(channelKey: ResourceLocation, channel: EventNetworkChannel) {
     //$$        channels[channelKey] = channel
     //$$    }

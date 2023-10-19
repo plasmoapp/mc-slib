@@ -1,8 +1,10 @@
 package su.plo.slib.mod.channel
 
 import net.minecraft.server.level.ServerPlayer
-import su.plo.slib.api.server.event.player.PlayerRegisterChannelsEvent
+import su.plo.slib.api.server.event.player.McPlayerRegisterChannelsEvent
 import su.plo.slib.mod.extension.toMcServerPlayer
+import su.plo.slib.mod.entity.ModServerPlayer
+import su.plo.slib.mod.ModServerLib
 
 //#if FABRIC
 import net.fabricmc.fabric.api.networking.v1.PacketSender
@@ -29,8 +31,13 @@ object RegisterChannelHandler
     //#endif
 
     fun firePlayerRegisterChannels(player: ServerPlayer, channels: List<String>) {
-        player.toMcServerPlayer()?.let {
-            PlayerRegisterChannelsEvent.invoker.onPlayerRegisterChannels(it, channels)
-        }
+        // skip player if he's not placed in the playerlist yet
+        if (ModServerLib.minecraftServer.playerList.getPlayer(player.uuid) == null) return
+
+        val mcServerPlayer = player.toMcServerPlayer() as ModServerPlayer
+
+        McPlayerRegisterChannelsEvent.invoker.onPlayerRegisterChannels(mcServerPlayer, channels)
+
+        channels.forEach { mcServerPlayer.addChannel(it) }
     }
 }

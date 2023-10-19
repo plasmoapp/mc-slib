@@ -6,23 +6,25 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.plugin.messaging.PluginMessageListener
 import su.plo.slib.api.server.McServerLib
-import su.plo.slib.api.server.channel.McChannelHandler
-import su.plo.slib.api.server.channel.McChannelManager
+import su.plo.slib.api.server.channel.McServerChannelHandler
+import su.plo.slib.api.server.channel.McServerChannelManager
 import java.util.HashMap
 import java.util.LinkedList
 
 class SpigotChannelManager(
     private val loader: JavaPlugin,
     private val minecraftServer: McServerLib
-) : McChannelManager, PluginMessageListener {
+) : McServerChannelManager, PluginMessageListener {
 
-    private val internalHandlers: ListMultimap<String, McChannelHandler> =
+    private val internalHandlers: ListMultimap<String, McServerChannelHandler> =
         Multimaps.newListMultimap(HashMap(), ::LinkedList)
 
-    override fun registerChannelHandler(channel: String, handler: McChannelHandler) {
+    override fun registerChannelHandler(channel: String, handler: McServerChannelHandler) {
         if (internalHandlers.containsKey(channel)) {
             internalHandlers.put(channel, handler)
             return
+        } else {
+            internalHandlers.put(channel, handler)
         }
 
         loader.server.messenger.registerIncomingPluginChannel(loader, channel, this)

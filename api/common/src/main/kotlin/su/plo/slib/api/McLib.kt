@@ -5,44 +5,50 @@ import su.plo.slib.api.chat.component.McTranslatableText
 import su.plo.slib.api.chat.converter.ServerTextConverter
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.language.ServerLanguages
-import su.plo.slib.api.permission.PermissionsManager
+import su.plo.slib.api.permission.PermissionManager
 
 /**
- * Represents a Minecraft server
+ * Represents a Minecraft server or proxy library.
  *
- * Use it when you are using ONLY common module
- *
- * For proxy use MinecraftServerLib
- * For server use MinecraftProxyLib
+ * This interface serves as the common module for working with Minecraft servers and proxies.
+ * Depending on the usage context, specific implementations such as
+ * [su.plo.slib.api.server.McServerLib] or [su.plo.slib.api.proxy.McProxyLib]
+ * should be used for server or proxy-specific functionality.
  */
 interface McLib {
 
     /**
-     * Gets server languages
-     *
+     * Gets the server's languages.
+     **
      * @see ServerLanguages
      */
     val languages: ServerLanguages
 
     /**
-     * Gets the text converter
+     * Gets the text converter for server-specific text components.
      *
-     * Text converter used to convert [McTextComponent] to server's specific text component
+     * The [ServerTextConverter] is responsible for converting [McTextComponent] objects to server-specific text components.
+     * It can also translate [McTranslatableText] components using the [ServerLanguages].
      *
-     * [ServerTextConverter] can translate [McTranslatableText] by using
-     * [ServerLanguages] ([ServerTextConverter.convert])
-     *
-     * @return [ServerTextConverter]
+     * @return The [ServerTextConverter] for text conversion and translation.
      */
     val textConverter: ServerTextConverter<*>
 
     /**
+     * Gets the command manager for managing and registering commands.
+     *
+     * Use this to manage server commands.
+     *
      * @see McCommandManager
      */
     val commandManager: McCommandManager<*>
 
     /**
-     * @see PermissionsManager
+     * Gets the permissions manager for managing universal permissions.
+     *
+     * The `PermissionsManager` is responsible for registering and managing universal permissions.
+     *
+     * @see PermissionManager
      */
-    val permissionsManager: PermissionsManager
+    val permissionManager: PermissionManager
 }

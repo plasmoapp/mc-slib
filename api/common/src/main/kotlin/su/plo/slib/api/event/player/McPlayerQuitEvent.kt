@@ -4,10 +4,10 @@ import su.plo.slib.api.entity.player.McPlayer
 import su.plo.slib.api.event.GlobalEvent
 
 /**
- * This event is fires once the player is disconnected from the server
+ * An event fired when a player quits the server.
  */
-object PlayerQuitEvent
-    : GlobalEvent<PlayerQuitEvent.Callback>(
+object McPlayerQuitEvent
+    : GlobalEvent<McPlayerQuitEvent.Callback>(
     { callbacks ->
         Callback { player ->
             callbacks.forEach { callback -> callback.onPlayerQuit(player) }
