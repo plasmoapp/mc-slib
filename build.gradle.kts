@@ -79,6 +79,7 @@ allprojects {
         mavenLocal()
         mavenCentral()
 
+        maven("https://repo.plasmoverse.com/shapshots")
         maven("https://repo.plo.su")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
         maven("https://repo.papermc.io/repository/maven-public/")
