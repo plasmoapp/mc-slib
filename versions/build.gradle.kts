@@ -45,11 +45,18 @@ dependencies {
             isTransitive = false
         }
     }
+
+    shadowCommon(libs.crowdin) {
+        isTransitive = false
+    }
+    shadowCommon(libs.toml4j) {
+        isTransitive = false
+    }
 }
 
 tasks {
     processResources {
-        filesMatching(mutableListOf("slib.mixins.json", "slib-forge.mixins.json")) {
+        filesMatching(mutableListOf("*.mixins.json")) {
             expand(
                 mutableMapOf(
                     "mcVersion" to platform.mcVersionStr,
@@ -69,6 +76,9 @@ tasks {
 
     shadowJar {
         configurations = listOf(shadowCommon)
+
+        relocate("su.plo.crowdin", "su.plo.slib.libs.crowdin")
+        relocate("com.moandjiezana.toml", "su.plo.slib.libs.toml")
 
         exclude("META-INF/*.kotlin_module")
 

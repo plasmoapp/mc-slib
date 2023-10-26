@@ -3,10 +3,10 @@ package su.plo.slib.language
 import com.google.common.base.Charsets
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.Maps
+import com.moandjiezana.toml.Toml
+import com.moandjiezana.toml.TomlWriter
 import org.slf4j.LoggerFactory
-import su.plo.config.toml.Toml
-import su.plo.config.toml.TomlWriter
-import su.plo.crowdin.PlasmoCrowdinLib
+import su.plo.crowdin.CrowdinLib
 import su.plo.slib.api.language.ServerLanguages
 import su.plo.slib.api.resource.ResourceLoader
 import java.io.*
@@ -142,7 +142,7 @@ class CrowdinServerLanguages(
         // check timestamp, if outdated, download from crowdin and use it as defaults
         if (System.currentTimeMillis() - timestamp < 86400 * 3 * 1000) return
 
-        val rawTranslations: Map<String, ByteArray> = PlasmoCrowdinLib
+        val rawTranslations: Map<String, ByteArray> = CrowdinLib
             .downloadRawTranslations(crowdinProjectId, fileName)
             .get()
 

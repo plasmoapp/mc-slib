@@ -3,8 +3,9 @@ plugins {
 }
 
 dependencies {
-    compileOnly(libs.spigot)
     compileOnly(libs.folia)
+    compileOnly(libs.spigot)
+    testCompileOnly(libs.folia)
 
     val includedProjects = listOf(
         ":api:api-common",
@@ -18,6 +19,13 @@ dependencies {
             isTransitive = false
         }
     }
+
+    shadow(libs.crowdin) {
+        isTransitive = false
+    }
+    shadow(libs.toml4j) {
+        isTransitive = false
+    }
 }
 
 tasks {
@@ -26,6 +34,9 @@ tasks {
 
         archiveAppendix.set("")
         archiveClassifier.set("")
+
+        relocate("su.plo.crowdin", "su.plo.slib.libs.crowdin")
+        relocate("com.moandjiezana.toml", "su.plo.slib.libs.toml")
     }
 
     build {
