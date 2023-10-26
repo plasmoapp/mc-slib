@@ -61,7 +61,7 @@ subprojects {
             }
 
             repositories {
-                maven("https://repo.plasmoverse.com/shapshots") {
+                maven("https://repo.plasmoverse.com/snapshots") {
                     name = "plasmoverseSnapshots"
 
                     credentials {
@@ -79,7 +79,7 @@ allprojects {
         mavenLocal()
         mavenCentral()
 
-        maven("https://repo.plasmoverse.com/shapshots")
+        maven("https://repo.plasmoverse.com/snapshots")
         maven("https://repo.plo.su")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
         maven("https://repo.papermc.io/repository/maven-public/")
