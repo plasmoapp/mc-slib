@@ -38,35 +38,35 @@ modImplementation("su.plo.slib:fabric-$mcVersion:$libVersion")
 
 You also need to add
 
-Initialization: [FabricMod.kt](//todo)
+Initialization: [FabricMod.kt](https://github.com/plasmoapp/mc-slib/blob/main/versions/src/test/kotlin/FabricMod.kt)
 
 ### Forge
 ```kotlin
 implementation("su.plo.slib:forge-$mcVersion:$libVersion")
 ```
 
-Initialization: [ForgeMod.kt](//todo)
+Initialization: [ForgeMod.kt](https://github.com/plasmoapp/mc-slib/blob/main/versions/1.19.3-forge/src/test/kotlin/ForgeMod.kt)
 
 ### Spigot
 ```kotlin
 implementation("su.plo.slib:spigot:$libVersion")
 ```
 
-Initialization: [SpigotPlugin.kt](//todo)
+Initialization: [SpigotPlugin.kt](https://github.com/plasmoapp/mc-slib/blob/main/spigot/src/test/kotlin/SpigotPlugin.kt)
 
 ### BungeeCord
 ```kotlin
 implementation("su.plo.slib:bungee:$libVersion")
 ```
 
-Initialization: [BungeePlugin.kt](//todo)
+Initialization: [BungeePlugin.kt](https://github.com/plasmoapp/mc-slib/blob/main/bungee/src/test/kotlin/BungeePlugin.kt)
 
 ### Velocity
 ```kotlin
 implementation("su.plo.slib:velocity:$libVersion")
 ```
 
-Initialization: [VelocityPlugin.kt](//todo)
+Initialization: [VelocityPlugin.kt](https://github.com/plasmoapp/mc-slib/blob/main/velocity/src/test/kotlin/VelocityPlugin.kt)
 
 
 ## Version
