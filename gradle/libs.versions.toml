@@ -2,8 +2,6 @@
 kotlin = "1.8.22"
 dokka = "1.8.20"
 
-architectury-plugin = "3.4-SNAPSHOT"
-architectury-loom = "0.12.0-SNAPSHOT"
 shadow = "7.1.0"
 
 guava = "31.1-jre"
@@ -33,7 +31,5 @@ bungee-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungee" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 
 [plugins]
-architectury-plugin = { id = "architectury-plugin", version.ref = "architectury-plugin" }
-architectury-loom   = { id = "dev.architectury.loom", version.ref = "architectury-loom" }
-shadow              = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
-dokka               = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+dokka  = { id = "org.jetbrains.dokka", version.ref = "dokka" }
