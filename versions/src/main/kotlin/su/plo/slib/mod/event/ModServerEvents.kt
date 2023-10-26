@@ -27,6 +27,7 @@ import su.plo.slib.mod.channel.RegisterChannelHandler
 
 //#else
 
+//$$ import net.minecraftforge.common.MinecraftForge
 //$$ import net.minecraftforge.event.RegisterCommandsEvent
 //$$ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 //$$ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
@@ -59,6 +60,10 @@ class ModServerEvents private constructor() {
     }
 
     //#else
+
+    //$$ init {
+    //$$     MinecraftForge.EVENT_BUS.register(this)
+    //$$ }
 
     //$$ @SubscribeEvent
     //$$ fun onServerStart(event: net.minecraftforge.event.server.ServerStartedEvent) {
@@ -102,6 +107,7 @@ class ModServerEvents private constructor() {
         val minecraftServer = ModServerLib
         val commandManager = minecraftServer.commandManager
 
+        commandManager.clear()
         McServerCommandsRegisterEvent.invoker.onCommandsRegister(commandManager, minecraftServer)
         commandManager.registerCommands(dispatcher)
     }

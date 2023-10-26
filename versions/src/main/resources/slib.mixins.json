@@ -1,4 +1,4 @@
- {
+{
     "required": true,
     "minVersion": "0.7",
     "package": "su.plo.slib.mod.mixin",
@@ -11,5 +11,5 @@
     "injectors": {
         "defaultRequire": 1
     },
-     "refmap": "slib-${loader}-${mcVersion}-versions_${mcVersion}-${loader}-refmap.json"
+    "refmap": "slib-${loader}-${mcVersion}-versions_${mcVersion}-${loader}-refmap.json"
 }
