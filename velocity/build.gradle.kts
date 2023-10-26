@@ -41,4 +41,10 @@ tasks {
     build {
         dependsOn.add(shadowJar)
     }
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = "11"
+        }
+    }
 }
