@@ -61,14 +61,12 @@ subprojects {
             }
 
             repositories {
-                if (findProperty("plasmoverseSnapshotsUsername") != null) {
-                    maven("https://repo.plasmoverse.com/shapshots") {
-                        name = "plasmoverseSnapshots"
+                maven("https://repo.plasmoverse.com/shapshots") {
+                    name = "plasmoverseSnapshots"
 
-                        credentials(PasswordCredentials::class)
-                        authentication {
-                            create<BasicAuthentication>("basic")
-                        }
+                    credentials {
+                        username = System.getenv("MAVEN_USERNAME")
+                        password = System.getenv("MAVEN_PASSWORD")
                     }
                 }
             }
