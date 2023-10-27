@@ -22,7 +22,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "PlasmoCrossPlatformLib"
+rootProject.name = "slib"
 
 // API
 file("api").listFilesOrdered {
