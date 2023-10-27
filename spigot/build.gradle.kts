@@ -43,6 +43,10 @@ tasks {
         dependsOn.add(shadowJar)
     }
 
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    }
+
     compileKotlin {
         kotlinOptions {
             jvmTarget = "17"
