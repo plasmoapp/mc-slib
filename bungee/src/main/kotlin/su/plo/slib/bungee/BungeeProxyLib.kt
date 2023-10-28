@@ -22,6 +22,7 @@ import su.plo.slib.bungee.permission.BungeePermissionSupplier
 import su.plo.slib.bungee.player.BungeeProxyPlayer
 import su.plo.slib.bungee.server.BungeeProxyServerInfo
 import su.plo.slib.language.CrowdinServerLanguages
+import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -51,6 +52,8 @@ class BungeeProxyLib(
 
     override val port: Int
         get() = proxyServer.config.listeners.first().host.port
+
+    override val configsFolder = File("plugins")
 
     init {
         loadServers()

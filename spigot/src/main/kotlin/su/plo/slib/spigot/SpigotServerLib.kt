@@ -28,6 +28,7 @@ import su.plo.slib.spigot.command.SpigotCommandManager
 import su.plo.slib.spigot.entity.SpigotServerEntity
 import su.plo.slib.spigot.entity.SpigotServerPlayer
 import su.plo.slib.spigot.permission.SpigotPermissionSupplier
+import java.io.File
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -61,6 +62,8 @@ class SpigotServerLib(
 
     override val version: String
         get() = Bukkit.getVersion().substringAfter("MC: ").substringBefore(")")
+
+    override val configsFolder = Bukkit.getPluginsFolder()
 
     fun onInitialize() {
         commandManager.registerCommands(loader)

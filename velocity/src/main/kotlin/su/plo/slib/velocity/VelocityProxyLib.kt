@@ -21,6 +21,7 @@ import su.plo.slib.velocity.command.VelocityCommandManager
 import su.plo.slib.velocity.permission.VelocityPermissionSupplier
 import su.plo.slib.velocity.player.VelocityProxyPlayer
 import su.plo.slib.velocity.server.VelocityProxyServerInfo
+import java.io.File
 import java.util.*
 
 class VelocityProxyLib(
@@ -48,6 +49,8 @@ class VelocityProxyLib(
 
     override val port: Int
         get() = proxyServer.boundAddress.port
+
+    override val configsFolder = File("plugins")
 
     init {
         loadServers()

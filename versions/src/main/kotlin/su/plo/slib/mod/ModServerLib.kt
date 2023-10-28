@@ -23,6 +23,7 @@ import su.plo.slib.mod.entity.ModServerPlayer
 import su.plo.slib.mod.event.server.ServerStoppingEvent
 import su.plo.slib.mod.permission.ModPermissionSupplier
 import su.plo.slib.mod.world.ModServerWorld
+import java.io.File
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -58,6 +59,8 @@ object ModServerLib : McServerLib {
 
     override val version: String
         get() = minecraftServer.serverVersion
+
+    override val configsFolder = File("config")
 
     override fun executeInMainThread(runnable: Runnable) {
         minecraftServer.execute(runnable)

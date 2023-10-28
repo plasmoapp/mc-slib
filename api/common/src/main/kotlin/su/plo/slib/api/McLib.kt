@@ -6,6 +6,7 @@ import su.plo.slib.api.chat.converter.ServerTextConverter
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.language.ServerLanguages
 import su.plo.slib.api.permission.PermissionManager
+import java.io.File
 
 /**
  * Represents a Minecraft server or proxy library.
@@ -51,4 +52,11 @@ interface McLib {
      * @see PermissionManager
      */
     val permissionManager: PermissionManager
+
+    /**
+     * Gets the folder where plugins/mods configs are stored.
+     *
+     * @return The folder with plugins/mods configs.
+     */
+    val configsFolder: File
 }
