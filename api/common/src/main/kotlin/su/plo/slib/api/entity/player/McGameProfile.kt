@@ -35,6 +35,6 @@ data class McGameProfile(
     data class Property(
         val name: String,
         val value: String,
-        val signature: String
+        val signature: String?
     )
 }
