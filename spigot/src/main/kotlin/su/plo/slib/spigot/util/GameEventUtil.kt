@@ -5,7 +5,6 @@ import org.bukkit.NamespacedKey
 
 object GameEventUtil {
 
-    // avoid <1.19 ClassNotFoundException error
     fun parseGameEvent(gameEventName: String): GameEvent {
         val gameEventKey: NamespacedKey
         val split = gameEventName.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -16,12 +15,5 @@ object GameEventUtil {
         }
 
         return GameEvent.getByKey(gameEventKey) ?: return GameEvent.STEP
-    }
-
-    fun isGameEventsSupported(): Boolean = try {
-        Class.forName("org.bukkit.GameEvent")
-        true
-    } catch (e: ClassNotFoundException) {
-        false
     }
 }

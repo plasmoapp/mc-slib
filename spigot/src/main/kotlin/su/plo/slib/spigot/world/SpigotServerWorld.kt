@@ -6,7 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.spigot.extension.runSync
-import su.plo.slib.spigot.util.GameEventUtil
 import su.plo.slib.spigot.util.GameEventUtil.parseGameEvent
 import java.util.*
 
@@ -19,7 +18,11 @@ class SpigotServerWorld(
         get() = level.key.toString()
 
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
-        if (!GameEventUtil.isGameEventsSupported()) return
+        try {
+            Class.forName("org.bukkit.GameEvent")
+        } catch (e: ClassNotFoundException) {
+            return
+        }
 
         val paperEntity = entity.getInstance<Entity>()
         loader.runSync(paperEntity) {
