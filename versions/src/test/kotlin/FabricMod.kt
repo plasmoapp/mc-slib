@@ -1,9 +1,9 @@
+//#if FABRIC
 import net.fabricmc.api.ModInitializer
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.mod.ModServerLib
 import su.plo.slib.mod.event.ModServerEvents.Companion.initialize
 import su.plo.slib.mod.event.server.ServerStartedEvent
-
 
 class FabricMod : ModInitializer {
 
@@ -25,3 +25,4 @@ class FabricMod : ModInitializer {
         }
     }
 }
+//#endif

@@ -8,6 +8,7 @@ import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.mod.ModServerLib
+import su.plo.slib.mod.channel.RegisterChannelHandler
 import su.plo.slib.mod.event.server.ServerStartedEvent
 import su.plo.slib.mod.event.server.ServerStoppingEvent
 import su.plo.slib.mod.extension.toMcServerPlayer
@@ -23,7 +24,6 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
-import su.plo.slib.mod.channel.RegisterChannelHandler
 
 //#else
 
@@ -63,6 +63,7 @@ class ModServerEvents private constructor() {
 
     //$$ init {
     //$$     MinecraftForge.EVENT_BUS.register(this)
+    //$$     MinecraftForge.EVENT_BUS.register(RegisterChannelHandler)
     //$$ }
 
     //$$ @SubscribeEvent
