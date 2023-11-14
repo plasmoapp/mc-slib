@@ -52,7 +52,7 @@ subprojects {
         }
     }
 
-    if (!project.name.contains("api")) {
+    if (project.name != "api") {
         publishing {
             publications {
                 create<MavenPublication>("maven") {

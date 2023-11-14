@@ -14,7 +14,6 @@ import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.world.McServerWorld
-import su.plo.slib.language.CrowdinServerLanguages
 import su.plo.slib.mod.channel.ModChannelManager
 import su.plo.slib.mod.chat.ServerComponentTextConverter
 import su.plo.slib.mod.command.ModCommandManager
@@ -41,8 +40,7 @@ object ModServerLib : McServerLib {
 
     private val permissionSupplier = ModPermissionSupplier(this)
 
-    override val languages = CrowdinServerLanguages()
-    override val textConverter = ServerComponentTextConverter(languages)
+    override val textConverter = ServerComponentTextConverter()
 
     override val commandManager = ModCommandManager(this)
     override val permissionManager = PermissionManager()

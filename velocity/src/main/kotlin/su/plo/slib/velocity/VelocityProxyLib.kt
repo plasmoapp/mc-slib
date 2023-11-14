@@ -14,7 +14,6 @@ import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
 import su.plo.slib.api.proxy.player.McProxyPlayer
 import su.plo.slib.api.proxy.server.McProxyServerInfo
-import su.plo.slib.language.CrowdinServerLanguages
 import su.plo.slib.velocity.channel.VelocityChannelManager
 import su.plo.slib.velocity.chat.ComponentTextConverter
 import su.plo.slib.velocity.command.VelocityCommandManager
@@ -34,8 +33,7 @@ class VelocityProxyLib(
 
     private val permissionSupplier = VelocityPermissionSupplier(this)
 
-    override val languages = CrowdinServerLanguages()
-    override val textConverter = ComponentTextConverter(languages)
+    override val textConverter = ComponentTextConverter()
 
     override val commandManager = VelocityCommandManager(this)
     override val permissionManager = PermissionManager()

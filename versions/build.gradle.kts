@@ -45,13 +45,6 @@ dependencies {
             isTransitive = false
         }
     }
-
-    shadowCommon(libs.crowdin) {
-        isTransitive = false
-    }
-    shadowCommon(libs.toml4j) {
-        isTransitive = false
-    }
 }
 
 tasks {
@@ -76,9 +69,6 @@ tasks {
 
     shadowJar {
         configurations = listOf(shadowCommon)
-
-        relocate("su.plo.crowdin", "su.plo.slib.libs.crowdin")
-        relocate("com.moandjiezana.toml", "su.plo.slib.libs.toml")
 
         exclude("META-INF/*.kotlin_module")
 

@@ -11,16 +11,14 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.world.WorldUnloadEvent
 import org.bukkit.plugin.java.JavaPlugin
-import su.plo.slib.api.server.McServerLib
-import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
-import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.permission.PermissionManager
+import su.plo.slib.api.server.McServerLib
+import su.plo.slib.api.server.entity.McServerEntity
+import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.server.world.McServerWorld
-import su.plo.slib.language.CrowdinServerLanguages
-import su.plo.slib.spigot.world.SpigotServerWorld
 import su.plo.slib.spigot.channel.RegisterChannelHandler
 import su.plo.slib.spigot.channel.SpigotChannelManager
 import su.plo.slib.spigot.chat.BaseComponentTextConverter
@@ -28,7 +26,7 @@ import su.plo.slib.spigot.command.SpigotCommandManager
 import su.plo.slib.spigot.entity.SpigotServerEntity
 import su.plo.slib.spigot.entity.SpigotServerPlayer
 import su.plo.slib.spigot.permission.SpigotPermissionSupplier
-import java.io.File
+import su.plo.slib.spigot.world.SpigotServerWorld
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -44,8 +42,7 @@ class SpigotServerLib(
 
     val backgroundExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
-    override val languages = CrowdinServerLanguages()
-    override val textConverter = BaseComponentTextConverter(languages)
+    override val textConverter = BaseComponentTextConverter()
 
     override val commandManager = SpigotCommandManager(this)
     override val permissionManager = PermissionManager()

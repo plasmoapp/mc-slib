@@ -23,13 +23,6 @@ dependencies {
             isTransitive = false
         }
     }
-
-    shadow(libs.crowdin) {
-        isTransitive = false
-    }
-    shadow(libs.toml4j) {
-        isTransitive = false
-    }
 }
 
 tasks {
@@ -38,9 +31,6 @@ tasks {
 
         archiveAppendix.set("")
         archiveClassifier.set("")
-
-        relocate("su.plo.crowdin", "su.plo.slib.libs.crowdin")
-        relocate("com.moandjiezana.toml", "su.plo.slib.libs.toml")
     }
 
     build {

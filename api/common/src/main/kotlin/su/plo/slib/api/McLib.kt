@@ -4,7 +4,7 @@ import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.chat.component.McTranslatableText
 import su.plo.slib.api.chat.converter.ServerTextConverter
 import su.plo.slib.api.command.McCommandManager
-import su.plo.slib.api.language.ServerLanguages
+import su.plo.slib.api.language.ServerTranslator
 import su.plo.slib.api.permission.PermissionManager
 import java.io.File
 
@@ -19,17 +19,10 @@ import java.io.File
 interface McLib {
 
     /**
-     * Gets the server's languages.
-     **
-     * @see ServerLanguages
-     */
-    val languages: ServerLanguages
-
-    /**
      * Gets the text converter for server-specific text components.
      *
      * The [ServerTextConverter] is responsible for converting [McTextComponent] objects to server-specific text components.
-     * It can also translate [McTranslatableText] components using the [ServerLanguages].
+     * It can also translate [McTranslatableText] components using the [ServerTranslator].
      *
      * @return The [ServerTextConverter] for text conversion and translation.
      */

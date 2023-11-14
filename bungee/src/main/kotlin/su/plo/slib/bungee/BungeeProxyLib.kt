@@ -21,7 +21,6 @@ import su.plo.slib.bungee.command.BungeeCommandManager
 import su.plo.slib.bungee.permission.BungeePermissionSupplier
 import su.plo.slib.bungee.player.BungeeProxyPlayer
 import su.plo.slib.bungee.server.BungeeProxyServerInfo
-import su.plo.slib.language.CrowdinServerLanguages
 import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -37,8 +36,7 @@ class BungeeProxyLib(
 
     private val permissionSupplier = BungeePermissionSupplier(this)
 
-    override val languages = CrowdinServerLanguages()
-    override val textConverter = BaseComponentTextConverter(languages)
+    override val textConverter = BaseComponentTextConverter( )
 
     override val commandManager = BungeeCommandManager(this)
     override val permissionManager = PermissionManager()

@@ -3,11 +3,8 @@ package su.plo.slib.mod.chat
 import net.minecraft.network.chat.Component
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.chat.converter.ServerTextConverter
-import su.plo.slib.api.language.ServerLanguages
 
-class ServerComponentTextConverter(
-    languages: ServerLanguages
-) : ServerTextConverter<Component>(languages) {
+class ServerComponentTextConverter : ServerTextConverter<Component>() {
 
     private val textConverter = ComponentTextConverter()
 
