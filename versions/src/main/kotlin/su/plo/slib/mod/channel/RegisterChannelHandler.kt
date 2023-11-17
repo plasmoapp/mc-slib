@@ -12,12 +12,25 @@ import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerGamePacketListenerImpl
+
+//#if MC>=12002
+//$$ import com.google.common.cache.CacheBuilder
+//$$ import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents
+//$$ import net.minecraft.server.network.ServerConfigurationPacketListenerImpl
+//$$ import java.util.*
+//$$ import java.util.concurrent.TimeUnit
+//#endif
+
 //#else
-//$$ import com.google.common.eventbus.Subscribe
-//$$ import io.netty.util.AsciiString
-//$$ import net.minecraft.network.FriendlyByteBuf
-//$$ import net.minecraft.resources.ResourceLocation
-//$$ import net.minecraftforge.network.NetworkEvent;
+
+//#if MC>=12002
+//$$ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
+//$$ import net.minecraftforge.event.network.ChannelRegistrationChangeEvent
+//$$ import net.minecraftforge.network.NetworkContext
+//$$ import net.minecraftforge.eventbus.api.SubscribeEvent
+//$$ import net.minecraft.server.network.ServerGamePacketListenerImpl
+//#endif
+
 //#endif
 
 object RegisterChannelHandler
@@ -26,49 +39,60 @@ object RegisterChannelHandler
     //#endif
 {
     //#if FABRIC
+
+    //#if MC>=12002
+    //$$ val channelsCache = CacheBuilder.newBuilder()
+    //$$     .expireAfterWrite(1L, TimeUnit.MINUTES)
+    //$$     .build<UUID, List<String>>()
+    //#endif
+
     override fun onChannelRegister(
         handler: ServerGamePacketListenerImpl,
         sender: PacketSender,
         server: MinecraftServer,
-        channels: MutableList<ResourceLocation>
+        newChannels: MutableList<ResourceLocation>
     ) {
-        firePlayerRegisterChannels(handler.player, channels.map { it.toString() })
+        //#if MC>=12002
+        // 1.20.2 forge sends channels only on configuration state,
+        // so we need to save these channels and check them on player join
+        //$$ val newChannels = newChannels.map { channel -> channel.toString() }
+        //$$
+        //$$ val player = handler.player
+        //$$ val channels = channelsCache.getIfPresent(player.uuid)
+        //$$     ?.let { it + newChannels }
+        //$$     ?.toSet()
+        //$$     ?.toList()
+        //$$     ?: newChannels
+        //$$ channelsCache.invalidate(player.uuid)
+        //$$
+        //$$ firePlayerRegisterChannels(player, channels)
+        //#else
+        firePlayerRegisterChannels(handler.player, newChannels.map { it.toString() })
+        //#endif
     }
     //#else
-    //$$ @Subscribe
-    //$$ fun onChannelRegister(event: NetworkEvent.ChannelRegistrationChangeEvent) {
-    //$$     if (event.registrationChangeType != NetworkEvent.RegistrationChangeType.REGISTER) return
+    //#if MC>=12002
+    //$$ @SubscribeEvent
+    //$$ fun onPlayerJoin(event: PlayerLoggedInEvent) { // forge clients handler
+    //$$     val player = event.entity as? ServerPlayer ?: return
+    //$$     val context = NetworkContext.get(player.connection.connection)
     //$$
-    //$$     val source = event.source.get()
-    //$$     val buf = event.payload
+    //$$     val channels = context.remoteChannels
+    //$$         .takeIf { it.isNotEmpty() }
+    //$$         ?.map { it.toString() }
+    //$$         ?: return
     //$$
-    //$$     val player = source.sender ?: return
-    //$$
-    //$$     firePlayerRegisterChannels(player, buf.parseChannels())
+    //$$     firePlayerRegisterChannels(player, channels)
     //$$ }
+    //$$ @SubscribeEvent
+    //$$ fun onRegister(event: ChannelRegistrationChangeEvent) { // fabric clients handler
+    //$$     val gameListener = event.source.packetListener as? ServerGamePacketListenerImpl ?: return
+    //$$     val player = gameListener.player ?: return
+    //$$     val channels = event.channels.map { it.toString() }
     //$$
-    //$$ private fun FriendlyByteBuf.parseChannels(): List<String> {
-    //$$     val channels = ArrayList<String>()
-    //$$     val active = StringBuilder()
-    //$$
-    //$$     while (isReadable) {
-    //$$         val byte = readByte()
-    //$$
-    //$$         if (byte != 0.toByte()) {
-    //$$             active.append(AsciiString.b2c(byte))
-    //$$             continue
-    //$$         }
-    //$$
-    //$$         val channel = active.toString()
-    //$$         if (ResourceLocation.isValidResourceLocation(channel)) {
-    //$$             channels.add(channel)
-    //$$         }
-    //$$
-    //$$         active.clear()
-    //$$     }
-    //$$
-    //$$     return channels
+    //$$     firePlayerRegisterChannels(player, channels)
     //$$ }
+    //#endif
     //#endif
 
     fun firePlayerRegisterChannels(player: ServerPlayer, channels: List<String>) {
@@ -81,4 +105,19 @@ object RegisterChannelHandler
 
         channels.forEach { mcServerPlayer.addChannel(it) }
     }
+
+    //#if FABRIC
+    //#if MC>=12002
+    //$$ object ConfigHandler : S2CConfigurationChannelEvents.Register {
+    //$$     override fun onChannelRegister(
+    //$$         handler: ServerConfigurationPacketListenerImpl,
+    //$$         sender: PacketSender,
+    //$$         server: MinecraftServer,
+    //$$         channels: MutableList<ResourceLocation>
+    //$$     ) {
+    //$$         channelsCache.put(handler.owner.id, channels.map { it.toString() })
+    //$$     }
+    //$$ }
+    //#endif
+    //#endif
 }

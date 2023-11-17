@@ -14,8 +14,15 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 //#else
 //$$ import net.minecraftforge.network.NetworkDirection
 //$$ import net.minecraftforge.network.NetworkEvent
-//$$ import net.minecraftforge.network.NetworkRegistry
 //$$ import net.minecraftforge.network.event.EventNetworkChannel
+
+//#if MC>=12002
+//$$ import net.minecraftforge.network.ChannelBuilder
+//#else
+//$$ import net.minecraftforge.network.NetworkRegistry
+//$$ import net.minecraftforge.network.NetworkRegistry.ChannelBuilder
+//#endif
+
 //#endif
 
 class ModChannelManager : McServerChannelManager {
@@ -45,16 +52,23 @@ class ModChannelManager : McServerChannelManager {
         }
         //#else
         //$$ val forgeChannel = channels.computeIfAbsent(channelKey) {
-        //$$     NetworkRegistry.newEventChannel(
-        //$$         channelKey,
-        //$$         { NetworkRegistry.ACCEPTVANILLA },
-        //$$         NetworkRegistry.acceptMissingOr(NetworkRegistry.ACCEPTVANILLA),
-        //$$         NetworkRegistry.acceptMissingOr(NetworkRegistry.ACCEPTVANILLA)
-        //$$     )
+        //$$     ChannelBuilder.named(channelKey)
+        //#if MC>=12002
+        //$$         .optional()
+        //#else
+        //$$         .networkProtocolVersion { NetworkRegistry.ACCEPTVANILLA }
+        //$$         .clientAcceptedVersions(NetworkRegistry.acceptMissingOr(NetworkRegistry.ACCEPTVANILLA))
+        //$$         .clientAcceptedVersions(NetworkRegistry.acceptMissingOr(NetworkRegistry.ACCEPTVANILLA))
+        //#endif
+        //$$         .eventNetworkChannel()
         //$$ }
 
         //$$ forgeChannel.addListener<NetworkEvent> { event ->
+        //#if MC>=12002
+        //$$     val context = event.source
+        //#else
         //$$     val context = event.source.get()
+        //#endif
         //$$     if (context.direction != NetworkDirection.PLAY_TO_SERVER || event.payload == null) return@addListener
 
         //$$     val messageBytes = ByteBufUtil.getBytes(event.payload)

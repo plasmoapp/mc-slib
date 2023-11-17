@@ -10,8 +10,11 @@ import su.plo.slib.api.chat.component.McTranslatableText
 import su.plo.slib.api.chat.converter.ServerTextConverter
 import su.plo.slib.api.chat.style.McTextClickEvent
 import su.plo.slib.api.chat.style.McTextHoverEvent
+import su.plo.slib.api.language.ServerTranslator
 
-class BaseComponentTextConverter : ServerTextConverter<BaseComponent>() {
+class BaseComponentTextConverter(
+    serverTranslator: ServerTranslator
+) : ServerTextConverter<BaseComponent>(serverTranslator) {
 
     override fun convertToJson(text: BaseComponent): String =
         ComponentSerializer.toString(text)

@@ -1,5 +1,6 @@
 package su.plo.slib.mod.event
 
+import com.google.common.cache.CacheBuilder
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.MinecraftServer
@@ -24,6 +25,10 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
+
+//#if MC>=12002
+//$$ import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents
+//#endif
 
 //#else
 
@@ -52,6 +57,10 @@ class ModServerEvents private constructor() {
 
         S2CPlayChannelEvents.REGISTER.register(RegisterChannelHandler)
 
+        //#if MC>=12002
+        //$$ S2CConfigurationChannelEvents.REGISTER.register(RegisterChannelHandler.ConfigHandler)
+        //#endif
+
         //#if MC>=11900
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ -> fireRegisterCommands(dispatcher) }
         //#else
@@ -63,7 +72,9 @@ class ModServerEvents private constructor() {
 
     //$$ init {
     //$$     MinecraftForge.EVENT_BUS.register(this)
+    //#if MC>=12002
     //$$     MinecraftForge.EVENT_BUS.register(RegisterChannelHandler)
+    //#endif
     //$$ }
 
     //$$ @SubscribeEvent

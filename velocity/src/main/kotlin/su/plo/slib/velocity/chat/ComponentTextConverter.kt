@@ -14,8 +14,11 @@ import su.plo.slib.api.chat.converter.ServerTextConverter
 import su.plo.slib.api.chat.style.McTextClickEvent
 import su.plo.slib.api.chat.style.McTextHoverEvent
 import su.plo.slib.api.chat.style.McTextStyle
+import su.plo.slib.api.language.ServerTranslator
 
-class ComponentTextConverter : ServerTextConverter<Component>() {
+class ComponentTextConverter(
+    serverTranslator: ServerTranslator
+) : ServerTextConverter<Component>(serverTranslator) {
 
     override fun convertToJson(text: Component) =
         GsonComponentSerializer.gson().serialize(text)

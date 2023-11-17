@@ -11,6 +11,7 @@ import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.entity.player.McServerPlayer
+import su.plo.slib.mod.extension.getObjectiveBelowName
 import su.plo.slib.mod.extension.textConverter
 import su.plo.slib.permission.PermissionSupplier
 
@@ -43,7 +44,7 @@ class ModServerPlayer(
         get() = instance.isDescending
 
     override val hasLabelScoreboard: Boolean
-        get() = instance.scoreboard.getDisplayObjective(2) != null
+        get() = instance.scoreboard.getObjectiveBelowName() != null
 
     override val isOnline: Boolean
         get() = !instance.hasDisconnected()
@@ -107,12 +108,20 @@ class ModServerPlayer(
     }
 
     override fun sendPacket(channel: String, data: ByteArray) {
-        instance.connection.send(
-            ClientboundCustomPayloadPacket(
-                ResourceLocation(channel),
-                FriendlyByteBuf(Unpooled.wrappedBuffer(data))
-            )
-        )
+        //#if MC>=11701
+        val buf = FriendlyByteBuf(Unpooled.buffer())
+        buf.writeResourceLocation(ResourceLocation(channel))
+        buf.writeBytes(data)
+
+        instance.connection.send(ClientboundCustomPayloadPacket(buf))
+        //#else
+        //$$ instance.connection.send(
+        //$$     ClientboundCustomPayloadPacket(
+        //$$         ResourceLocation(channel),
+        //$$         FriendlyByteBuf(Unpooled.wrappedBuffer(data))
+        //$$     )
+        //$$ )
+        //#endif
     }
 
     fun addChannel(channel: String) {

@@ -6,6 +6,7 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.position.Pos3d
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.api.server.world.McServerWorld
+import su.plo.slib.mod.extension.level
 import java.util.*
 
 open class ModServerEntity<E : Entity>(
@@ -32,7 +33,7 @@ open class ModServerEntity<E : Entity>(
         get() = instance.uuid
 
     override val world: McServerWorld
-        get() = minecraftServer.getWorld(instance.level)
+        get() = minecraftServer.getWorld(instance.level())
 
     override fun getPosition(position: Pos3d): Pos3d {
         position.x = instance.position().x
@@ -57,7 +58,7 @@ open class ModServerEntity<E : Entity>(
         getLookAngle(lookAngle)
 
     override fun getServerPosition(position: ServerPos3d): ServerPos3d {
-        position.world = minecraftServer.getWorld(instance.level)
+        position.world = minecraftServer.getWorld(instance.level())
 
         position.x = instance.position().x
         position.y = instance.position().y
@@ -71,7 +72,7 @@ open class ModServerEntity<E : Entity>(
 
     override fun getServerPosition() =
         ServerPos3d(
-            minecraftServer.getWorld(instance.level),
+            minecraftServer.getWorld(instance.level()),
             instance.position().x(),
             instance.position().y(),
             instance.position().z(),

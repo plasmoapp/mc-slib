@@ -19,6 +19,11 @@ import java.io.File
 interface McLib {
 
     /**
+     * Gets the server translator.
+     */
+    val serverTranslator: ServerTranslator
+
+    /**
      * Gets the text converter for server-specific text components.
      *
      * The [ServerTextConverter] is responsible for converting [McTextComponent] objects to server-specific text components.

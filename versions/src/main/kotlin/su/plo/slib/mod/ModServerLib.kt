@@ -2,6 +2,7 @@ package su.plo.slib.mod
 
 import com.google.common.collect.Maps
 import com.mojang.authlib.GameProfile
+import kotlinx.coroutines.*
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -14,6 +15,7 @@ import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.world.McServerWorld
+import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.mod.channel.ModChannelManager
 import su.plo.slib.mod.chat.ServerComponentTextConverter
 import su.plo.slib.mod.command.ModCommandManager
@@ -23,10 +25,9 @@ import su.plo.slib.mod.event.server.ServerStoppingEvent
 import su.plo.slib.mod.permission.ModPermissionSupplier
 import su.plo.slib.mod.world.ModServerWorld
 import java.io.File
+import java.lang.Runnable
 import java.util.*
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.seconds
 
 object ModServerLib : McServerLib {
 
@@ -35,12 +36,12 @@ object ModServerLib : McServerLib {
     private val worldByInstance: MutableMap<ServerLevel, McServerWorld> = Maps.newConcurrentMap()
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
 
-    private val backgroundExecutor = Executors.newSingleThreadScheduledExecutor()
-    private lateinit var worldCleanupTask: ScheduledFuture<*>
+    private var worldCleanupJob: Job? = null
 
     private val permissionSupplier = ModPermissionSupplier(this)
 
-    override val textConverter = ServerComponentTextConverter()
+    override val serverTranslator = ServerTranslatorFactory.createTranslator()
+    override val textConverter = ServerComponentTextConverter(serverTranslator)
 
     override val commandManager = ModCommandManager(this)
     override val permissionManager = PermissionManager()
@@ -110,7 +111,7 @@ object ModServerLib : McServerLib {
 
     override fun getGameProfile(playerId: UUID): McGameProfile? {
         //#if MC>=11701
-        return minecraftServer.profileCache.get(playerId).orElse(null)?.let { convertGameProfile(it) }
+        return minecraftServer.profileCache?.get(playerId)?.orElse(null)?.let { convertGameProfile(it) }
         //#else
         //$$ return minecraftServer.profileCache.get(playerId)?.let { convertGameProfile(it) }
         //#endif
@@ -118,7 +119,7 @@ object ModServerLib : McServerLib {
 
     override fun getGameProfile(name: String): McGameProfile? {
         //#if MC>=11701
-        return minecraftServer.profileCache.get(name).orElse(null)?.let { convertGameProfile(it) }
+        return minecraftServer.profileCache?.get(name)?.orElse(null)?.let { convertGameProfile(it) }
         //#else
         //$$ return minecraftServer.profileCache.get(name)?.let { convertGameProfile(it) }
         //#endif
@@ -152,12 +153,12 @@ object ModServerLib : McServerLib {
 
     fun onInitialize(minecraftServer: MinecraftServer) {
         this.minecraftServer = minecraftServer
-        this.worldCleanupTask = backgroundExecutor.scheduleAtFixedRate(
-            { worldsCleanupTick() },
-            0L,
-            30L,
-            TimeUnit.SECONDS
-        )
+        this.worldCleanupJob = CoroutineScope(Dispatchers.Default).launch {
+            while (isActive) {
+                delay(30.seconds)
+                worldsCleanupTick()
+            }
+        }
 
         McPlayerQuitEvent.registerListener(::onPlayerQuit)
         ServerStoppingEvent.registerListener(::onServerStopping)
@@ -166,8 +167,7 @@ object ModServerLib : McServerLib {
     private fun onShutdown() {
         commandManager.clear()
         permissionManager.clear()
-        worldCleanupTask.cancel(false)
-        backgroundExecutor.shutdown()
+        worldCleanupJob?.cancel()
 
         McPlayerQuitEvent.unregisterListener(::onPlayerQuit)
         ServerStoppingEvent.unregisterListener(::onServerStopping)

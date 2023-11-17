@@ -19,6 +19,7 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.server.world.McServerWorld
+import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.spigot.channel.RegisterChannelHandler
 import su.plo.slib.spigot.channel.SpigotChannelManager
 import su.plo.slib.spigot.chat.BaseComponentTextConverter
@@ -28,8 +29,6 @@ import su.plo.slib.spigot.entity.SpigotServerPlayer
 import su.plo.slib.spigot.permission.SpigotPermissionSupplier
 import su.plo.slib.spigot.world.SpigotServerWorld
 import java.util.*
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
 
 class SpigotServerLib(
     private val loader: JavaPlugin
@@ -40,9 +39,8 @@ class SpigotServerLib(
 
     private val permissionSupplier = SpigotPermissionSupplier(this)
 
-    val backgroundExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
-
-    override val textConverter = BaseComponentTextConverter()
+    override val serverTranslator = ServerTranslatorFactory.createTranslator()
+    override val textConverter = BaseComponentTextConverter(serverTranslator)
 
     override val commandManager = SpigotCommandManager(this)
     override val permissionManager = PermissionManager()
@@ -71,7 +69,6 @@ class SpigotServerLib(
     fun onShutdown() {
         commandManager.clear()
         permissionManager.clear()
-        backgroundExecutor.shutdown()
     }
 
     override fun executeInMainThread(runnable: Runnable) {

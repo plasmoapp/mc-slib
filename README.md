@@ -90,12 +90,20 @@ There is not all minecraft versions for Fabric/Forge platforms, so you need to u
         </tr>
         <tr>
             <td>1.19.3</td>
-            <td>1.18.2+</td>
+            <td>1.18.2-1.19.4</td>
+        </tr>
+        <tr>
+            <td>1.20.1</td>
+            <td>1.20.1</td>
+        </tr>
+        <tr>
+            <td>1.20.2</td>
+            <td>1.20.2+</td>
         </tr>
     </tbody>
 </table>
 
-For instance, with minecraft 1.20, you need to use 1.19.3:
+For instance, with minecraft 1.18.2, you need to use 1.19.3:
 ```kotlin
 implementation("su.plo.slib:$platform-1.19.3:$libVersion")
 ````

@@ -1,5 +1,6 @@
 [versions]
 kotlin = "1.8.22"
+kotlinx-coroutines = "1.7.3"
 dokka = "1.8.20"
 
 shadow = "7.1.0"
@@ -12,9 +13,13 @@ folia = "1.20.1-R0.1-SNAPSHOT"
 velocity = "3.1.1"
 bungee = "1.19-R0.1-SNAPSHOT"
 
+adventure = "4.14.0"
 fabric-permissions = "0.2-SNAPSHOT"
 
 [libraries]
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlinx-coroutines" }
+
 guava        = { module = "com.google.guava:guava", version.ref = "guava" }
 slf4j        = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
@@ -24,6 +29,7 @@ velocity = { module = "com.velocitypowered:velocity-api", version.ref = "velocit
 bungee-api = { module = "net.md-5:bungeecord-api", version.ref = "bungee" }
 bungee-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungee" }
 
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 
 [plugins]

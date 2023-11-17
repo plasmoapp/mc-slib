@@ -5,7 +5,9 @@ import su.plo.slib.api.chat.component.McTranslatableText
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.language.ServerTranslator
 
-abstract class ServerTextConverter<T> : TranslatableTextConverter<T>() {
+abstract class ServerTextConverter<T>(
+    private val serverTranslator: ServerTranslator
+) : TranslatableTextConverter<T>() {
 
     /**
      * Converts a [McTextComponent] to a JSON string while considering the server languages.
@@ -15,7 +17,7 @@ abstract class ServerTextConverter<T> : TranslatableTextConverter<T>() {
      * @return A JSON string representing the converted text component.
      */
     fun convertToJson(source: McCommandSource, text: McTextComponent): String {
-        val language = ServerTranslator.getLanguage(source.language)
+        val language = serverTranslator.getLanguage(source.language)
 
         val convertedText = translateInner(language, text)
         if (convertedText !is McTranslatableText)
@@ -38,7 +40,7 @@ abstract class ServerTextConverter<T> : TranslatableTextConverter<T>() {
      * @return A server-specific implementation of type [T] representing the converted text component.
      */
     fun convert(source: McCommandSource, text: McTextComponent): T {
-        val language = ServerTranslator.getLanguage(source.language)
+        val language = serverTranslator.getLanguage(source.language)
 
         val convertedText = translateInner(language, text)
         if (convertedText !is McTranslatableText)

@@ -10,6 +10,7 @@ import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.event.EventHandler
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.language.ServerTranslator
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
@@ -21,6 +22,7 @@ import su.plo.slib.bungee.command.BungeeCommandManager
 import su.plo.slib.bungee.permission.BungeePermissionSupplier
 import su.plo.slib.bungee.player.BungeeProxyPlayer
 import su.plo.slib.bungee.server.BungeeProxyServerInfo
+import su.plo.slib.language.ServerTranslatorFactory
 import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -36,7 +38,8 @@ class BungeeProxyLib(
 
     private val permissionSupplier = BungeePermissionSupplier(this)
 
-    override val textConverter = BaseComponentTextConverter( )
+    override val serverTranslator = ServerTranslatorFactory.createTranslator()
+    override val textConverter = BaseComponentTextConverter(serverTranslator)
 
     override val commandManager = BungeeCommandManager(this)
     override val permissionManager = PermissionManager()

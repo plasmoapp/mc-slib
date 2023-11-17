@@ -6,8 +6,7 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.mod.ModServerLib
 
 fun ServerPlayer.serverLevel() =
-    this.level as ServerLevel
+    level() as ServerLevel
 
-fun ServerPlayer.toMcServerPlayer(minecraftServer: McServerLib? = null) =
-    minecraftServer?.getPlayerByInstance(this)
-        ?: ModServerLib.getPlayerByInstance(this)
+fun ServerPlayer.toMcServerPlayer(minecraftServer: McServerLib = ModServerLib) =
+    minecraftServer.getPlayerByInstance(this)

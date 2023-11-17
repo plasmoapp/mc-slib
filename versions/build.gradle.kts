@@ -23,7 +23,10 @@ dependencies {
             11605 -> "0.42.0+1.16"
             11701 -> "0.46.1+1.17"
             11802 -> "0.76.0+1.18.2"
+            11902 -> "0.76.1+1.19.2"
             11903 -> "0.73.2+1.19.3"
+            12001 -> "0.90.7+1.20.1"
+            12002 -> "0.90.7+1.20.2"
             else -> throw GradleException("Unsupported platform $platform")
         }
 
@@ -74,6 +77,10 @@ tasks {
 
         if (platform.isForge) {
             exclude("fabric.mod.json")
+
+            if (platform.mcVersion >= 12002) {
+                exclude("slib-forge.mixins.json")
+            }
         } else {
             exclude("slib-forge.mixins.json")
         }
