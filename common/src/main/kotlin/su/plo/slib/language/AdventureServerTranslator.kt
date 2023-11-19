@@ -10,7 +10,11 @@ import java.util.*
 class AdventureServerTranslator : ServerTranslator, Translator {
 
     init {
-        GlobalTranslator.translator().addSource(this)
+        try {
+            GlobalTranslator.translator().addSource(this)
+        } catch (_: NoSuchMethodError) {
+            GlobalTranslator.get().addSource(this)
+        }
     }
 
     private val serverTranslator = MapServerTranslator()
