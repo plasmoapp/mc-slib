@@ -1,7 +1,7 @@
 package su.plo.slib.velocity.channel
 
-import com.google.common.collect.ListMultimap
 import com.google.common.collect.Multimaps
+import com.google.common.collect.SetMultimap
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PluginMessageEvent
 import com.velocitypowered.api.proxy.Player
@@ -15,27 +15,37 @@ import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.channel.McProxyChannelHandler
 import su.plo.slib.api.proxy.channel.McProxyChannelManager
 import su.plo.slib.velocity.connection.VelocityProxyServerConnection
-import java.util.*
 
 class VelocityChannelManager(
     private val proxyServer: ProxyServer,
     private val minecraftProxy: McProxyLib
 ) : McProxyChannelManager {
 
-    private val internalHandlers: ListMultimap<ChannelIdentifier, McProxyChannelHandler> =
-        Multimaps.newListMultimap(HashMap(), ::LinkedList)
+    private val internalHandlers: SetMultimap<ChannelIdentifier, McProxyChannelHandler> =
+        Multimaps.newSetMultimap(HashMap(), ::HashSet)
+
+    private val registeredReceivers: MutableSet<String> = HashSet()
 
     override fun registerChannelHandler(channel: String, handler: McProxyChannelHandler) {
         val mcChannel = MinecraftChannelIdentifier.from(channel)
 
-        if (internalHandlers.containsKey(mcChannel)) {
+        if (internalHandlers.containsKey(mcChannel) || registeredReceivers.contains(channel)) {
             internalHandlers.put(mcChannel, handler)
             return
         } else {
+            registeredReceivers.add(channel)
             internalHandlers.put(mcChannel, handler)
         }
 
         proxyServer.channelRegistrar.register(mcChannel)
+    }
+
+    override fun unregisterChannelHandler(channel: String, handler: McProxyChannelHandler) {
+        internalHandlers.remove(channel, handler)
+    }
+
+    override fun clear() {
+        internalHandlers.clear()
     }
 
     @Subscribe

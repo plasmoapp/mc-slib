@@ -1,7 +1,7 @@
 package su.plo.slib.mod.channel
 
-import com.google.common.collect.ListMultimap
 import com.google.common.collect.Multimaps
+import com.google.common.collect.SetMultimap
 import io.netty.buffer.ByteBufUtil
 import net.minecraft.resources.ResourceLocation
 import su.plo.slib.api.server.channel.McServerChannelHandler
@@ -27,17 +27,20 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 
 class ModChannelManager : McServerChannelManager {
 
-    private val internalHandlers: ListMultimap<ResourceLocation, McServerChannelHandler> =
-        Multimaps.newListMultimap(HashMap(), ::LinkedList)
+    private val internalHandlers: SetMultimap<ResourceLocation, McServerChannelHandler> =
+        Multimaps.newSetMultimap(HashMap(), ::HashSet)
+
+    private val registeredReceivers: MutableSet<String> = HashSet()
 
     @Synchronized
     override fun registerChannelHandler(channel: String, handler: McServerChannelHandler) {
         val channelKey = ResourceLocation(channel)
 
-        if (internalHandlers.containsKey(channelKey)) {
+        if (internalHandlers.containsKey(channelKey) || registeredReceivers.contains(channel)) {
             internalHandlers.put(channelKey, handler)
             return
         } else {
+            registeredReceivers.add(channel)
             internalHandlers.put(channelKey, handler)
         }
 
@@ -79,6 +82,14 @@ class ModChannelManager : McServerChannelManager {
         //$$         }
         //$$ }
         //#endif
+    }
+
+    override fun unregisterChannelHandler(channel: String, handler: McServerChannelHandler) {
+        internalHandlers.remove(channel, handler)
+    }
+
+    override fun clear() {
+        internalHandlers.clear()
     }
 
     //#if FORGE

@@ -1,7 +1,7 @@
 package su.plo.slib.bungee.channel
 
-import com.google.common.collect.ListMultimap
 import com.google.common.collect.Multimaps
+import com.google.common.collect.SetMultimap
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
@@ -13,25 +13,35 @@ import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.channel.McProxyChannelHandler
 import su.plo.slib.api.proxy.channel.McProxyChannelManager
 import su.plo.slib.bungee.connection.BungeeProxyServerConnection
-import java.util.*
 
 class BungeeChannelManager(
     private val proxyServer: ProxyServer,
     private val minecraftProxy: McProxyLib
 ) : McProxyChannelManager, Listener {
 
-    private val internalHandlers: ListMultimap<String, McProxyChannelHandler> =
-        Multimaps.newListMultimap(HashMap(), ::LinkedList)
+    private val internalHandlers: SetMultimap<String, McProxyChannelHandler> =
+        Multimaps.newSetMultimap(HashMap(), ::HashSet)
+
+    private val registeredReceivers: MutableSet<String> = java.util.HashSet()
 
     override fun registerChannelHandler(channel: String, handler: McProxyChannelHandler) {
-        if (internalHandlers.containsKey(channel)) {
+        if (internalHandlers.containsKey(channel) || registeredReceivers.contains(channel)) {
             internalHandlers.put(channel, handler)
             return
         } else {
+            registeredReceivers.add(channel)
             internalHandlers.put(channel, handler)
         }
 
         proxyServer.registerChannel(channel)
+    }
+
+    override fun unregisterChannelHandler(channel: String, handler: McProxyChannelHandler) {
+        internalHandlers.remove(channel, handler)
+    }
+
+    override fun clear() {
+        internalHandlers.clear()
     }
 
     @EventHandler
