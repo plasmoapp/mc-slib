@@ -28,6 +28,7 @@ import su.plo.slib.spigot.entity.SpigotServerEntity
 import su.plo.slib.spigot.entity.SpigotServerPlayer
 import su.plo.slib.spigot.permission.SpigotPermissionSupplier
 import su.plo.slib.spigot.world.SpigotServerWorld
+import java.io.File
 import java.util.*
 
 class SpigotServerLib(
@@ -58,7 +59,7 @@ class SpigotServerLib(
     override val version: String
         get() = Bukkit.getVersion().substringAfter("MC: ").substringBefore(")")
 
-    override val configsFolder = Bukkit.getPluginsFolder()
+    override val configsFolder: File = loader.dataFolder.parentFile
 
     fun onInitialize() {
         commandManager.registerCommands(loader)
