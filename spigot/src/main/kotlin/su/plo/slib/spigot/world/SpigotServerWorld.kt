@@ -15,7 +15,7 @@ class SpigotServerWorld(
 ) : McServerWorld {
 
     override val key: String
-        get() = level.key.toString()
+        get() = level.name
 
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
         try {
