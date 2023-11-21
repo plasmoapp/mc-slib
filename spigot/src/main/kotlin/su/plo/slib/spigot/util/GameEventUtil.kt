@@ -1,11 +1,10 @@
 package su.plo.slib.spigot.util
 
-import org.bukkit.GameEvent
 import org.bukkit.NamespacedKey
 
 object GameEventUtil {
 
-    fun parseGameEvent(gameEventName: String): GameEvent {
+    fun parseGameEvent(gameEventName: String): Any {
         val gameEventKey: NamespacedKey
         val split = gameEventName.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         gameEventKey = if (split.size == 2) {
@@ -14,6 +13,10 @@ object GameEventUtil {
             NamespacedKey("minecraft", gameEventName)
         }
 
-        return GameEvent.getByKey(gameEventKey) ?: return GameEvent.STEP
+        val gameEventClass = Class.forName("org.bukkit.GameEvent")
+        val gameEventByKeyMethod = gameEventClass.getMethod("getByKey", NamespacedKey::class.java)
+
+        return gameEventByKeyMethod.invoke(null, gameEventKey)
+            ?: return gameEventClass.getField("STEP").get(null)
     }
 }

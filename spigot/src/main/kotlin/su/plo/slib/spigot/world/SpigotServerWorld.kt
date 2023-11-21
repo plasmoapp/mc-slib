@@ -3,6 +3,7 @@ package su.plo.slib.spigot.world
 import org.bukkit.World
 import org.bukkit.entity.Entity
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.util.Vector
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.spigot.extension.runSync
@@ -18,7 +19,7 @@ class SpigotServerWorld(
         get() = level.name
 
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
-        try {
+        val gameEventClass = try {
             Class.forName("org.bukkit.GameEvent")
         } catch (e: ClassNotFoundException) {
             return
@@ -26,7 +27,14 @@ class SpigotServerWorld(
 
         val paperEntity = entity.getInstance<Entity>()
         loader.runSync(paperEntity) {
-            level.sendGameEvent(paperEntity, parseGameEvent(gameEvent), paperEntity.location.toVector())
+            val sendGameEventMethod = level.javaClass.getMethod(
+                "sendGameEvent",
+                Entity::class.java,
+                gameEventClass,
+                Vector::class.java
+            )
+
+            sendGameEventMethod.invoke(level, paperEntity, parseGameEvent(gameEvent), paperEntity.location.toVector())
         }
     }
 

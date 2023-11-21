@@ -3,9 +3,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly(libs.folia)
     compileOnly(libs.spigot)
-    testCompileOnly(libs.folia)
+    testCompileOnly(libs.spigot)
 
     val includedProjects = listOf(
         ":api:api-common",

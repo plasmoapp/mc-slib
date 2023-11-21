@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.plugin.Plugin
+import java.util.function.Consumer
 
 object SchedulerUtil {
 
@@ -16,7 +17,15 @@ object SchedulerUtil {
     @Suppress("deprecation")
     fun runTaskFor(entity: Entity, plugin: Plugin, task: Runnable) {
         try {
-            entity.scheduler.run(plugin, { task.run() }, null)
+            val entityScheduler = entity.javaClass.getMethod("getScheduler").invoke(entity)
+            val runMethod = entityScheduler.javaClass.getMethod(
+                "run",
+                Plugin::class.java, Consumer::class.java, Runnable::class.java
+            )
+
+            runMethod.invoke(entityScheduler, plugin, Consumer<Any> { task.run() }, null)
+
+            // entity.scheduler.run(plugin, { task.run() }, null)
         } catch (e: ReflectiveOperationException) {
             Bukkit.getScheduler().runTask(plugin, task)
         }
@@ -31,7 +40,15 @@ object SchedulerUtil {
     @Suppress("deprecation")
     fun runTaskAt(location: Location, plugin: Plugin, task: Runnable) {
         try {
-            Bukkit.getRegionScheduler().run(plugin, location) { task.run() }
+            val regionScheduler = Bukkit::class.java.getMethod("getRegionScheduler").invoke(null)
+            val runMethod = regionScheduler.javaClass.getMethod(
+                "run",
+                Plugin::class.java, Location::class.java, Consumer::class.java
+            )
+
+            runMethod.invoke(regionScheduler, plugin, location, Consumer<Any> { task.run() })
+
+            // Bukkit.getRegionScheduler().run(plugin, location) { task.run() }
         } catch (e: ReflectiveOperationException) {
             Bukkit.getScheduler().runTask(plugin, task)
         }
