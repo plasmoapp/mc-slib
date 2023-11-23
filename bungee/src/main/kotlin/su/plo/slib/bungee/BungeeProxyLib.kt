@@ -5,6 +5,7 @@ import net.md_5.bungee.api.config.ServerInfo
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.api.event.PlayerDisconnectEvent
 import net.md_5.bungee.api.event.PostLoginEvent
+import net.md_5.bungee.api.event.ServerSwitchEvent
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.event.EventHandler
@@ -14,6 +15,7 @@ import su.plo.slib.api.language.ServerTranslator
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
+import su.plo.slib.api.proxy.event.player.McProxyServerConnectedEvent
 import su.plo.slib.api.proxy.player.McProxyPlayer
 import su.plo.slib.api.proxy.server.McProxyServerInfo
 import su.plo.slib.bungee.channel.BungeeChannelManager
@@ -124,6 +126,14 @@ class BungeeProxyLib(
     fun onPlayerQuit(event: PlayerDisconnectEvent) {
         McPlayerQuitEvent.invoker.onPlayerQuit(getPlayerByInstance(event.player))
         playerById.remove(event.player.uniqueId)
+    }
+
+    @EventHandler
+    fun onServerSwitch(event: ServerSwitchEvent) {
+        val player = getPlayerByInstance(event.player)
+        val previousServer = event.from?.let { getServerInfoByServerInstance(it) }
+
+        McProxyServerConnectedEvent.invoker.onServerConnected(player, previousServer)
     }
 
     private fun loadServers() {

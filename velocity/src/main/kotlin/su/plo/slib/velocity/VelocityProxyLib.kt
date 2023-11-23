@@ -4,6 +4,7 @@ import com.google.common.collect.Maps
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.connection.PostLoginEvent
+import com.velocitypowered.api.event.player.ServerPostConnectEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
@@ -12,6 +13,7 @@ import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
+import su.plo.slib.api.proxy.event.player.McProxyServerConnectedEvent
 import su.plo.slib.api.proxy.player.McProxyPlayer
 import su.plo.slib.api.proxy.server.McProxyServerInfo
 import su.plo.slib.language.ServerTranslatorFactory
@@ -128,6 +130,14 @@ class VelocityProxyLib(
     fun onPlayerQuit(event: DisconnectEvent) {
         McPlayerQuitEvent.invoker.onPlayerQuit(getPlayerByInstance(event.player))
         playerById.remove(event.player.uniqueId)
+    }
+
+    @Subscribe
+    fun onServerPostConnect(event: ServerPostConnectEvent) {
+        val player = getPlayerByInstance(event.player)
+        val previousServer = event.previousServer?.let { getServerInfoByServerInstance(it) }
+
+        McProxyServerConnectedEvent.invoker.onServerConnected(player, previousServer)
     }
 
     private fun loadServers() {
