@@ -17,6 +17,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl
 //$$ import com.google.common.cache.CacheBuilder
 //$$ import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents
 //$$ import net.minecraft.server.network.ServerConfigurationPacketListenerImpl
+//$$ import su.plo.slib.api.event.player.McPlayerJoinEvent
 //$$ import java.util.*
 //$$ import java.util.concurrent.TimeUnit
 //#endif
@@ -44,6 +45,14 @@ object RegisterChannelHandler
     //$$ val channelsCache = CacheBuilder.newBuilder()
     //$$     .expireAfterWrite(1L, TimeUnit.MINUTES)
     //$$     .build<UUID, List<String>>()
+    //$$ init {
+    //$$     McPlayerJoinEvent.registerListener {
+    //$$         val channels = channelsCache.getIfPresent(it.uuid) ?: return@registerListener
+    //$$         channelsCache.invalidate(it.uuid)
+    //$$
+    //$$         firePlayerRegisterChannels(it.getInstance(), channels)
+    //$$     }
+    //$$ }
     //#endif
 
     override fun onChannelRegister(
@@ -97,14 +106,26 @@ object RegisterChannelHandler
 
     fun firePlayerRegisterChannels(player: ServerPlayer, channels: List<String>) {
         // skip player if he's not placed in the playerlist yet
-        if (ModServerLib.minecraftServer.playerList.getPlayer(player.uuid) == null) return
+        if (ModServerLib.minecraftServer.playerList.getPlayer(player.uuid) == null && !hasForgeChannel(channels)) return
 
         val mcServerPlayer = player.toMcServerPlayer() as ModServerPlayer
 
-        McPlayerRegisterChannelsEvent.invoker.onPlayerRegisterChannels(mcServerPlayer, channels)
+        // skip if channels are already registered
+        val addedChannels = channels.mapNotNull {
+            if (mcServerPlayer.addChannel(it)) {
+                it
+            } else {
+                null
+            }
+        }
+        println("$channels -> $addedChannels")
+        if (addedChannels.isEmpty()) return
 
-        channels.forEach { mcServerPlayer.addChannel(it) }
+        McPlayerRegisterChannelsEvent.invoker.onPlayerRegisterChannels(mcServerPlayer, addedChannels)
     }
+
+    private fun hasForgeChannel(channels: List<String>): Boolean =
+        "fml:handshake" in channels || "forge:handshake" in channels
 
     //#if FABRIC
     //#if MC>=12002
