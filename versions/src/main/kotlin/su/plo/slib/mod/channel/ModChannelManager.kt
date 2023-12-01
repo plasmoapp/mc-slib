@@ -94,15 +94,15 @@ class ModChannelManager : McServerChannelManager {
 
     //#if FORGE
     //$$ companion object {
-    //$$    private val channels: MutableMap<ResourceLocation, EventNetworkChannel> = HashMap()
-
-    //$$    /**
-    //$$     * You can add your own forge channel here, if you are using channel for client-side
-    //$$     */
-    //$$    @JvmStatic
-    //$$    fun addForgeChannel(channelKey: ResourceLocation, channel: EventNetworkChannel) {
-    //$$        channels[channelKey] = channel
-    //$$    }
+    //$$     private val channels: MutableMap<ResourceLocation, EventNetworkChannel> = HashMap()
+    //$$
+    //$$     /**
+    //$$      * You can add your own forge channel here, if you are using channel for client-side
+    //$$      */
+    //$$     @JvmStatic
+    //$$     fun addForgeChannel(channelKey: ResourceLocation, channel: EventNetworkChannel) {
+    //$$         channels[channelKey] = channel
+    //$$     }
     //$$ }
     //#endif
 }

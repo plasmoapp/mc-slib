@@ -3,7 +3,6 @@ package su.plo.slib.mod.entity
 import com.google.common.collect.Sets
 import io.netty.buffer.Unpooled
 import net.minecraft.network.FriendlyByteBuf
-import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.resources.ResourceLocation
 import su.plo.slib.api.server.McServerLib
@@ -14,6 +13,18 @@ import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.mod.extension.getObjectiveBelowName
 import su.plo.slib.mod.extension.textConverter
 import su.plo.slib.permission.PermissionSupplier
+
+//#if FABRIC
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+//#else
+
+//$$ import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket
+
+//#if MC>=12002
+//$$ import net.minecraftforge.network.NetworkDirection
+//#endif
+
+//#endif
 
 //#if MC>=11701
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket
@@ -108,23 +119,23 @@ class ModServerPlayer(
     }
 
     override fun sendPacket(channel: String, data: ByteArray) {
-        //#if MC>=11701
-        val buf = FriendlyByteBuf(Unpooled.buffer())
-        buf.writeResourceLocation(ResourceLocation(channel))
-        buf.writeBytes(data)
+        val channelKey = ResourceLocation(channel)
+        val buf = FriendlyByteBuf(Unpooled.wrappedBuffer(data))
 
-        instance.connection.send(ClientboundCustomPayloadPacket(buf))
+        //#if FABRIC
+        ServerPlayNetworking.send(instance, channelKey, buf)
         //#else
-        //$$ instance.connection.send(
-        //$$     ClientboundCustomPayloadPacket(
-        //$$         ResourceLocation(channel),
-        //$$         FriendlyByteBuf(Unpooled.wrappedBuffer(data))
-        //$$     )
-        //$$ )
+        //#if MC>=12002
+        //$$ val packet = NetworkDirection.PLAY_TO_CLIENT
+        //$$     .buildPacket<ClientboundCustomPayloadPacket>(buf, channelKey)
+        //$$     .getThis()
+        //#else
+        //$$ val packet = ClientboundCustomPayloadPacket(channelKey, buf)
+        //#endif
+        //$$ instance.connection.send(packet)
         //#endif
     }
 
-    fun addChannel(channel: String) {
+    fun addChannel(channel: String) =
         registeredChannels.add(channel)
-    }
 }
