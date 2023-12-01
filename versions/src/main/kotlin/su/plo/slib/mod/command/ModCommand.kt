@@ -12,6 +12,7 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import net.minecraft.commands.CommandSourceStack
+import org.apache.logging.log4j.LogManager
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.server.McServerLib
 import java.util.concurrent.CompletableFuture
@@ -62,8 +63,7 @@ class ModCommand(
         try {
             command.execute(source, args)
         } catch (e: Exception) {
-            // todo: logging
-//            BaseVoice.LOGGER.error("Error while executing command", e)
+            logger.error("Error while executing command", e)
             throw e
         }
         return 1
@@ -90,4 +90,8 @@ class ModCommand(
 
     override fun test(source: CommandSourceStack) =
         command.hasPermission(commandManager.getCommandSource(source), null)
+
+    companion object {
+        private val logger = LogManager.getLogger(ModCommand::class.java)
+    }
 }
