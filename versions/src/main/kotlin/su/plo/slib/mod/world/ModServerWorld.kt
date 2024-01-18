@@ -2,6 +2,7 @@ package su.plo.slib.mod.world
 
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.level.storage.ServerLevelData
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.world.McServerWorld
 import java.util.*
@@ -20,12 +21,10 @@ import net.minecraft.core.registries.BuiltInRegistries
 //#endif
 
 class ModServerWorld(
-    private val resourceLocation: ResourceLocation,
     private val level: ServerLevel
 ) : McServerWorld {
 
-    override val key: String
-        get() = resourceLocation.toString()
+    override val name: String = (level.levelData as ServerLevelData).levelName
 
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
         //#if MC>=11900

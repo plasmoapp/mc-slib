@@ -8,9 +8,9 @@ import su.plo.slib.api.server.entity.McServerEntity
 interface McServerWorld {
 
     /**
-     * Gets the unique key that identifies this world.
+     * Gets the name of this world.
      */
-    val key: String
+    val name: String
 
     /**
      * Sends a game event to the world.

@@ -68,12 +68,7 @@ object ModServerLib : McServerLib {
     override fun getWorld(instance: Any): McServerWorld {
         require(instance is ServerLevel) { "instance is not " + ServerLevel::class.java }
 
-        return worldByInstance.computeIfAbsent(instance) {
-            ModServerWorld(
-                instance.dimension().location(),
-                instance
-            )
-        }
+        return worldByInstance.computeIfAbsent(instance) { ModServerWorld(instance) }
     }
 
     override fun getPlayerByInstance(instance: Any): McServerPlayer {
