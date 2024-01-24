@@ -97,13 +97,13 @@ interface McServerLib : McLib {
     /**
      * Creates a new [McServerEntity] instance of wrapped [instance].
      *
-     * The [instance] parameter represents the server-specific player instance:
+     * The [instance] parameter represents the server-specific entity instance:
      *  - For Bukkit: [org.bukkit.entity.LivingEntity]
      *  - For modded servers (Fabric/Forge): [net.minecraft.world.entity.Entity]
      *
-     * @return The Entity.
+     * @return The entity.
      */
-    fun getEntity(instance: Any): McServerEntity
+    fun getEntityByInstance(instance: Any): McServerEntity
 
     /**
      * Gets the bound port of the server.

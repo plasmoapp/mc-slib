@@ -52,7 +52,7 @@ class SpigotServerPlayer(
             } else if (field == null ||
                 instance.spectatorTarget != field.getInstance()
             ) {
-                return minecraftServer.getEntity(instance.spectatorTarget!!)
+                return minecraftServer.getEntityByInstance(instance.spectatorTarget!!)
             }
 
             return field

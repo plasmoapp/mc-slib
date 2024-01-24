@@ -95,7 +95,7 @@ object ModServerLib : McServerLib {
     override fun getPlayerById(playerId: UUID): McServerPlayer? =
         playerById[playerId] ?: minecraftServer.playerList.getPlayer(playerId)?.let { getPlayerByInstance(it) }
 
-    override fun getEntity(instance: Any): McServerEntity {
+    override fun getEntityByInstance(instance: Any): McServerEntity {
         require(instance is Entity) { "instance is not " + Entity::class.java }
 
         return ModServerEntity(

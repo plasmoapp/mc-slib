@@ -69,7 +69,7 @@ class ModServerPlayer(
             if (instance.camera === instance) {
                 return null
             } else if (field == null || !instance.camera.equals(field.getInstance())) {
-                return minecraftServer.getEntity(instance.camera)
+                return minecraftServer.getEntityByInstance(instance.camera)
             }
 
             return field

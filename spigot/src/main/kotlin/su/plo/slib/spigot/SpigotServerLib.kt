@@ -124,7 +124,7 @@ class SpigotServerLib(
         // todo: use game profile properties?
         McGameProfile(offlinePlayer.uniqueId, offlinePlayer.name ?: "", ImmutableList.of())
 
-    override fun getEntity(instance: Any): McServerEntity {
+    override fun getEntityByInstance(instance: Any): McServerEntity {
         require(instance is LivingEntity) { "instance is not ${LivingEntity::class.java}" }
 
         return SpigotServerEntity(
