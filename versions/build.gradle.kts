@@ -18,6 +18,10 @@ repositories {
 }
 
 dependencies {
+    api(project(":api:api-common"))
+    api(project(":api:api-server"))
+    api(project(":common"))
+
     if (platform.isFabric) {
         val fabricApiVersion = when (platform.mcVersion) {
             11605 -> "0.42.0+1.16"
@@ -33,19 +37,6 @@ dependencies {
         modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}")
         libs.fabric.permissions.also {
             modImplementation(it)
-        }
-    }
-
-    val includedProjects = listOf(
-        ":api:api-common",
-        ":api:api-server",
-        ":common"
-    )
-
-    includedProjects.forEach {
-        api(project(it))
-        shadowCommon(project(it)) {
-            isTransitive = false
         }
     }
 }

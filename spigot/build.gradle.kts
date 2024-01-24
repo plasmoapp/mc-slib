@@ -6,18 +6,9 @@ dependencies {
     compileOnly(libs.spigot)
     testCompileOnly(libs.spigot)
 
-    val includedProjects = listOf(
-        ":api:api-common",
-        ":api:api-server",
-        ":common"
-    )
-
-    includedProjects.forEach {
-        api(project(it))
-        shadow(project(it)) {
-            isTransitive = false
-        }
-    }
+    api(project(":api:api-common"))
+    api(project(":api:api-server"))
+    api(project(":common"))
 }
 
 tasks {

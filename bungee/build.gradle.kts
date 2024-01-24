@@ -11,18 +11,9 @@ dependencies {
     testCompileOnly(libs.bungee.api)
     compileOnly(libs.bungee.proxy)
 
-    val includedProjects = listOf(
-        ":api:api-common",
-        ":api:api-proxy",
-        ":common"
-    )
-
-    includedProjects.forEach {
-        api(project(it))
-        shadow(project(it)) {
-            isTransitive = false
-        }
-    }
+    api(project(":api:api-common"))
+    api(project(":api:api-proxy"))
+    api(project(":common"))
 }
 
 tasks {
