@@ -118,7 +118,6 @@ object RegisterChannelHandler
                 null
             }
         }
-        println("$channels -> $addedChannels")
         if (addedChannels.isEmpty()) return
 
         McPlayerRegisterChannelsEvent.invoker.onPlayerRegisterChannels(mcServerPlayer, addedChannels)
