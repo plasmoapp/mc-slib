@@ -26,7 +26,9 @@ import su.plo.slib.spigot.chat.BaseComponentTextConverter
 import su.plo.slib.spigot.command.SpigotCommandManager
 import su.plo.slib.spigot.entity.SpigotServerEntity
 import su.plo.slib.spigot.entity.SpigotServerPlayer
+import su.plo.slib.spigot.extension.addChannel
 import su.plo.slib.spigot.permission.SpigotPermissionSupplier
+import su.plo.slib.spigot.util.SchedulerUtil
 import su.plo.slib.spigot.world.SpigotServerWorld
 import java.io.File
 import java.util.*
@@ -73,7 +75,7 @@ class SpigotServerLib(
     }
 
     override fun executeInMainThread(runnable: Runnable) {
-        Bukkit.getServer().scheduler.runTask(loader, runnable)
+        SchedulerUtil.runTask(loader, runnable)
     }
 
     override fun getWorld(instance: Any): McServerWorld {

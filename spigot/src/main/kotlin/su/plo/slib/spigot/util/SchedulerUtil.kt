@@ -9,18 +9,43 @@ import java.util.function.Consumer
 object SchedulerUtil {
 
     /**
+     * Schedules a task to run on the main thread.
+     *
+     * For non-Folia servers, runs on Bukkit scheduler.
+     * For Folia servers, runs on the global region's scheduler.
+     */
+    fun runTask(plugin: Plugin, task: Runnable) {
+        try {
+            val globalRegionScheduler = Bukkit::class.java.getMethod("getGlobalRegionScheduler").invoke(null)
+            val runMethod = globalRegionScheduler.javaClass.getMethod(
+                "run",
+                Plugin::class.java,
+                Consumer::class.java
+            )
+
+            runMethod.invoke(globalRegionScheduler, plugin, Consumer<Any> { task.run() })
+
+            // Bukkit.getGlobalRegionScheduler().run(plugin) { task.run() }
+        } catch (e: ReflectiveOperationException) {
+            Bukkit.getScheduler().runTask(plugin, task)
+        }
+    }
+
+
+    /**
      * Schedules a task to run for a given [entity].
      *
      * For non-Folia servers, runs on Bukkit scheduler.
      * For Folia servers, runs on the entity's scheduler.
      */
-    @Suppress("deprecation")
     fun runTaskFor(entity: Entity, plugin: Plugin, task: Runnable) {
         try {
             val entityScheduler = entity.javaClass.getMethod("getScheduler").invoke(entity)
             val runMethod = entityScheduler.javaClass.getMethod(
                 "run",
-                Plugin::class.java, Consumer::class.java, Runnable::class.java
+                Plugin::class.java,
+                Consumer::class.java,
+                Runnable::class.java
             )
 
             runMethod.invoke(entityScheduler, plugin, Consumer<Any> { task.run() }, null)
@@ -37,13 +62,14 @@ object SchedulerUtil {
      * For non-Folia servers, runs on Bukkit scheduler.
      * For Folia servers, runs on the region's scheduler.
      */
-    @Suppress("deprecation")
     fun runTaskAt(location: Location, plugin: Plugin, task: Runnable) {
         try {
             val regionScheduler = Bukkit::class.java.getMethod("getRegionScheduler").invoke(null)
             val runMethod = regionScheduler.javaClass.getMethod(
                 "run",
-                Plugin::class.java, Location::class.java, Consumer::class.java
+                Plugin::class.java,
+                Location::class.java,
+                Consumer::class.java
             )
 
             runMethod.invoke(regionScheduler, plugin, location, Consumer<Any> { task.run() })
