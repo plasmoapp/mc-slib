@@ -128,6 +128,8 @@ class VelocityProxyLib(
 
     @Subscribe
     fun onPlayerQuit(event: DisconnectEvent) {
+        if (event.loginStatus == DisconnectEvent.LoginStatus.CONFLICTING_LOGIN) return
+
         McPlayerQuitEvent.invoker.onPlayerQuit(getPlayerByInstance(event.player))
         playerById.remove(event.player.uniqueId)
     }
