@@ -142,9 +142,13 @@ class SpigotServerLib(
 
     @EventHandler(ignoreCancelled = true)
     fun onPlayerJoin(event: org.bukkit.event.player.PlayerJoinEvent) {
+        val player = event.player
+
         McPlayerJoinEvent.invoker.onPlayerJoin(
-            getPlayerByInstance(event.player)
+            getPlayerByInstance(player)
         )
+
+        channelManager.registeredChannels.forEach(player::addChannel)
     }
 
     @EventHandler

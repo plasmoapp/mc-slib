@@ -6,6 +6,13 @@ package su.plo.slib.api.server.channel
 interface McServerChannelManager {
 
     /**
+     * Gets the collection of registered channels ids.
+     *
+     * @return The collection of registered channels ids.
+     */
+    val registeredChannels: Collection<String>
+
+    /**
      * Registers a custom channel [handler] for the specified [channel].
      *
      * @param channel The name of the custom channel to register the handler for.

@@ -30,17 +30,17 @@ class ModChannelManager : McServerChannelManager {
     private val internalHandlers: SetMultimap<ResourceLocation, McServerChannelHandler> =
         Multimaps.newSetMultimap(HashMap(), ::HashSet)
 
-    private val registeredReceivers: MutableSet<String> = HashSet()
+    override val registeredChannels: MutableSet<String> = HashSet()
 
     @Synchronized
     override fun registerChannelHandler(channel: String, handler: McServerChannelHandler) {
         val channelKey = ResourceLocation(channel)
 
-        if (internalHandlers.containsKey(channelKey) || registeredReceivers.contains(channel)) {
+        if (internalHandlers.containsKey(channelKey) || registeredChannels.contains(channel)) {
             internalHandlers.put(channelKey, handler)
             return
         } else {
-            registeredReceivers.add(channel)
+            registeredChannels.add(channel)
             internalHandlers.put(channelKey, handler)
         }
 

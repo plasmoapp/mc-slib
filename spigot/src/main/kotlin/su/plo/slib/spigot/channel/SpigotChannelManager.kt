@@ -17,14 +17,14 @@ class SpigotChannelManager(
     private val internalHandlers: SetMultimap<String, McServerChannelHandler> =
         Multimaps.newSetMultimap(HashMap(), ::HashSet)
 
-    private val registeredReceivers: MutableSet<String> = java.util.HashSet()
+    override val registeredChannels: Collection<String>
+        get() = loader.server.messenger.getOutgoingChannels(loader)
 
     override fun registerChannelHandler(channel: String, handler: McServerChannelHandler) {
-        if (internalHandlers.containsKey(channel) || registeredReceivers.contains(channel)) {
+        if (internalHandlers.containsKey(channel) || loader.server.messenger.getOutgoingChannels(loader).contains(channel)) {
             internalHandlers.put(channel, handler)
             return
         } else {
-            registeredReceivers.add(channel)
             internalHandlers.put(channel, handler)
         }
 
@@ -34,10 +34,18 @@ class SpigotChannelManager(
 
     override fun unregisterChannelHandler(channel: String, handler: McServerChannelHandler) {
         internalHandlers.remove(channel, handler)
+
+        if (!internalHandlers.containsKey(channel) || internalHandlers.get(channel).isEmpty()) {
+            loader.server.messenger.unregisterIncomingPluginChannel(loader, channel, this)
+            loader.server.messenger.unregisterOutgoingPluginChannel(loader, channel)
+        }
     }
 
     override fun clear() {
         internalHandlers.clear()
+
+        loader.server.messenger.unregisterIncomingPluginChannel(loader)
+        loader.server.messenger.unregisterOutgoingPluginChannel(loader)
     }
 
     override fun onPluginMessageReceived(channelName: String, player: Player, message: ByteArray) {
