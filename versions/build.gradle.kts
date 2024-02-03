@@ -31,6 +31,7 @@ dependencies {
             11903 -> "0.73.2+1.19.3"
             12001 -> "0.90.7+1.20.1"
             12002 -> "0.90.7+1.20.2"
+            12004 -> "0.95.4+1.20.4"
             else -> throw GradleException("Unsupported platform $platform")
         }
 
