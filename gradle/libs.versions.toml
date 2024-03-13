@@ -13,6 +13,9 @@ folia = "1.20.1-R0.1-SNAPSHOT"
 velocity = "3.1.1"
 bungee = "1.19-R0.1-SNAPSHOT"
 
+minestom = "7320437640"
+minestom-extensions = "1.2.0"
+
 adventure = "4.14.0"
 fabric-permissions = "0.2-SNAPSHOT"
 
@@ -29,7 +32,11 @@ velocity = { module = "com.velocitypowered:velocity-api", version.ref = "velocit
 bungee-api = { module = "net.md-5:bungeecord-api", version.ref = "bungee" }
 bungee-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungee" }
 
+minestom = { module = "net.minestom:minestom-snapshots", version.ref = "minestom" }
+minestom-extension = { module = "dev.hollowcube:minestom-ce-extensions", version.ref = "minestom-extensions" }
+
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
+adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 
 [plugins]

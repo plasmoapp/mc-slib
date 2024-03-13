@@ -1,4 +1,4 @@
-package su.plo.slib.velocity.chat
+package su.plo.slib.chat
 
 import com.google.common.collect.Lists
 import net.kyori.adventure.text.Component
@@ -16,7 +16,7 @@ import su.plo.slib.api.chat.style.McTextHoverEvent
 import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.language.ServerTranslator
 
-class ComponentTextConverter(
+class AdventureComponentTextConverter(
     serverTranslator: ServerTranslator
 ) : ServerTextConverter<Component>(serverTranslator) {
 
@@ -27,9 +27,7 @@ class ComponentTextConverter(
         GsonComponentSerializer.gson().deserialize(json)
 
     override fun convert(text: McTextComponent): Component {
-        var component: Component
-
-        component =
+        var component =
             if (text is McTranslatableText) convertTranslatable(text)
             else Component.text(text.toString())
 
