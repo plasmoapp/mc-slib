@@ -36,6 +36,7 @@ minestom = { module = "net.minestom:minestom-snapshots", version.ref = "minestom
 minestom-extension = { module = "dev.hollowcube:minestom-ce-extensions", version.ref = "minestom-extensions" }
 
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
+adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 
 [plugins]

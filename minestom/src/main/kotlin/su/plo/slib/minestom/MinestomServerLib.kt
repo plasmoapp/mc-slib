@@ -18,10 +18,10 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.server.world.McServerWorld
+import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.minestom.channel.RegisterChannelHandler
 import su.plo.slib.minestom.channel.MinestomChannelManager
-import su.plo.slib.minestom.chat.BaseComponentTextConverter
 import su.plo.slib.minestom.command.MinestomCommandManager
 import su.plo.slib.minestom.entity.MinestomServerEntity
 import su.plo.slib.minestom.entity.MinestomServerPlayer
@@ -43,7 +43,7 @@ class MinestomServerLib(
     private val permissionSupplier = MinestomPermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
-    override val textConverter = BaseComponentTextConverter(serverTranslator)
+    override val textConverter = AdventureComponentTextConverter(serverTranslator)
 
     override val commandManager = MinestomCommandManager(this)
     override val permissionManager = PermissionManager()

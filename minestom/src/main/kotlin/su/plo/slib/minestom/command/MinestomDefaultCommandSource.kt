@@ -4,11 +4,11 @@ import net.minestom.server.command.CommandSender
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.permission.PermissionTristate
-import su.plo.slib.minestom.chat.BaseComponentTextConverter
+import su.plo.slib.chat.AdventureComponentTextConverter
 
 class MinestomDefaultCommandSource(
-        private val textConverter: BaseComponentTextConverter,
-        private val source: CommandSender
+    private val textConverter: AdventureComponentTextConverter,
+    private val source: CommandSender
 ) : McCommandSource {
 
     override fun sendMessage(text: McTextComponent) =
