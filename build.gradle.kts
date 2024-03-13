@@ -26,7 +26,6 @@ subprojects {
         implementation(rootProject.libs.kotlinx.coroutines)
         implementation(rootProject.libs.kotlinx.coroutines.jdk8)
 
-        implementation(rootProject.libs.slf4j)
         implementation(rootProject.libs.guava)
     }
 

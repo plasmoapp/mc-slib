@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
@@ -18,6 +19,7 @@ import su.plo.slib.api.proxy.player.McProxyPlayer
 import su.plo.slib.api.proxy.server.McProxyServerInfo
 import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.language.ServerTranslatorFactory
+import su.plo.slib.logging.Slf4jLogger
 import su.plo.slib.velocity.channel.VelocityChannelManager
 import su.plo.slib.velocity.command.VelocityCommandManager
 import su.plo.slib.velocity.permission.VelocityPermissionSupplier
@@ -65,6 +67,9 @@ class VelocityProxyLib(
         proxyServer.eventManager.register(plugin, commandManager)
         proxyServer.eventManager.register(plugin, this)
     }
+
+    override fun createLogger(name: String): McLogger =
+        Slf4jLogger(name)
 
     override fun getPlayerById(playerId: UUID): McProxyPlayer? =
         playerById[playerId] ?: proxyServer.getPlayer(playerId).map { getPlayerByInstance(it) }.orElse(null)

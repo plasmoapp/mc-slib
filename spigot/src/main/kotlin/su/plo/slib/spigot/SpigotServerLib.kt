@@ -14,12 +14,15 @@ import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.language.ServerTranslatorFactory
+import su.plo.slib.logging.JavaLogger
+import su.plo.slib.logging.Slf4jLogger
 import su.plo.slib.spigot.channel.RegisterChannelHandler
 import su.plo.slib.spigot.channel.SpigotChannelManager
 import su.plo.slib.spigot.chat.BaseComponentTextConverter
@@ -32,6 +35,7 @@ import su.plo.slib.spigot.util.SchedulerUtil
 import su.plo.slib.spigot.world.SpigotServerWorld
 import java.io.File
 import java.util.*
+import java.util.logging.Logger
 
 class SpigotServerLib(
     private val loader: JavaPlugin
@@ -72,6 +76,14 @@ class SpigotServerLib(
     fun onShutdown() {
         commandManager.clear()
         permissionManager.clear()
+    }
+
+    override fun createLogger(name: String): McLogger = try {
+        Class.forName("org.slf4j.LoggerFactory")
+        Slf4jLogger(name)
+    } catch (e: ClassNotFoundException) {
+        JavaLogger(name)
+            .apply { parent = loader.logger.parent }
     }
 
     override fun executeInMainThread(runnable: Runnable) {

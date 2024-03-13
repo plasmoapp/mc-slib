@@ -5,6 +5,7 @@ import su.plo.slib.api.chat.component.McTranslatableText
 import su.plo.slib.api.chat.converter.ServerTextConverter
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.language.ServerTranslator
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.permission.PermissionManager
 import java.io.File
 
@@ -57,4 +58,11 @@ interface McLib {
      * @return The folder with plugins/mods configs.
      */
     val configsFolder: File
+
+    /**
+     * Creates a new logger with a specified name.
+     *
+     * @param name The name of the logger.
+     */
+    fun createLogger(name: String): McLogger
 }

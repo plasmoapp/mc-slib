@@ -58,10 +58,10 @@ interface McServerLib : McLib {
     /**
      * Gets a player by their name.
      *
-     * @param name The name of the player.
+     * @param playerName The name of the player.
      * @return The player if found, otherwise `null`.
      */
-    fun getPlayerByName(name: String): McServerPlayer?
+    fun getPlayerByName(playerName: String): McServerPlayer?
 
     /**
      * Gets a player by their unique identifier.

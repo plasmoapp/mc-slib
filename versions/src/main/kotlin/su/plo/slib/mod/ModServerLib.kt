@@ -12,6 +12,7 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.entity.player.McPlayer
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.world.McServerWorld
@@ -22,6 +23,7 @@ import su.plo.slib.mod.command.ModCommandManager
 import su.plo.slib.mod.entity.ModServerEntity
 import su.plo.slib.mod.entity.ModServerPlayer
 import su.plo.slib.mod.event.server.ServerStoppingEvent
+import su.plo.slib.mod.logging.Log4jLogger
 import su.plo.slib.mod.permission.ModPermissionSupplier
 import su.plo.slib.mod.world.ModServerWorld
 import java.io.File
@@ -60,6 +62,9 @@ object ModServerLib : McServerLib {
         get() = minecraftServer.serverVersion
 
     override val configsFolder = File("config")
+
+    override fun createLogger(name: String): McLogger =
+        Log4jLogger(name)
 
     override fun executeInMainThread(runnable: Runnable) {
         minecraftServer.execute(runnable)
