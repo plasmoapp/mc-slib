@@ -54,6 +54,13 @@ implementation("su.plo.slib:spigot:$libVersion")
 
 Initialization: [SpigotPlugin.kt](https://github.com/plasmoapp/mc-slib/blob/main/spigot/src/test/kotlin/SpigotPlugin.kt)
 
+### Minestom
+```kotlin
+implementation("su.plo.slib:minestom:$libVersion")
+```
+
+Initialization: [MinestomExtension.kt](https://github.com/plasmoapp/mc-slib/blob/main/minestom/src/test/kotlin/MinestomExtension.kt)
+
 ### BungeeCord
 ```kotlin
 implementation("su.plo.slib:bungee:$libVersion")
