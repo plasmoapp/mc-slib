@@ -24,7 +24,7 @@ class ModServerWorld(
     private val level: ServerLevel
 ) : McServerWorld {
 
-    override val name: String = (level.levelData as ServerLevelData).levelName
+    override val name: String = level.dimension().location().toString()
 
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
         //#if MC>=11900
