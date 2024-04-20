@@ -11,7 +11,7 @@ import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.event.EventHandler
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
-import su.plo.slib.api.logging.McLogger
+import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
@@ -60,6 +60,10 @@ class BungeeProxyLib(
     override val configsFolder = File("plugins")
 
     init {
+        McLoggerFactory.supplier = McLoggerFactory.Supplier {name ->
+            JavaLogger(name).apply { parent = loader.logger.parent }
+        }
+
         loadServers()
 
         // register commands
@@ -70,10 +74,6 @@ class BungeeProxyLib(
         proxyServer.pluginManager.registerListener(loader, commandManager)
         proxyServer.pluginManager.registerListener(loader, this)
     }
-
-    override fun createLogger(name: String): McLogger =
-        JavaLogger(name)
-            .apply { parent = loader.logger.parent }
 
     override fun getPlayerById(playerId: UUID): McProxyPlayer? =
         proxyServer.getPlayer(playerId)

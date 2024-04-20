@@ -6,6 +6,7 @@ import su.plo.slib.api.chat.converter.ServerTextConverter
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.language.ServerTranslator
 import su.plo.slib.api.logging.McLogger
+import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import java.io.File
 
@@ -64,5 +65,6 @@ interface McLib {
      *
      * @param name The name of the logger.
      */
-    fun createLogger(name: String): McLogger
+    fun createLogger(name: String): McLogger =
+        McLoggerFactory.createLogger(name).value
 }

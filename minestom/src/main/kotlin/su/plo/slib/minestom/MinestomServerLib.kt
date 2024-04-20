@@ -13,7 +13,7 @@ import net.minestom.server.instance.Instance
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
-import su.plo.slib.api.logging.McLogger
+import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
@@ -65,6 +65,10 @@ class MinestomServerLib(
 
     override val configsFolder: File = extension.dataDirectory.toFile()
 
+    init {
+        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
+    }
+
     fun onInitialize() {
         commandManager.registerCommands()
 
@@ -78,9 +82,6 @@ class MinestomServerLib(
         commandManager.clear()
         permissionManager.clear()
     }
-
-    override fun createLogger(name: String): McLogger =
-        Slf4jLogger(name)
 
     override fun executeInMainThread(runnable: Runnable) {
         MinecraftServer.getSchedulerManager().scheduleNextTick(runnable)

@@ -11,23 +11,23 @@ class Slf4jLogger(name: String) : McLogger {
     override fun getName(): String =
         logger.name
 
-    override fun trace(format: String, vararg arguments: Any) {
+    override fun trace(format: String, vararg arguments: Any?) {
         logger.trace(format, *arguments)
     }
 
-    override fun debug(format: String, vararg arguments: Any) {
+    override fun debug(format: String, vararg arguments: Any?) {
         logger.debug(format, *arguments)
     }
 
-    override fun info(format: String, vararg arguments: Any) {
+    override fun info(format: String, vararg arguments: Any?) {
         logger.info(format, *arguments)
     }
 
-    override fun warn(format: String, vararg arguments: Any) {
+    override fun warn(format: String, vararg arguments: Any?) {
         logger.warn(format, *arguments)
     }
 
-    override fun error(format: String, vararg arguments: Any) {
+    override fun error(format: String, vararg arguments: Any?) {
         logger.error(format, *arguments)
     }
 }

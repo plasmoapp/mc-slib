@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
-import su.plo.slib.api.logging.McLogger
+import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
@@ -67,6 +67,18 @@ class SpigotServerLib(
 
     override val configsFolder: File = loader.dataFolder.parentFile
 
+    init {
+        McLoggerFactory.supplier = McLoggerFactory.Supplier { name ->
+            try {
+                Class.forName("org.slf4j.LoggerFactory")
+                Slf4jLogger(name)
+            } catch (e: ClassNotFoundException) {
+                JavaLogger(name)
+                    .apply { parent = loader.logger.parent }
+            }
+        }
+    }
+
     fun onInitialize() {
         commandManager.registerCommands(loader)
         loader.server.pluginManager.registerEvents(RegisterChannelHandler(this), loader)
@@ -76,14 +88,6 @@ class SpigotServerLib(
     fun onShutdown() {
         commandManager.clear()
         permissionManager.clear()
-    }
-
-    override fun createLogger(name: String): McLogger = try {
-        Class.forName("org.slf4j.LoggerFactory")
-        Slf4jLogger(name)
-    } catch (e: ClassNotFoundException) {
-        JavaLogger(name)
-            .apply { parent = loader.logger.parent }
     }
 
     override fun executeInMainThread(runnable: Runnable) {

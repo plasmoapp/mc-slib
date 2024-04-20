@@ -16,7 +16,7 @@ interface McLogger {
      * @param format    The format string.
      * @param arguments A list of arguments.
      */
-    fun trace(format: String, vararg arguments: Any)
+    fun trace(format: String, vararg arguments: Any?)
 
     /**
      * Log a message at the DEBUG level.
@@ -24,7 +24,7 @@ interface McLogger {
      * @param format    The format string.
      * @param arguments A list of arguments.
      */
-    fun debug(format: String, vararg arguments: Any)
+    fun debug(format: String, vararg arguments: Any?)
 
     /**
      * Log a message at the INFO level.
@@ -32,7 +32,7 @@ interface McLogger {
      * @param format    The format string.
      * @param arguments A list of arguments.
      */
-    fun info(format: String, vararg arguments: Any)
+    fun info(format: String, vararg arguments: Any?)
 
     /**
      * Log a message at the WARN level.
@@ -40,7 +40,7 @@ interface McLogger {
      * @param format    The format string.
      * @param arguments A list of arguments.
      */
-    fun warn(format: String, vararg arguments: Any)
+    fun warn(format: String, vararg arguments: Any?)
 
     /**
      * Log a message at the ERROR level.
@@ -48,5 +48,5 @@ interface McLogger {
      * @param format    The format string.
      * @param arguments A list of arguments.
      */
-    fun error(format: String, vararg arguments: Any)
+    fun error(format: String, vararg arguments: Any?)
 }

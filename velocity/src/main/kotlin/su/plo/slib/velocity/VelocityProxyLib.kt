@@ -10,7 +10,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
-import su.plo.slib.api.logging.McLogger
+import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
@@ -57,6 +57,8 @@ class VelocityProxyLib(
     override val configsFolder = File("plugins")
 
     init {
+        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
+
         loadServers()
 
         // register commands
@@ -67,9 +69,6 @@ class VelocityProxyLib(
         proxyServer.eventManager.register(plugin, commandManager)
         proxyServer.eventManager.register(plugin, this)
     }
-
-    override fun createLogger(name: String): McLogger =
-        Slf4jLogger(name)
 
     override fun getPlayerById(playerId: UUID): McProxyPlayer? =
         playerById[playerId] ?: proxyServer.getPlayer(playerId).map { getPlayerByInstance(it) }.orElse(null)
