@@ -10,7 +10,13 @@ import su.plo.slib.mod.extension.toMcServerPlayer
 import java.util.*
 
 //#if FABRIC
+
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+
+//#if MC>=12005
+//$$ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
+//#endif
+
 //#else
 //$$ import net.minecraftforge.network.NetworkDirection
 //$$ import net.minecraftforge.network.NetworkEvent
@@ -45,6 +51,17 @@ class ModChannelManager : McServerChannelManager {
         }
 
         //#if FABRIC
+
+        //#if MC>=12005
+        //$$ val codec = getOrRegisterCodec(channelKey)
+        //$$
+        //$$ ServerPlayNetworking.registerGlobalReceiver(codec.type) { payload, context ->
+        //$$     internalHandlers.get(channelKey)
+        //$$         .forEach { channelHandler ->
+        //$$             channelHandler.receive(context.player().toMcServerPlayer(), payload.data)
+        //$$         }
+        //$$ }
+        //#else
         ServerPlayNetworking.registerGlobalReceiver(channelKey) { _, player, _, buf, _ ->
             val messageBytes = ByteBufUtil.getBytes(buf)
 
@@ -53,6 +70,8 @@ class ModChannelManager : McServerChannelManager {
                     channelHandler.receive(player.toMcServerPlayer(), messageBytes)
                 }
         }
+        //#endif
+
         //#else
         //$$ val forgeChannel = channels.computeIfAbsent(channelKey) {
         //$$     ChannelBuilder.named(channelKey)
@@ -92,17 +111,29 @@ class ModChannelManager : McServerChannelManager {
         internalHandlers.clear()
     }
 
-    //#if FORGE
-    //$$ companion object {
-    //$$     private val channels: MutableMap<ResourceLocation, EventNetworkChannel> = HashMap()
-    //$$
-    //$$     /**
-    //$$      * You can add your own forge channel here, if you are using channel for client-side
-    //$$      */
-    //$$     @JvmStatic
-    //$$     fun addForgeChannel(channelKey: ResourceLocation, channel: EventNetworkChannel) {
-    //$$         channels[channelKey] = channel
-    //$$     }
-    //$$ }
-    //#endif
+    companion object {
+        //#if MC>=12005
+        //$$ private val codecs: MutableMap<ResourceLocation, ByteArrayCodec> = HashMap()
+        //$$
+        //$$ fun getOrRegisterCodec(channelKey: ResourceLocation): ByteArrayCodec = codecs.computeIfAbsent(channelKey) {
+        //$$     ByteArrayCodec(channelKey)
+        //$$         .also {
+        //$$             PayloadTypeRegistry.playC2S().register(it.type, it)
+        //$$             PayloadTypeRegistry.playS2C().register(it.type, it)
+        //$$         }
+        //$$ }
+        //#endif
+
+        //#if FORGE
+        //$$  private val channels: MutableMap<ResourceLocation, EventNetworkChannel> = HashMap()
+        //$$
+        //$$  /**
+        //$$   * You can add your own forge channel here, if you are using channel for client-side
+        //$$   */
+        //$$  @JvmStatic
+        //$$  fun addForgeChannel(channelKey: ResourceLocation, channel: EventNetworkChannel) {
+        //$$      channels[channelKey] = channel
+        //$$  }
+        //#endif
+    }
 }

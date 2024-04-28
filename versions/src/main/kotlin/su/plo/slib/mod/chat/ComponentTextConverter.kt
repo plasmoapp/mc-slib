@@ -9,17 +9,38 @@ import su.plo.slib.api.chat.style.McTextClickEvent
 import su.plo.slib.api.chat.style.McTextHoverEvent
 import su.plo.slib.api.chat.style.McTextStyle
 
+//#if MC>=12005
+//$$ import com.google.gson.*
+//$$ import com.mojang.serialization.JsonOps
+//#endif
+
 class ComponentTextConverter : McTextConverter<Component> {
 
-    // todo: legacy
-    override fun convertToJson(text: Component): String {
-        return Component.Serializer.toJson(text)
-    }
+    //#if MC>=12005
+    //$$ private val gson: Gson = GsonBuilder().disableHtmlEscaping().create()
+    //#endif
 
     // todo: legacy
-    override fun convertFromJson(json: String): Component {
-        return Component.Serializer.fromJson(json)!!
-    }
+    override fun convertToJson(text: Component): String =
+        //#if MC>=12005
+        //$$ gson.toJson(
+        //$$     ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, text).getOrThrow(::JsonParseException)
+        //$$ )
+        //#else
+        Component.Serializer.toJson(text)
+        //#endif
+
+    // todo: legacy
+    override fun convertFromJson(json: String): Component =
+        //#if MC>=12005
+        //$$ JsonParser.parseString(json)
+        //$$     ?.let {
+        //$$         ComponentSerialization.CODEC.parse(JsonOps.INSTANCE, it).getOrThrow(::JsonParseException)
+        //$$     }
+        //$$     ?: throw JsonParseException("JsonParser return null smh")
+        //#else
+        Component.Serializer.fromJson(json)!!
+        //#endif
 
     override fun convert(text: McTextComponent): Component {
         var component =

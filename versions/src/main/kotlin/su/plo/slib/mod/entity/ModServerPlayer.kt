@@ -36,6 +36,11 @@ import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket
 //$$ import net.minecraft.Util
 //#endif
 
+//#if MC>=12005
+//$$ import su.plo.slib.mod.channel.ByteArrayPayload
+//$$ import su.plo.slib.mod.channel.ModChannelManager
+//#endif
+
 class ModServerPlayer(
     private val minecraftServer: McServerLib,
     private val permissions: PermissionSupplier,
@@ -120,10 +125,19 @@ class ModServerPlayer(
 
     override fun sendPacket(channel: String, data: ByteArray) {
         val channelKey = ResourceLocation(channel)
+        //#if MC<12005
         val buf = FriendlyByteBuf(Unpooled.wrappedBuffer(data))
+        //#endif
 
         //#if FABRIC
+
+        //#if MC>=12005
+        //$$ val codec = ModChannelManager.getOrRegisterCodec(channelKey)
+        //$$ ServerPlayNetworking.send(instance, ByteArrayPayload(codec.type, data))
+        //#else
         ServerPlayNetworking.send(instance, channelKey, buf)
+        //#endif
+
         //#else
         //#if MC>=12002
         //$$ val packet = NetworkDirection.PLAY_TO_CLIENT
