@@ -6,13 +6,13 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 
 class ByteArrayCodec(
-    private val channelKey: ResourceLocation
+    channelKey: ResourceLocation
 ) : StreamCodec<RegistryFriendlyByteBuf, ByteArrayPayload> {
 
     val type = CustomPacketPayload.Type<ByteArrayPayload>(channelKey)
 
     override fun decode(buf: RegistryFriendlyByteBuf): ByteArrayPayload {
-        val length = buf.readVarInt()
+        val length = buf.readableBytes()
 
         val data = ByteArray(length)
         buf.readBytes(data)
@@ -21,7 +21,6 @@ class ByteArrayCodec(
     }
 
     override fun encode(buf: RegistryFriendlyByteBuf, payload: ByteArrayPayload) {
-        buf.writeVarInt(payload.data.size)
         buf.writeBytes(payload.data)
     }
 }
