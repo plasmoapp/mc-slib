@@ -144,6 +144,7 @@ class MinestomServerLib(
     }
 
     private val playerJoinListener: Consumer<PlayerSpawnEvent> = Consumer { event ->
+        if (!event.isFirstSpawn) return@Consumer
         val player = getPlayerByInstance(event.player) as MinestomServerPlayer
         McPlayerJoinEvent.invoker.onPlayerJoin(player)
 
