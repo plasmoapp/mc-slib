@@ -22,7 +22,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl
 //$$ import java.util.concurrent.TimeUnit
 //#endif
 
-//#else
+//#elseif FORGE
 
 //#if MC>=12002
 //$$ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
@@ -31,6 +31,14 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl
 //$$ import net.minecraftforge.eventbus.api.SubscribeEvent
 //$$ import net.minecraft.server.network.ServerGamePacketListenerImpl
 //#endif
+
+//#elseif NEOFORGE
+
+//$$ import io.netty.util.AttributeKey
+//$$ import net.neoforged.bus.api.SubscribeEvent
+//$$ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
+//$$ import net.neoforged.neoforge.network.registration.NetworkPayloadSetup
+//$$ import net.neoforged.neoforge.network.registration.NetworkRegistry
 
 //#endif
 
@@ -79,7 +87,8 @@ object RegisterChannelHandler
         firePlayerRegisterChannels(handler.player, newChannels.map { it.toString() })
         //#endif
     }
-    //#else
+    //#elseif FORGE
+
     //#if MC>=12002
     //$$ @SubscribeEvent
     //$$ fun onPlayerJoin(event: PlayerLoggedInEvent) { // forge clients handler
@@ -102,6 +111,28 @@ object RegisterChannelHandler
     //$$     firePlayerRegisterChannels(player, channels)
     //$$ }
     //#endif
+
+    //#elseif NEOFORGE
+
+    //$$ private val ATTRIBUTE_PAYLOAD_SETUP = AttributeKey.valueOf<NetworkPayloadSetup>("neoforge:payload_setup")
+    //$$
+    //$$ @SubscribeEvent
+    //$$ fun onPlayerJoin(event: PlayerLoggedInEvent) { // forge clients handler
+    //$$     val player = event.entity as? ServerPlayer ?: return
+    //$$
+    //$$     val payloadSetup = player.connection.connection.channel()
+    //$$         .attr(ATTRIBUTE_PAYLOAD_SETUP)
+    //$$         .get()
+    //$$         ?: return
+    //$$
+    //$$     val channels = payloadSetup.channels
+    //$$         .takeIf { it.isNotEmpty() }
+    //$$         ?.map { it.toString() }
+    //$$         ?: return
+    //$$
+    //$$     firePlayerRegisterChannels(player, channels)
+    //$$ }
+
     //#endif
 
     fun firePlayerRegisterChannels(player: ServerPlayer, channels: List<String>) {

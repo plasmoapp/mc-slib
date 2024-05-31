@@ -30,13 +30,21 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 //$$ import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents
 //#endif
 
-//#else
+//#elseif FORGE
 
 //$$ import net.minecraftforge.common.MinecraftForge
 //$$ import net.minecraftforge.event.RegisterCommandsEvent
 //$$ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 //$$ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
 //$$ import net.minecraftforge.eventbus.api.SubscribeEvent
+
+//#elseif NEOFORGE
+
+//$$ import net.neoforged.neoforge.common.NeoForge
+//$$ import net.neoforged.bus.api.SubscribeEvent
+//$$ import net.neoforged.neoforge.event.RegisterCommandsEvent
+//$$ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
+//$$ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
 
 //#endif
 
@@ -70,6 +78,17 @@ class ModServerEvents private constructor() {
 
     //#else
 
+    //#if NEOFORGE
+
+    //$$ init {
+    //$$     NeoForge.EVENT_BUS.register(this)
+    //#if MC>=12002
+    //$$     NeoForge.EVENT_BUS.register(RegisterChannelHandler)
+    //#endif
+    //$$ }
+
+    //#else
+
     //$$ init {
     //$$     MinecraftForge.EVENT_BUS.register(this)
     //#if MC>=12002
@@ -77,13 +96,23 @@ class ModServerEvents private constructor() {
     //#endif
     //$$ }
 
+    //#endif
+
     //$$ @SubscribeEvent
+    //#if NEOFORGE
+    //$$ fun onServerStart(event: net.neoforged.neoforge.event.server.ServerStartedEvent) {
+    //#else
     //$$ fun onServerStart(event: net.minecraftforge.event.server.ServerStartedEvent) {
+    //#endif
     //$$     fireServerStarted(event.server)
     //$$ }
 
     //$$ @SubscribeEvent
+    //#if NEOFORGE
+    //$$ fun onServerStart(event: net.neoforged.neoforge.event.server.ServerStoppingEvent) {
+    //#else
     //$$ fun onServerStart(event: net.minecraftforge.event.server.ServerStoppingEvent) {
+    //#endif
     //$$     fireServerStopping(event.server)
     //$$ }
 

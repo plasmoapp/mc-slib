@@ -15,14 +15,21 @@ import su.plo.slib.mod.extension.textConverter
 import su.plo.slib.permission.PermissionSupplier
 
 //#if FABRIC
+
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-//#else
+
+//#elseif FORGE
 
 //$$ import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket
 
 //#if MC>=12002
 //$$ import net.minecraftforge.network.NetworkDirection
 //#endif
+
+//#elseif NEOFORGE
+
+//$$ import net.neoforged.neoforge.common.extensions.ICommonPacketListener
+//$$ import net.neoforged.neoforge.network.registration.NetworkRegistry
 
 //#endif
 
@@ -39,10 +46,10 @@ import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket
 //#if MC>=12005
 //$$ import su.plo.slib.mod.channel.ModChannelManager
 
-//#if FABRIC
-//$$ import su.plo.slib.mod.channel.ByteArrayPayload
-//#elseif FORGE
+//#if FORGE
 //$$ import net.minecraft.network.protocol.common.ClientCommonPacketListener
+//#else
+//$$ import su.plo.slib.mod.channel.ByteArrayPayload
 //#endif
 
 //#endif
@@ -144,7 +151,8 @@ class ModServerPlayer(
         ServerPlayNetworking.send(instance, channelKey, buf)
         //#endif
 
-        //#else
+        //#elseif FORGE
+
         //#if MC>=12006
         //$$ val forgeChannel = ModChannelManager.getForgeChannel(channelKey)
         //$$ val buf = FriendlyByteBuf(Unpooled.wrappedBuffer(data))
@@ -159,6 +167,20 @@ class ModServerPlayer(
         //$$ val packet = ClientboundCustomPayloadPacket(channelKey, buf)
         //#endif
         //$$ instance.connection.send(packet)
+
+        //#elseif NEOFORGE
+
+        //$$ // hack to avoid neoforge channels check
+        //$$ if (!NetworkRegistry.hasChannel(instance.connection as ICommonPacketListener, channelKey)) {
+        //$$     NetworkRegistry.onMinecraftRegister(
+        //$$         instance.connection.connection,
+        //$$         setOf(channelKey)
+        //$$     )
+        //$$ }
+        //$$
+        //$$ val codec = ModChannelManager.getOrRegisterCodec(channelKey)
+        //$$ instance.connection.send(ByteArrayPayload(codec.type, data))
+
         //#endif
     }
 

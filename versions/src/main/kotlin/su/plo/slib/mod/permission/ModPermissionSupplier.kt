@@ -12,6 +12,8 @@ import net.fabricmc.fabric.api.util.TriState
 
 //#if FORGE
 //$$ import net.minecraftforge.server.permission.PermissionAPI
+//#elseif NEOFORGE
+//$$ import net.neoforged.neoforge.server.permission.PermissionAPI
 //#endif
 
 class ModPermissionSupplier(

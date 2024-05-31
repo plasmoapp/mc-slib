@@ -17,7 +17,15 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 //$$ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
 //#endif
 
+//#elseif NEOFORGE
+
+//$$ import net.minecraft.server.level.ServerPlayer
+//$$ import net.neoforged.bus.api.SubscribeEvent
+//$$ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
+//$$ import net.neoforged.neoforge.network.handling.IPayloadHandler
+
 //#else
+
 //$$ import net.minecraftforge.network.NetworkDirection
 //$$ import net.minecraftforge.network.NetworkEvent
 //$$ import net.minecraftforge.network.event.EventNetworkChannel
@@ -37,6 +45,32 @@ class ModChannelManager : McServerChannelManager {
         Multimaps.newSetMultimap(HashMap(), ::HashSet)
 
     override val registeredChannels: MutableSet<String> = HashSet()
+
+    //#if NEOFORGE
+    //$$ @SubscribeEvent
+    //$$ fun onRegisterPayloadHandlers(event: RegisterPayloadHandlersEvent) {
+    //$$     val registrar = event.registrar("0").optional()
+    //$$
+    //$$     println("Register codecs: $codecs")
+    //$$     codecs.forEach { (channelKey, codec) ->
+    //$$         registrar.playBidirectional(
+    //$$             codec.type,
+    //$$             codec
+    //$$         ) { payload, context ->
+    //$$             val player = context.player()
+    //$$             if (player !is ServerPlayer) {
+    //$$                 clientHandlers[channelKey]?.handle(payload, context)
+    //$$                 return@playBidirectional
+    //$$             }
+    //$$
+    //$$             internalHandlers.get(channelKey)
+    //$$                 .forEach { channelHandler ->
+    //$$                     channelHandler.receive(player.toMcServerPlayer(), payload.data)
+    //$$                 }
+    //$$         }
+    //$$     }
+    //$$ }
+    //#endif
 
     @Synchronized
     override fun registerChannelHandler(channel: String, handler: McServerChannelHandler) {
@@ -72,7 +106,7 @@ class ModChannelManager : McServerChannelManager {
         }
         //#endif
 
-        //#else
+        //#elseif FORGE
         //$$ val forgeChannel = channels.computeIfAbsent(channelKey) {
         //$$     ChannelBuilder.named(channelKey)
         //#if MC>=12002
@@ -119,20 +153,27 @@ class ModChannelManager : McServerChannelManager {
     }
 
     companion object {
-        //#if FABRIC
+        //#if NEOFORGE
+        //$$ private val clientHandlers: MutableMap<ResourceLocation, IPayloadHandler<ByteArrayPayload>> = HashMap()
+        //$$
+        //$$ fun registerClientHandler(channel: ResourceLocation, handler: IPayloadHandler<ByteArrayPayload>) {
+        //$$     clientHandlers[channel] = handler
+        //$$ }
+        //#endif
 
         //#if MC>=12005
         //$$ private val codecs: MutableMap<ResourceLocation, ByteArrayCodec> = HashMap()
         //$$
         //$$ fun getOrRegisterCodec(channelKey: ResourceLocation): ByteArrayCodec = codecs.computeIfAbsent(channelKey) {
+        //$$     println("Register $channelKey")
         //$$     ByteArrayCodec(channelKey)
+        //#if FABRIC
         //$$         .also {
         //$$             PayloadTypeRegistry.playC2S().register(it.type, it)
         //$$             PayloadTypeRegistry.playS2C().register(it.type, it)
         //$$         }
-        //$$ }
         //#endif
-
+        //$$ }
         //#endif
 
         //#if FORGE

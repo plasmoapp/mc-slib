@@ -9,6 +9,7 @@ preprocess {
     val fabric12100 = createNode("1.21-fabric", 12100, "official")
 
     val fabric12006 = createNode("1.20.6-fabric", 12006, "official")
+    val neoForge12006 = createNode("1.20.6-neoforge", 12006, "official")
 
     val forge12004 = createNode("1.20.4-forge", 12004, "official")
     val fabric12004 = createNode("1.20.4-fabric", 12004, "official")
@@ -36,6 +37,7 @@ preprocess {
 
     fabric12100.link(fabric12006)
 
+    neoForge12006.link(fabric12006)
     fabric12006.link(fabric12004)
 
     fabric12004.link(fabric12002)
