@@ -37,8 +37,14 @@ import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket
 //#endif
 
 //#if MC>=12005
-//$$ import su.plo.slib.mod.channel.ByteArrayPayload
 //$$ import su.plo.slib.mod.channel.ModChannelManager
+
+//#if FABRIC
+//$$ import su.plo.slib.mod.channel.ByteArrayPayload
+//#elseif FORGE
+//$$ import net.minecraft.network.protocol.common.ClientCommonPacketListener
+//#endif
+
 //#endif
 
 class ModServerPlayer(
@@ -124,7 +130,7 @@ class ModServerPlayer(
     }
 
     override fun sendPacket(channel: String, data: ByteArray) {
-        val channelKey = ResourceLocation(channel)
+        val channelKey = ResourceLocation.tryParse(channel) ?: throw IllegalArgumentException("Invalid channel key")
         //#if MC<12005
         val buf = FriendlyByteBuf(Unpooled.wrappedBuffer(data))
         //#endif
@@ -139,7 +145,13 @@ class ModServerPlayer(
         //#endif
 
         //#else
-        //#if MC>=12002
+        //#if MC>=12006
+        //$$ val forgeChannel = ModChannelManager.getForgeChannel(channelKey)
+        //$$ val buf = FriendlyByteBuf(Unpooled.wrappedBuffer(data))
+        //$$
+        //$$ val packet = NetworkDirection.PLAY_TO_CLIENT
+        //$$     .buildPacket<ClientCommonPacketListener, FriendlyByteBuf>(forgeChannel, buf)
+        //#elseif MC>=12002
         //$$ val packet = NetworkDirection.PLAY_TO_CLIENT
         //$$     .buildPacket<ClientboundCustomPayloadPacket>(buf, channelKey)
         //$$     .getThis()

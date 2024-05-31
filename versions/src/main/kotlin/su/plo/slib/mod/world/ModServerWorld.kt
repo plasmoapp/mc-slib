@@ -59,14 +59,14 @@ class ModServerWorld(
 
     //#if MC>=12005
     //$$ private fun parseGameEvent(gameEventName: String): Holder.Reference<GameEvent> =
-    //$$     BuiltInRegistries.GAME_EVENT.getHolder(ResourceLocation(gameEventName))
+    //$$     BuiltInRegistries.GAME_EVENT.getHolder(ResourceLocation.tryParse(gameEventName))
     //$$         .orElseThrow { IllegalArgumentException("Invalid game event") }
     //#elseif MC>=11900
     private fun parseGameEvent(gameEventName: String): GameEvent {
         //#if MC>=11903
-        return BuiltInRegistries.GAME_EVENT[ResourceLocation(gameEventName)]
+        return BuiltInRegistries.GAME_EVENT[ResourceLocation.tryParse(gameEventName)]
         //#else
-        //$$ return Registry.GAME_EVENT.get(ResourceLocation(gameEventName))
+        //$$ return Registry.GAME_EVENT.get(ResourceLocation.tryParse(gameEventName))
         //#endif
     }
     //#endif

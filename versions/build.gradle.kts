@@ -1,6 +1,5 @@
 import gg.essential.gradle.multiversion.excludeKotlinDefaultImpls
 import gg.essential.gradle.multiversion.mergePlatformSpecifics
-import kotlinx.validation.api.publishedApiAnnotationName
 
 plugins {
     kotlin("jvm")
@@ -33,6 +32,7 @@ dependencies {
             12002 -> "0.90.7+1.20.2"
             12004 -> "0.95.4+1.20.4"
             12006 -> "0.97.7+1.20.6"
+            12100 -> "0.99.0+1.21"
             else -> throw GradleException("Unsupported platform $platform")
         }
 

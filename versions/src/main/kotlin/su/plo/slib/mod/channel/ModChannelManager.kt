@@ -40,7 +40,7 @@ class ModChannelManager : McServerChannelManager {
 
     @Synchronized
     override fun registerChannelHandler(channel: String, handler: McServerChannelHandler) {
-        val channelKey = ResourceLocation(channel)
+        val channelKey = ResourceLocation.tryParse(channel) ?: throw IllegalArgumentException("Invalid channel key")
 
         if (internalHandlers.containsKey(channelKey) || registeredChannels.contains(channel)) {
             internalHandlers.put(channelKey, handler)
@@ -91,7 +91,14 @@ class ModChannelManager : McServerChannelManager {
         //#else
         //$$     val context = event.source.get()
         //#endif
-        //$$     if (context.direction != NetworkDirection.PLAY_TO_SERVER || event.payload == null) return@addListener
+        //$$ if (
+        //#if MC>=12005
+        //$$     context.isClientSide ||
+        //#else
+        //$$     context.direction != NetworkDirection.PLAY_TO_SERVER ||
+        //#endif
+        //$$     event.payload == null
+        //$$ ) return@addListener
 
         //$$     val messageBytes = ByteBufUtil.getBytes(event.payload)
 
@@ -112,6 +119,8 @@ class ModChannelManager : McServerChannelManager {
     }
 
     companion object {
+        //#if FABRIC
+
         //#if MC>=12005
         //$$ private val codecs: MutableMap<ResourceLocation, ByteArrayCodec> = HashMap()
         //$$
@@ -124,8 +133,14 @@ class ModChannelManager : McServerChannelManager {
         //$$ }
         //#endif
 
+        //#endif
+
         //#if FORGE
         //$$  private val channels: MutableMap<ResourceLocation, EventNetworkChannel> = HashMap()
+        //$$
+        //$$  @JvmStatic
+        //$$  fun getForgeChannel(channelKey: ResourceLocation): EventNetworkChannel? =
+        //$$      channels[channelKey]
         //$$
         //$$  /**
         //$$   * You can add your own forge channel here, if you are using channel for client-side

@@ -11,7 +11,7 @@ package su.plo.slib.mod.mixinkt
 //$$
 //$$ object MixinServerGamePacketListenerImplKt {
 //$$
-//$$     private val REGISTER = ResourceLocation("minecraft:register")
+//$$     private val REGISTER = ResourceLocation.tryParse("minecraft:register")
 //$$
 //$$     fun handleCustomPayload(player: ServerPlayer, packet: ServerboundCustomPayloadPacket) {
 //$$         val packetId = packet.identifier
