@@ -44,7 +44,13 @@ class AdventureServerTranslator : Translator, ServerTranslator {
         val language = getLanguage(locale.toString())
         val translationString = language[component.key()] ?: return null
 
-        return LegacyComponentRenderer.renderTranslatable(component, translationString, locale)
+        return when (format) {
+            ServerLanguageFormat.LEGACY_AMPERSAND ->
+                LegacyComponentRenderer.renderTranslatable(component, translationString, locale)
+
+            ServerLanguageFormat.MINI_MESSAGE ->
+                MiniMessageComponentRenderer.renderTranslatable(component, translationString, locale)
+        }
     }
 
     override fun translate(key: String, locale: Locale): MessageFormat? {

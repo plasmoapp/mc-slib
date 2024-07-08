@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     api(project(":api:api-common"))
-    api(project(":common-integration"))
 
     listOf(
         libs.adventure.api,
@@ -26,6 +25,7 @@ dependencies {
 
 tasks {
     shadowJar {
+        archiveClassifier = "all"
         relocate("net.kyori", "su.plo.slib.libs.adventure")
     }
 }

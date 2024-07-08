@@ -8,5 +8,10 @@ enum class ServerLanguageFormat {
     /**
      * Format with color codes starting with "&".
      */
-    LEGACY_AMPERSAND
+    LEGACY_AMPERSAND,
+
+    /**
+     * [MiniMessage format](https://docs.advntr.dev/minimessage/format.html).
+     */
+    MINI_MESSAGE
 }

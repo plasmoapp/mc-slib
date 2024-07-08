@@ -7,6 +7,7 @@ dependencies {
     testCompileOnly(libs.spigot)
 
     compileOnly(project(":common"))
+    compileOnly(project(":common-integration"))
     listOf(
         project(":api:api-common"),
         project(":api:api-server"),

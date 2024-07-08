@@ -25,6 +25,7 @@ import su.plo.slib.bungee.permission.BungeePermissionSupplier
 import su.plo.slib.bungee.player.BungeeProxyPlayer
 import su.plo.slib.bungee.server.BungeeProxyServerInfo
 import su.plo.slib.chat.AdventureComponentTextConverter
+import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.JavaLogger
 import java.io.File
@@ -49,6 +50,7 @@ class BungeeProxyLib(
     private val permissionSupplier = BungeePermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
+        .also { IntegrationLoader.loadAdventureTranslator(it) }
     override val textConverter = AdventureComponentTextConverter()
 
     override val commandManager = BungeeCommandManager(this)

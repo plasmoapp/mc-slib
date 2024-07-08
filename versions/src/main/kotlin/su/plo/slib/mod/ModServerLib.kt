@@ -18,6 +18,7 @@ import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.chat.AdventureComponentTextConverter
+import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.mod.channel.ModChannelManager
 import su.plo.slib.mod.command.ModCommandManager
 import su.plo.slib.mod.entity.ModServerEntity
@@ -47,6 +48,7 @@ object ModServerLib : McServerLib {
     private val permissionSupplier = ModPermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
+        .also { IntegrationLoader.loadAdventureTranslator(it) }
     override val textConverter = AdventureComponentTextConverter()
 
     override val commandManager = ModCommandManager(this)

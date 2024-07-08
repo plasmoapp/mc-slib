@@ -12,6 +12,7 @@ dependencies {
     compileOnly(libs.bungee.proxy)
 
     compileOnly(project(":common"))
+    compileOnly(project(":common-integration"))
     listOf(
         project(":api:api-common"),
         project(":api:api-proxy"),

@@ -18,6 +18,7 @@ import su.plo.slib.api.proxy.event.player.McProxyServerConnectedEvent
 import su.plo.slib.api.proxy.player.McProxyPlayer
 import su.plo.slib.api.proxy.server.McProxyServerInfo
 import su.plo.slib.chat.AdventureComponentTextConverter
+import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.Slf4jLogger
 import su.plo.slib.velocity.channel.VelocityChannelManager
@@ -43,6 +44,7 @@ class VelocityProxyLib(
     private val permissionSupplier = VelocityPermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
+        .also { IntegrationLoader.loadAdventureTranslator(it) }
     override val textConverter = AdventureComponentTextConverter()
 
     override val commandManager = VelocityCommandManager(this)
