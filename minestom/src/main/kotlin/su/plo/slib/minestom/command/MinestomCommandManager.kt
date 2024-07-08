@@ -9,7 +9,6 @@ import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
-import su.plo.slib.minestom.extension.textConverter
 
 class MinestomCommandManager(
     private val minecraftServer: McServerLib
@@ -41,6 +40,6 @@ class MinestomCommandManager(
         require(source is CommandSender) { "source is not ${CommandSender::class.java}" }
 
         return if (source is Player) minecraftServer.getPlayerByInstance(source)
-        else MinestomDefaultCommandSource(minecraftServer.textConverter(), source)
+        else MinestomDefaultCommandSource(minecraftServer.textConverter, source)
     }
 }

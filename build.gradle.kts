@@ -1,12 +1,8 @@
 import gg.essential.gradle.util.setJvmDefault
 
-// Version
-val targetJavaVersion: String by rootProject
-
 plugins {
     idea
     `maven-publish`
-    alias(libs.plugins.shadow)
 
     kotlin("jvm") version(libs.versions.kotlin.get())
     alias(libs.plugins.dokka)
@@ -33,7 +29,7 @@ subprojects {
         java {
             withSourcesJar()
 
-            toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
+            toolchain.languageVersion.set(JavaLanguageVersion.of(8))
         }
 
         compileJava {

@@ -9,12 +9,12 @@ import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.event.EventHandler
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
-import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.command.McProxyCommand
 import su.plo.slib.api.proxy.event.command.McProxyCommandExecuteEvent
+import su.plo.slib.bungee.BungeeProxyLib
 
 class BungeeCommandManager(
-    private val minecraftProxy: McProxyLib
+    private val minecraftProxy: BungeeProxyLib
 ) : McCommandManager<McProxyCommand>(), Listener {
 
     @EventHandler

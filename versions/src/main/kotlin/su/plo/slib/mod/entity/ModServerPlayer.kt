@@ -10,8 +10,8 @@ import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.entity.player.McServerPlayer
+import su.plo.slib.mod.chat.ComponentTextConverter
 import su.plo.slib.mod.extension.getObjectiveBelowName
-import su.plo.slib.mod.extension.textConverter
 import su.plo.slib.permission.PermissionSupplier
 
 //#if FABRIC
@@ -108,31 +108,38 @@ class ModServerPlayer(
         permissions.hasPermission(instance, permission)
 
     override fun kick(reason: McTextComponent) {
-        instance.connection.disconnect(minecraftServer.textConverter().convert(this, reason))
+        val json = minecraftServer.textConverter.convertToJson(this, reason)
+        val component = ComponentTextConverter.convertFromJson(json)
+
+        instance.connection.disconnect(component)
     }
 
     override fun sendActionBar(text: McTextComponent) {
+        val json = minecraftServer.textConverter.convertToJson(this, text)
+        val component = ComponentTextConverter.convertFromJson(json)
+
         //#if MC>=11701
         instance.connection.send(
-            ClientboundSetActionBarTextPacket(
-                minecraftServer.textConverter().convert(this, text)
-            )
+            ClientboundSetActionBarTextPacket(component)
         )
         //#else
         //$$ instance.connection.send(
         //$$     ClientboundSetTitlesPacket(
         //$$         ClientboundSetTitlesPacket.Type.ACTIONBAR,
-        //$$         minecraftServer.textConverter().convert(this, text)
+        //$$         component
         //$$     )
         //$$ )
         //#endif
     }
 
     override fun sendMessage(text: McTextComponent) {
+        val json = minecraftServer.textConverter.convertToJson(this, text)
+        val component = ComponentTextConverter.convertFromJson(json)
+
         //#if MC>=11900
-        instance.sendSystemMessage(minecraftServer.textConverter().convert(this, text))
+        instance.sendSystemMessage(component)
         //#else
-        //$$ instance.sendMessage(minecraftServer.textConverter().convert(this, text), Util.NIL_UUID);
+        //$$ instance.sendMessage(component, Util.NIL_UUID);
         //#endif
     }
 

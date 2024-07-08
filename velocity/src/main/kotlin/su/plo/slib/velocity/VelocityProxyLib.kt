@@ -33,13 +33,17 @@ class VelocityProxyLib(
     plugin: Any
 ) : McProxyLib {
 
+    init {
+        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
+    }
+
     private val playerById: MutableMap<UUID, McProxyPlayer> = Maps.newConcurrentMap()
     private val serverByName: MutableMap<String, VelocityProxyServerInfo> = Maps.newConcurrentMap()
 
     private val permissionSupplier = VelocityPermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
-    override val textConverter = AdventureComponentTextConverter(serverTranslator)
+    override val textConverter = AdventureComponentTextConverter()
 
     override val commandManager = VelocityCommandManager(this)
     override val permissionManager = PermissionManager()
@@ -57,8 +61,6 @@ class VelocityProxyLib(
     override val configsFolder = File("plugins")
 
     init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
-
         loadServers()
 
         // register commands

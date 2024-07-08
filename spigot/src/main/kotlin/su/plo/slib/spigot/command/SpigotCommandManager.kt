@@ -4,15 +4,14 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.SimpleCommandMap
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
-import su.plo.slib.spigot.extension.textConverter
+import su.plo.slib.spigot.SpigotServerLib
 
 class SpigotCommandManager(
-    private val minecraftServer: McServerLib
+    private val minecraftServer: SpigotServerLib
 ) : McCommandManager<McCommand>() {
 
     @Synchronized
@@ -38,6 +37,6 @@ class SpigotCommandManager(
         require(source is CommandSender) { "source is not ${CommandSender::class.java}" }
 
         return if (source is Player) minecraftServer.getPlayerByInstance(source)
-        else SpigotDefaultCommandSource(minecraftServer.textConverter(), source)
+        else SpigotDefaultCommandSource(minecraftServer, source)
     }
 }

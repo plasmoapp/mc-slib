@@ -1,22 +1,23 @@
 package su.plo.slib.spigot.entity
 
-import net.md_5.bungee.api.ChatMessageType
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scoreboard.DisplaySlot
-import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.chat.component.McTextComponent
-import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.permission.PermissionSupplier
-import su.plo.slib.spigot.extension.textConverter
+import su.plo.slib.spigot.SpigotServerLib
 
 @Suppress("deprecation")
 class SpigotServerPlayer(
     private val loader: JavaPlugin,
-    minecraftServer: McServerLib,
+    minecraftServer: SpigotServerLib,
     private val permissions: PermissionSupplier,
     player: Player
 ) : SpigotServerEntity<Player>(minecraftServer, player), McServerPlayer {
@@ -58,12 +59,22 @@ class SpigotServerPlayer(
             return field
         }
 
-    override fun sendMessage(text: McTextComponent) =
-        instance.spigot().sendMessage(minecraftServer.textConverter().convert(this, text))
+    private val audience: Audience
+        get() = minecraftServer.adventure.player(instance)
 
-    override fun sendActionBar(text: McTextComponent) =
-        instance.spigot().sendMessage(ChatMessageType.ACTION_BAR, minecraftServer.textConverter().convert(this, text))
+    override fun sendMessage(text: McTextComponent) {
+        val json = minecraftServer.textConverter.convertToJson(text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
 
+        audience.sendMessage(component)
+    }
+
+    override fun sendActionBar(text: McTextComponent) {
+        val json = minecraftServer.textConverter.convertToJson(text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        audience.sendActionBar(component)
+    }
 
     override fun hasPermission(permission: String) =
         permissions.hasPermission(instance, permission)
@@ -77,7 +88,12 @@ class SpigotServerPlayer(
     }
 
     override fun kick(reason: McTextComponent) {
-        instance.kickPlayer(minecraftServer.textConverter().convert(this, reason).toLegacyText())
+        val json = minecraftServer.textConverter.convertToJson(reason)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        val textReason = LegacyComponentSerializer.legacySection().serialize(component)
+
+        instance.kickPlayer(textReason)
     }
 
     override fun canSee(player: McServerPlayer): Boolean {

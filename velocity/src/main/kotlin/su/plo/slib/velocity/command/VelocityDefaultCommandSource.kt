@@ -1,6 +1,7 @@
 package su.plo.slib.velocity.command
 
 import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.chat.AdventureComponentTextConverter
@@ -15,11 +16,17 @@ class VelocityDefaultCommandSource(
         get() = "en_us"
 
     override fun sendMessage(text: McTextComponent) {
-        source.sendMessage(textConverter.convert(this, text))
+        val json = textConverter.convertToJson(this, text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        source.sendMessage(component)
     }
 
     override fun sendActionBar(text: McTextComponent) {
-        source.sendActionBar(textConverter.convert(this, text))
+        val json = textConverter.convertToJson(this, text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        source.sendActionBar(component)
     }
 
     override fun hasPermission(permission: String) =

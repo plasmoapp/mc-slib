@@ -5,7 +5,7 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.permission.PermissionTristate
-import su.plo.slib.mod.extension.textConverter
+import su.plo.slib.mod.chat.ComponentTextConverter
 
 class ModDefaultCommandSource(
     private val minecraftServer: McServerLib,
@@ -16,10 +16,13 @@ class ModDefaultCommandSource(
         get() = "en_us"
 
     override fun sendMessage(text: McTextComponent) {
+        val json = minecraftServer.textConverter.convertToJson(this, text)
+        val component = ComponentTextConverter.convertFromJson(json)
+
         //#if MC>=11900
-        source.sendSystemMessage(minecraftServer.textConverter().convert(this, text))
+        source.sendSystemMessage(component)
         //#else
-        //$$ source.sendSuccess(minecraftServer.textConverter().convert(this, text), true);
+        //$$ source.sendSuccess(component, true);
         //#endif
     }
 

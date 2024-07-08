@@ -1,28 +1,24 @@
 plugins {
-    id("com.github.johnrengelman.shadow")
+    id("su.plo.slib.shadow-platform")
 }
 
 dependencies {
     compileOnly(libs.velocity)
     testCompileOnly(libs.velocity)
 
-    api(project(":api:api-common"))
-    api(project(":api:api-proxy"))
-    api(project(":common"))
+    compileOnly(project(":common"))
+    listOf(
+        project(":api:api-common"),
+        project(":api:api-proxy"),
+        project(":common-integration"),
+        project(":common", "shadow")
+    ).forEach {
+        api(it)
+        shadow(it) { isTransitive = false }
+    }
 }
 
 tasks {
-    shadowJar {
-        configurations = listOf(project.configurations.shadow.get())
-
-        archiveAppendix.set("")
-        archiveClassifier.set("")
-    }
-
-    build {
-        dependsOn.add(shadowJar)
-    }
-
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(11))
     }

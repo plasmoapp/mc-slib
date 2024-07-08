@@ -3,8 +3,10 @@ kotlin = "1.9.23"
 kotlinx-coroutines = "1.7.3"
 dokka = "1.8.20"
 
-shadow = "7.1.0"
+shadow = "8.1.1"
+asm = "9.6"
 
+annotations = "23.0.0"
 guava = "31.1-jre"
 slf4j = "1.7.30"
 
@@ -16,13 +18,15 @@ bungee = "1.19-R0.1-SNAPSHOT"
 minestom = "7320437640"
 minestom-extensions = "1.2.0"
 
-adventure = "4.14.0"
+adventure = "4.13.1"
+adventure-platform = "4.3.3"
 fabric-permissions = "0.2-SNAPSHOT"
 
 [libraries]
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlinx-coroutines" }
 
+annotations  = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 guava        = { module = "com.google.guava:guava", version.ref = "guava" }
 slf4j        = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
@@ -37,8 +41,14 @@ minestom-extension = { module = "dev.hollowcube:minestom-ce-extensions", version
 
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
+adventure-legacy = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure" }
+adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
+adventure-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform" }
+adventure-bungee = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 
+shadow = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
+asm = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
+
 [plugins]
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 dokka  = { id = "org.jetbrains.dokka", version.ref = "dokka" }

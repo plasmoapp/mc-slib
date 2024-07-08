@@ -1,5 +1,6 @@
 package su.plo.slib.minestom.entity
 
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import su.plo.slib.api.server.McServerLib
@@ -8,7 +9,6 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.permission.PermissionSupplier
-import su.plo.slib.minestom.extension.textConverter
 
 class MinestomServerPlayer(
     minecraftServer: McServerLib,
@@ -46,12 +46,19 @@ class MinestomServerPlayer(
 
     override val spectatorTarget: McServerEntity? = null
 
-    override fun sendMessage(text: McTextComponent) =
-        instance.sendMessage(minecraftServer.textConverter().convert(this, text))
+    override fun sendMessage(text: McTextComponent) {
+        val json = minecraftServer.textConverter.convertToJson(this, text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
 
-    override fun sendActionBar(text: McTextComponent) =
-        instance.sendActionBar(minecraftServer.textConverter().convert(this, text))
+        instance.sendMessage(component)
+    }
 
+    override fun sendActionBar(text: McTextComponent) {
+        val json = minecraftServer.textConverter.convertToJson(this, text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        instance.sendActionBar(component)
+    }
 
     override fun hasPermission(permission: String) =
         permissions.hasPermission(instance, permission)
@@ -65,7 +72,10 @@ class MinestomServerPlayer(
     }
 
     override fun kick(reason: McTextComponent) {
-        instance.kick(minecraftServer.textConverter().convert(this, reason))
+        val json = minecraftServer.textConverter.convertToJson(this, reason)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        instance.kick(component)
     }
 
     override fun canSee(player: McServerPlayer): Boolean {

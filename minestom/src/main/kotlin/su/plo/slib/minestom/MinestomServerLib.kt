@@ -39,13 +39,17 @@ class MinestomServerLib(
     private val extension: Extension
 ) : McServerLib {
 
+    init {
+        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
+    }
+
     private val worldByInstance: MutableMap<Instance, McServerWorld> = Maps.newConcurrentMap()
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
 
     private val permissionSupplier = MinestomPermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
-    override val textConverter = AdventureComponentTextConverter(serverTranslator)
+    override val textConverter = AdventureComponentTextConverter()
 
     override val commandManager = MinestomCommandManager(this)
     override val permissionManager = PermissionManager()
@@ -64,10 +68,6 @@ class MinestomServerLib(
         get() = MinecraftServer.VERSION_NAME
 
     override val configsFolder: File = extension.dataDirectory.toFile()
-
-    init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
-    }
 
     fun onInitialize() {
         commandManager.registerCommands()

@@ -1,5 +1,4 @@
 import gg.essential.gradle.multiversion.excludeKotlinDefaultImpls
-import gg.essential.gradle.multiversion.mergePlatformSpecifics
 
 plugins {
     kotlin("jvm")
@@ -17,9 +16,16 @@ repositories {
 }
 
 dependencies {
-    api(project(":api:api-common"))
-    api(project(":api:api-server"))
-    api(project(":common"))
+    compileOnly(project(":common"))
+    listOf(
+        project(":api:api-common"),
+        project(":api:api-server"),
+        project(":common-integration"),
+        project(":common", "shadow")
+    ).forEach {
+        compileOnly(it)
+        shadowCommon(it) { isTransitive = false }
+    }
 
     if (platform.isFabric) {
         val fabricApiVersion = when (platform.mcVersion) {
@@ -56,11 +62,7 @@ tasks {
     }
 
     jar {
-        mergePlatformSpecifics()
-
-        if (platform.mcVersion >= 11400) {
-            excludeKotlinDefaultImpls()
-        }
+        excludeKotlinDefaultImpls()
     }
 
     shadowJar {

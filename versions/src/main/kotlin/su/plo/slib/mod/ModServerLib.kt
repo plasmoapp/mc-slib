@@ -17,8 +17,8 @@ import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.mod.channel.ModChannelManager
-import su.plo.slib.mod.chat.ServerComponentTextConverter
 import su.plo.slib.mod.command.ModCommandManager
 import su.plo.slib.mod.entity.ModServerEntity
 import su.plo.slib.mod.entity.ModServerPlayer
@@ -33,6 +33,10 @@ import kotlin.time.Duration.Companion.seconds
 
 object ModServerLib : McServerLib {
 
+    init {
+        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Log4jLogger(name) }
+    }
+
     lateinit var minecraftServer: MinecraftServer
 
     private val worldByInstance: MutableMap<ServerLevel, McServerWorld> = Maps.newConcurrentMap()
@@ -43,7 +47,7 @@ object ModServerLib : McServerLib {
     private val permissionSupplier = ModPermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
-    override val textConverter = ServerComponentTextConverter(serverTranslator)
+    override val textConverter = AdventureComponentTextConverter()
 
     override val commandManager = ModCommandManager(this)
     override val permissionManager = PermissionManager()
@@ -62,10 +66,6 @@ object ModServerLib : McServerLib {
         get() = minecraftServer.serverVersion
 
     override val configsFolder = File("config")
-
-    init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Log4jLogger(name) }
-    }
 
     override fun executeInMainThread(runnable: Runnable) {
         minecraftServer.execute(runnable)

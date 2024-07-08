@@ -1,5 +1,5 @@
 plugins {
-    id("com.github.johnrengelman.shadow")
+    id("su.plo.slib.shadow-platform")
 }
 
 dependencies {
@@ -8,23 +8,19 @@ dependencies {
     testCompileOnly(libs.minestom)
     testCompileOnly(libs.minestom.extension)
 
-    api(project(":api:api-common"))
-    api(project(":api:api-server"))
-    api(project(":common"))
+    compileOnly(project(":common"))
+    listOf(
+        project(":api:api-common"),
+        project(":api:api-server"),
+        project(":common-integration"),
+        project(":common", "shadow")
+    ).forEach {
+        api(it)
+        shadow(it) { isTransitive = false }
+    }
 }
 
 tasks {
-    shadowJar {
-        configurations = listOf(project.configurations.shadow.get())
-
-        archiveAppendix.set("")
-        archiveClassifier.set("")
-    }
-
-    build {
-        dependsOn.add(shadowJar)
-    }
-
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
     }

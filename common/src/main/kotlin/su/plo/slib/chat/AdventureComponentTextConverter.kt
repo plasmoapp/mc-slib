@@ -8,17 +8,28 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import net.kyori.adventure.translation.GlobalTranslator
+import net.kyori.adventure.translation.Translator
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.chat.component.McTranslatableText
 import su.plo.slib.api.chat.converter.ServerTextConverter
 import su.plo.slib.api.chat.style.McTextClickEvent
 import su.plo.slib.api.chat.style.McTextHoverEvent
 import su.plo.slib.api.chat.style.McTextStyle
-import su.plo.slib.api.language.ServerTranslator
 
-class AdventureComponentTextConverter(
-    serverTranslator: ServerTranslator
-) : ServerTextConverter<Component>(serverTranslator) {
+class AdventureComponentTextConverter : ServerTextConverter<Component> {
+
+    override fun convertToJson(language: String, text: McTextComponent): String {
+        val translatedComponent = convert(language, text)
+
+        return convertToJson(translatedComponent)
+    }
+
+    override fun convert(language: String, text: McTextComponent): Component {
+        val component = convert(text)
+
+        return GlobalTranslator.render(component, Translator.parseLocale(language)!!)
+    }
 
     override fun convertToJson(text: Component) =
         GsonComponentSerializer.gson().serialize(text)
@@ -95,9 +106,9 @@ class AdventureComponentTextConverter(
 
     private fun convertStyle(builder: Style.Builder, style: McTextStyle): Style.Builder {
         if (style.type === McTextStyle.Type.COLOR) {
-            builder.color(NamedTextColor.NAMES.value(style.name))
+            builder.color(NamedTextColor.NAMES.value(style.name.lowercase()))
         } else if (style.type === McTextStyle.Type.DECORATION) {
-            builder.decoration(TextDecoration.NAMES.value(style.name)!!, true)
+            builder.decoration(TextDecoration.NAMES.value(style.name.lowercase())!!, true)
         }
         return builder
     }

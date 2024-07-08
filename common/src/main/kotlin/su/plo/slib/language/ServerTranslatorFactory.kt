@@ -1,14 +1,11 @@
 package su.plo.slib.language
 
 import su.plo.slib.api.language.ServerTranslator
+import su.plo.slib.integration.IntegrationLoader
 
 object ServerTranslatorFactory {
 
     fun createTranslator(): ServerTranslator =
-        try {
-            Class.forName("net.kyori.adventure.translation.GlobalTranslator")
-            AdventureServerTranslator()
-        } catch (_: ClassNotFoundException) {
-            MapServerTranslator()
-        }
+        AdventureServerTranslator()
+            .also { IntegrationLoader.loadAdventureTranslator(it) }
 }

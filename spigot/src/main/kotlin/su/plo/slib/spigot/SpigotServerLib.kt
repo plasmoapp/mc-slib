@@ -2,6 +2,7 @@ package su.plo.slib.spigot
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Maps
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
@@ -20,12 +21,12 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.server.world.McServerWorld
+import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.JavaLogger
 import su.plo.slib.logging.Slf4jLogger
 import su.plo.slib.spigot.channel.RegisterChannelHandler
 import su.plo.slib.spigot.channel.SpigotChannelManager
-import su.plo.slib.spigot.chat.BaseComponentTextConverter
 import su.plo.slib.spigot.command.SpigotCommandManager
 import su.plo.slib.spigot.entity.SpigotServerEntity
 import su.plo.slib.spigot.entity.SpigotServerPlayer
@@ -35,11 +36,22 @@ import su.plo.slib.spigot.util.SchedulerUtil
 import su.plo.slib.spigot.world.SpigotServerWorld
 import java.io.File
 import java.util.*
-import java.util.logging.Logger
 
 class SpigotServerLib(
     private val loader: JavaPlugin
 ) : McServerLib, Listener {
+
+    init {
+        McLoggerFactory.supplier = McLoggerFactory.Supplier { name ->
+            try {
+                Class.forName("org.slf4j.LoggerFactory")
+                Slf4jLogger(name)
+            } catch (e: ClassNotFoundException) {
+                JavaLogger(name)
+                    .apply { parent = loader.logger.parent }
+            }
+        }
+    }
 
     private val worldByInstance: MutableMap<World, McServerWorld> = Maps.newConcurrentMap()
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
@@ -47,7 +59,7 @@ class SpigotServerLib(
     private val permissionSupplier = SpigotPermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
-    override val textConverter = BaseComponentTextConverter(serverTranslator)
+    override val textConverter = AdventureComponentTextConverter()
 
     override val commandManager = SpigotCommandManager(this)
     override val permissionManager = PermissionManager()
@@ -67,19 +79,11 @@ class SpigotServerLib(
 
     override val configsFolder: File = loader.dataFolder.parentFile
 
-    init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier { name ->
-            try {
-                Class.forName("org.slf4j.LoggerFactory")
-                Slf4jLogger(name)
-            } catch (e: ClassNotFoundException) {
-                JavaLogger(name)
-                    .apply { parent = loader.logger.parent }
-            }
-        }
-    }
+    lateinit var adventure: BukkitAudiences
 
     fun onInitialize() {
+        adventure = BukkitAudiences.create(loader)
+
         commandManager.registerCommands(loader)
         loader.server.pluginManager.registerEvents(RegisterChannelHandler(this), loader)
         loader.server.pluginManager.registerEvents(this, loader)
@@ -88,6 +92,7 @@ class SpigotServerLib(
     fun onShutdown() {
         commandManager.clear()
         permissionManager.clear()
+        adventure.close()
     }
 
     override fun executeInMainThread(runnable: Runnable) {

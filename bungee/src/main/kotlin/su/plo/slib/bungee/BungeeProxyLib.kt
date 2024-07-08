@@ -1,5 +1,6 @@
 package su.plo.slib.bungee
 
+import net.kyori.adventure.platform.bungeecord.BungeeAudiences
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.config.ServerInfo
 import net.md_5.bungee.api.connection.ProxiedPlayer
@@ -19,11 +20,11 @@ import su.plo.slib.api.proxy.event.player.McProxyServerConnectedEvent
 import su.plo.slib.api.proxy.player.McProxyPlayer
 import su.plo.slib.api.proxy.server.McProxyServerInfo
 import su.plo.slib.bungee.channel.BungeeChannelManager
-import su.plo.slib.bungee.chat.BaseComponentTextConverter
 import su.plo.slib.bungee.command.BungeeCommandManager
 import su.plo.slib.bungee.permission.BungeePermissionSupplier
 import su.plo.slib.bungee.player.BungeeProxyPlayer
 import su.plo.slib.bungee.server.BungeeProxyServerInfo
+import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.JavaLogger
 import java.io.File
@@ -34,6 +35,12 @@ class BungeeProxyLib(
     private val loader: Plugin
 ) : McProxyLib, Listener {
 
+    init {
+        McLoggerFactory.supplier = McLoggerFactory.Supplier {name ->
+            JavaLogger(name).apply { parent = loader.logger.parent }
+        }
+    }
+
     private val proxyServer = ProxyServer.getInstance()
 
     private val playerById: MutableMap<UUID, BungeeProxyPlayer> = ConcurrentHashMap()
@@ -42,7 +49,7 @@ class BungeeProxyLib(
     private val permissionSupplier = BungeePermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
-    override val textConverter = BaseComponentTextConverter(serverTranslator)
+    override val textConverter = AdventureComponentTextConverter()
 
     override val commandManager = BungeeCommandManager(this)
     override val permissionManager = PermissionManager()
@@ -59,11 +66,9 @@ class BungeeProxyLib(
 
     override val configsFolder = File("plugins")
 
-    init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier {name ->
-            JavaLogger(name).apply { parent = loader.logger.parent }
-        }
+    val adventure: BungeeAudiences = BungeeAudiences.create(loader)
 
+    init {
         loadServers()
 
         // register commands

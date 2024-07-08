@@ -2,15 +2,15 @@ package su.plo.slib.spigot.entity
 
 import org.bukkit.Location
 import org.bukkit.entity.LivingEntity
-import su.plo.slib.api.server.McServerLib
-import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.position.Pos3d
+import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.api.server.world.McServerWorld
+import su.plo.slib.spigot.SpigotServerLib
 import java.util.*
 
 open class SpigotServerEntity<E : LivingEntity>(
-    protected val minecraftServer: McServerLib,
+    protected val minecraftServer: SpigotServerLib,
     protected val instance: E
 ) : McServerEntity {
 

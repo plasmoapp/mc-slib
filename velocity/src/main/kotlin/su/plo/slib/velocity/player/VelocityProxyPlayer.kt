@@ -2,6 +2,7 @@ package su.plo.slib.velocity.player
 
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.proxy.McProxyLib
@@ -59,11 +60,17 @@ class VelocityProxyPlayer(
         }
 
     override fun sendMessage(text: McTextComponent) {
-        instance.sendMessage(minecraftProxy.textConverter().convert(this, text))
+        val json = minecraftProxy.textConverter.convertToJson(this, text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        instance.sendMessage(component)
     }
 
     override fun sendActionBar(text: McTextComponent) {
-        instance.sendActionBar(minecraftProxy.textConverter().convert(this, text))
+        val json = minecraftProxy.textConverter.convertToJson(this, text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        instance.sendActionBar(component)
     }
 
     override fun sendPacket(channel: String, data: ByteArray) {
@@ -71,7 +78,10 @@ class VelocityProxyPlayer(
     }
 
     override fun kick(reason: McTextComponent) {
-        instance.disconnect(minecraftProxy.textConverter().convert(this, reason))
+        val json = minecraftProxy.textConverter.convertToJson(this, reason)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        instance.disconnect(component)
     }
 
     override fun hasPermission(permission: String) =

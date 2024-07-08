@@ -41,6 +41,7 @@ file("api").listFilesOrdered {
 
 // Implementations
 include("common")
+include("common-integration")
 include("spigot")
 include("minestom")
 include("velocity")

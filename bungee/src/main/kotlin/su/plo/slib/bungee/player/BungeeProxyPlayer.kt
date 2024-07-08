@@ -1,19 +1,20 @@
 package su.plo.slib.bungee.player
 
-import net.md_5.bungee.api.ChatMessageType
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.connection.InitialHandler
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.entity.player.McGameProfile
-import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.player.McProxyPlayer
+import su.plo.slib.bungee.BungeeProxyLib
 import su.plo.slib.bungee.connection.BungeeProxyServerConnection
 import su.plo.slib.permission.PermissionSupplier
-import su.plo.slib.bungee.extension.textConverter
 import java.util.*
 
 class BungeeProxyPlayer(
-    private val minecraftProxy: McProxyLib,
+    private val minecraftProxy: BungeeProxyLib,
     private val permissions: PermissionSupplier,
     private val instance: ProxiedPlayer
 ) : McProxyPlayer {
@@ -64,19 +65,34 @@ class BungeeProxyPlayer(
             return field
         }
 
+    private val audience: Audience
+        get() = minecraftProxy.adventure.player(instance)
+
     override fun sendMessage(text: McTextComponent) {
-        instance.sendMessage(minecraftProxy.textConverter().convert(this, text))
+        val json = minecraftProxy.textConverter.convertToJson(text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        audience.sendMessage(component)
     }
 
     override fun sendActionBar(text: McTextComponent) {
-        instance.sendMessage(ChatMessageType.ACTION_BAR, minecraftProxy.textConverter().convert(this, text))
+        val json = minecraftProxy.textConverter.convertToJson(text)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        audience.sendActionBar(component)
     }
 
     override fun sendPacket(channel: String, data: ByteArray) =
         instance.sendData(channel, data)
 
-    override fun kick(reason: McTextComponent) =
-        instance.disconnect(minecraftProxy.textConverter().convert(this, reason))
+    override fun kick(reason: McTextComponent) {
+        val json = minecraftProxy.textConverter.convertToJson(reason)
+        val component = GsonComponentSerializer.gson().deserialize(json)
+
+        val textReason = LegacyComponentSerializer.legacySection().serialize(component)
+
+        instance.disconnect(textReason)
+    }
 
     override fun hasPermission(permission: String) =
         permissions.hasPermission(instance, permission)
