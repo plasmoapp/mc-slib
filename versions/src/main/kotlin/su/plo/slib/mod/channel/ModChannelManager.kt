@@ -165,7 +165,6 @@ class ModChannelManager : McServerChannelManager {
         //$$ private val codecs: MutableMap<ResourceLocation, ByteArrayCodec> = HashMap()
         //$$
         //$$ fun getOrRegisterCodec(channelKey: ResourceLocation): ByteArrayCodec = codecs.computeIfAbsent(channelKey) {
-        //$$     println("Register $channelKey")
         //$$     ByteArrayCodec(channelKey)
         //#if FABRIC
         //$$         .also {

@@ -26,6 +26,8 @@ dependencies {
 tasks {
     shadowJar {
         archiveClassifier = "all"
+
+        exclude("classpath.index")
         relocate("net.kyori", "su.plo.slib.libs.adventure")
     }
 }
