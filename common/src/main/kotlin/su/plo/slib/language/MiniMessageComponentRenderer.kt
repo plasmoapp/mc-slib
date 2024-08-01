@@ -24,6 +24,9 @@ object MiniMessageComponentRenderer {
             .hoverEvent(
                 component.hoverEvent()?.withRenderedValue(renderer, locale)
             )
+            .children(
+                component.children().map { renderer.render(it, locale) }
+            )
             .let { renderer.render(it, locale) }
 
     class ArgumentTagResolver(

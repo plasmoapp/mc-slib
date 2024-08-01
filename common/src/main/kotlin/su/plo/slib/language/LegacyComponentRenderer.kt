@@ -21,6 +21,9 @@ object LegacyComponentRenderer {
             .hoverEvent(
                 component.hoverEvent()?.withRenderedValue(renderer, locale)
             )
+            .children(
+                component.children().map { renderer.render(it, locale) }
+            )
             .let { translation ->
                 var index = 0
 
