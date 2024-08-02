@@ -11,11 +11,6 @@ interface ServerTranslator {
     var defaultLanguage: String
 
     /**
-     * Format used to parse components.
-     */
-    var format: ServerLanguageFormat
-
-    /**
      * Registers the translations for translatable components.
      */
     fun register(languageName: String, languageMap: Map<String, String>)

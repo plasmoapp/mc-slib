@@ -19,15 +19,69 @@ object MiniMessageComponentRenderer {
         locale: Locale,
         renderer: TranslatableComponentRenderer<Locale> = GlobalTranslator.renderer()
     ): Component =
-        MiniMessage.miniMessage().deserialize(miniMessageString, ArgumentTagResolver(component.args(), locale, renderer))
+        MiniMessage.miniMessage().deserialize(
+            miniMessageString
+                .let { convertLegacy(it) }
+                .let { convertArgsToTags(it) },
+            ArgumentTagResolver(component.args(), locale, renderer)
+        )
             .mergeStyle(component)
             .hoverEvent(
                 component.hoverEvent()?.withRenderedValue(renderer, locale)
             )
-            .children(
-                component.children().map { renderer.render(it, locale) }
-            )
+            .let { c ->
+                c.children(
+                    c.children() + component.children().map { renderer.render(it, locale) }
+                )
+            }
             .let { renderer.render(it, locale) }
+
+    private fun convertLegacy(miniMessageString: String, prefix: String = "&"): String =
+        miniMessageString
+            .replace("${prefix}0", "<black>")
+            .replace("${prefix}1", "<dark_blue>")
+            .replace("${prefix}2", "<dark_green>")
+            .replace("${prefix}3", "<dark_aqua>")
+            .replace("${prefix}4", "<dark_red>")
+            .replace("${prefix}5", "<dark_purple>")
+            .replace("${prefix}6", "<gold>")
+            .replace("${prefix}7", "<gray>")
+            .replace("${prefix}8", "<dark_gray>")
+            .replace("${prefix}9", "<blue>")
+            .replace("${prefix}a", "<green>")
+            .replace("${prefix}b", "<aqua>")
+            .replace("${prefix}c", "<red>")
+            .replace("${prefix}d", "<light_purple>")
+            .replace("${prefix}e", "<yellow>")
+            .replace("${prefix}f", "<white>")
+
+            .replace("${prefix}n", "<underlined>")
+            .replace("${prefix}m", "<strikethrough>")
+            .replace("${prefix}k", "<obfuscated>")
+            .replace("${prefix}o", "<italic>")
+            .replace("${prefix}l", "<bold>")
+            .replace("${prefix}r", "<reset>")
+
+            .replace(Regex("${prefix}#([0-9a-fA-F]{6})")) {
+                "<#${it.groupValues[1]}>"
+            }
+
+    private val stringFormatRegex = Regex("%(\\d+\\$)?[\\d.]*[a-zA-Z]")
+
+    private fun convertArgsToTags(miniMessageString: String): String {
+        var index = 0
+
+        return miniMessageString.replace(stringFormatRegex) { match ->
+            val position = match.groupValues[1]
+                .takeIf { it.isNotEmpty() }
+                ?.dropLast(1)
+                ?.toIntOrNull()
+                ?.minus(1)
+                ?: index++
+
+            "<argument:$position>"
+        }
+    }
 
     class ArgumentTagResolver(
         private val arguments: List<Component>,

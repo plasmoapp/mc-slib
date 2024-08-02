@@ -1,6 +1,5 @@
 package su.plo.slib.language
 
-import su.plo.slib.api.language.ServerLanguageFormat
 import su.plo.slib.api.language.ServerTranslator
 
 class MapServerTranslator : ServerTranslator {
@@ -10,8 +9,6 @@ class MapServerTranslator : ServerTranslator {
             languages.computeIfAbsent(value) { HashMap() }
             field = value
         }
-
-    override var format: ServerLanguageFormat = ServerLanguageFormat.LEGACY_AMPERSAND
 
     private val languages: MutableMap<String, MutableMap<String, String>> = hashMapOf(
         "en_us" to HashMap()
