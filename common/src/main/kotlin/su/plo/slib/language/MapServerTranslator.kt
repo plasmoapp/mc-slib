@@ -25,7 +25,7 @@ class MapServerTranslator : ServerTranslator {
 
     @Synchronized
     override fun getLanguage(languageName: String): Map<String, String> =
-        languages.getOrElse(languageName) {
-            languages[defaultLanguage] ?: throw IllegalStateException("Default language doesn't exist")
+        languages.getOrElse(languageName.lowercase()) {
+            languages[defaultLanguage.lowercase()] ?: throw IllegalStateException("Default language doesn't exist")
         }
 }
