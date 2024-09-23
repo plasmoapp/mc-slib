@@ -19,7 +19,9 @@ class AdventureTranslatorIntegration(
     init {
         try {
             GlobalTranslator.translator().addSource(this)
-        } catch (e: NoSuchMethodException) {
+        } catch (_: NoSuchMethodException) {
+            GlobalTranslator.get().addSource(this)
+        } catch (_: NoSuchMethodError) {
             GlobalTranslator.get().addSource(this)
         }
     }
