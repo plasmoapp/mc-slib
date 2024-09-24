@@ -1,6 +1,5 @@
 package su.plo.slib.mod.event
 
-import com.google.common.cache.CacheBuilder
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.MinecraftServer
@@ -57,7 +56,7 @@ class ModServerEvents private constructor() {
     //#if FABRIC
 
     init {
-        ServerLifecycleEvents.SERVER_STARTING.register { fireServerStarted(it) }
+        ServerLifecycleEvents.SERVER_STARTED.register { fireServerStarted(it) }
         ServerLifecycleEvents.SERVER_STOPPING.register { fireServerStopping(it) }
 
         ServerPlayConnectionEvents.JOIN.register { handler, _, _ -> firePlayerJoin(handler.player) }
