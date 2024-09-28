@@ -51,7 +51,6 @@ class ModChannelManager : McServerChannelManager {
     //$$ fun onRegisterPayloadHandlers(event: RegisterPayloadHandlersEvent) {
     //$$     val registrar = event.registrar("0").optional()
     //$$
-    //$$     println("Register codecs: $codecs")
     //$$     codecs.forEach { (channelKey, codec) ->
     //$$         registrar.playBidirectional(
     //$$             codec.type,
