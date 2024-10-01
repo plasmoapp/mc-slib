@@ -56,6 +56,9 @@ class ModServerEvents private constructor() {
     //#if FABRIC
 
     init {
+        ServerLifecycleEvents.SERVER_STARTING.register {
+            ModServerLib.minecraftServer = it
+        }
         ServerLifecycleEvents.SERVER_STARTED.register { fireServerStarted(it) }
         ServerLifecycleEvents.SERVER_STOPPING.register { fireServerStopping(it) }
 
