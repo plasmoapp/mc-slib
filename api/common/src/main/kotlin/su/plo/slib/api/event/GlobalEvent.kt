@@ -8,7 +8,7 @@ abstract class GlobalEvent<T> (
 ) {
     private val listeners: MutableSet<T> = CopyOnWriteArraySet()
 
-    var invoker = invokerSupplier.apply(listeners)
+    val invoker = invokerSupplier.apply(listeners)
 
     fun registerListener(listener: T) {
         if (listeners.add(listener)) invokerSupplier.apply(listeners)
