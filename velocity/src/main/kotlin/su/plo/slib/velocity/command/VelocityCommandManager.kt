@@ -19,7 +19,9 @@ class VelocityCommandManager(
     @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {
         val command = event.command
-        val commandAlias = command.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+        val commandAlias = command.split(" ")
+            .dropLastWhile { it.isEmpty() }
+            .getOrNull(0) ?: ""
 
         val commandSource = getCommandSource(event.commandSource)
         McProxyCommandExecuteEvent.invoker.onCommandExecute(commandSource, command)
