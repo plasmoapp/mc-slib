@@ -86,7 +86,7 @@ class BungeeProxyPlayer(
         instance.sendData(channel, data)
 
     override fun kick(reason: McTextComponent) {
-        val json = minecraftProxy.textConverter.convertToJson(reason)
+        val json = minecraftProxy.textConverter.convertToJson(this, reason)
         val component = GsonComponentSerializer.gson().deserialize(json)
 
         val textReason = LegacyComponentSerializer.legacySection().serialize(component)

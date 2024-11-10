@@ -88,7 +88,7 @@ class SpigotServerPlayer(
     }
 
     override fun kick(reason: McTextComponent) {
-        val json = minecraftServer.textConverter.convertToJson(reason)
+        val json = minecraftServer.textConverter.convertToJson(this, reason)
         val component = GsonComponentSerializer.gson().deserialize(json)
 
         val textReason = LegacyComponentSerializer.legacySection().serialize(component)
