@@ -21,9 +21,6 @@ class BungeePermissionSupplier(
     override fun getPermission(player: Any, permission: String): PermissionTristate {
         require(player is ProxiedPlayer) { "player is not " + ProxiedPlayer::class.java }
 
-        if (!player.permissions.contains(permission))
-            return PermissionTristate.UNDEFINED
-
         return PermissionTristate.fromBoolean(player.hasPermission(permission))
     }
 }
