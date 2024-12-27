@@ -14,6 +14,10 @@ class SpigotCommand(
 ) : Command(name) {
 
     override fun execute(sender: CommandSender, commandLabel: String, args: Array<String>): Boolean {
+        if (!isRegistered) {
+            return false
+        }
+
         val source = commandManager.getCommandSource(sender)
         if (!command.hasPermission(source, args)) {
             source.sendMessage(minecraftServer.permissionManager.noPermissionMessage)
@@ -30,9 +34,19 @@ class SpigotCommand(
         alias: String,
         args: Array<String>,
         location: Location?
-    ): List<String> =
-        command.suggest(commandManager.getCommandSource(sender), args)
+    ): List<String> {
+        if (!isRegistered) {
+            return super.tabComplete(sender, alias, args)
+        }
 
-    override fun testPermissionSilent(target: CommandSender): Boolean =
-        command.hasPermission(commandManager.getCommandSource(target), null)
+        return command.suggest(commandManager.getCommandSource(sender), args)
+    }
+
+    override fun testPermissionSilent(target: CommandSender): Boolean {
+        if (!isRegistered) {
+            return super.testPermissionSilent(target)
+        }
+
+        return command.hasPermission(commandManager.getCommandSource(target), null)
+    }
 }

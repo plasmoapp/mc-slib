@@ -92,7 +92,7 @@ class SpigotServerLib(
     }
 
     fun onShutdown() {
-        commandManager.clear()
+        commandManager.clear(loader)
         permissionManager.clear()
         adventure.close()
     }
