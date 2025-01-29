@@ -15,6 +15,11 @@ interface McServerEntity : McEntity {
     val world: McServerWorld
 
     /**
+     * Checks if entity is not removed from the world.
+     */
+    fun isValid(): Boolean
+
+    /**
      * Creates a new instance of [ServerPos3d] representing the entity's position.
      */
     fun getServerPosition(): ServerPos3d

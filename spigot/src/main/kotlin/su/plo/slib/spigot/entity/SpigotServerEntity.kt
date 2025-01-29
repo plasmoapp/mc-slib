@@ -37,6 +37,9 @@ open class SpigotServerEntity<E : LivingEntity>(
     override val world: McServerWorld
         get() = minecraftServer.getWorld(instance.world)
 
+    override fun isValid(): Boolean =
+        instance.isValid
+
     override fun getPosition() = getPosition(position)
 
     override fun getPosition(position: Pos3d): Pos3d {

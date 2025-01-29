@@ -35,6 +35,9 @@ open class ModServerEntity<E : Entity>(
     override val world: McServerWorld
         get() = minecraftServer.getWorld(instance.level())
 
+    override fun isValid(): Boolean =
+        instance.isAlive
+
     override fun getPosition(position: Pos3d): Pos3d {
         position.x = instance.position().x
         position.y = instance.position().y

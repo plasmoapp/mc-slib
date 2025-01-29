@@ -34,6 +34,9 @@ open class MinestomServerEntity<E : LivingEntity>(
     override val world: McServerWorld
         get() = minecraftServer.getWorld(instance.instance)
 
+    override fun isValid(): Boolean =
+        !instance.isRemoved
+
     override fun getPosition() = getPosition(position)
 
     override fun getPosition(position: Pos3d): Pos3d {
