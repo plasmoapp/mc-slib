@@ -25,6 +25,15 @@ interface McServerLib : McLib {
     fun executeInMainThread(runnable: Runnable)
 
     /**
+     * Gets a world by name.
+     *
+     * @param name The world name
+     * @return The world or null.
+     */
+    fun getWorld(name: String): McServerWorld? =
+        worlds.firstOrNull { it.name == name }
+
+    /**
      * Gets a world by server-specific instance.
      *
      * The [instance] parameter represents the server-specific server instance:
