@@ -34,7 +34,7 @@ package su.plo.slib.mod.mixinkt
 //$$             }
 //$$
 //$$             val channel = active.toString()
-//$$             if (ResourceLocation.isValidResourceLocation(channel)) {
+//$$             if (ResourceLocation.tryParse(channel) != null) {
 //$$                 channels.add(channel)
 //$$             }
 //$$
