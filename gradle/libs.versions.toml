@@ -16,7 +16,6 @@ velocity = "3.1.1"
 bungee = "1.19-R0.1-SNAPSHOT"
 
 minestom = "39d445482f"
-minestom-extensions = "1.2.0"
 
 adventure = "4.13.1"
 adventure-platform = "4.3.3"
@@ -37,7 +36,6 @@ bungee-api = { module = "net.md-5:bungeecord-api", version.ref = "bungee" }
 bungee-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungee" }
 
 minestom = { module = "net.minestom:minestom-snapshots", version.ref = "minestom" }
-minestom-extension = { module = "dev.hollowcube:minestom-ce-extensions", version.ref = "minestom-extensions" }
 
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }

@@ -8,7 +8,6 @@ import net.minestom.server.event.instance.InstanceUnregisterEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerPluginMessageEvent
 import net.minestom.server.event.player.PlayerSpawnEvent
-import net.minestom.server.extensions.Extension
 import net.minestom.server.instance.Instance
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerJoinEvent
@@ -37,7 +36,7 @@ import java.util.*
 import java.util.function.Consumer
 
 class MinestomServerLib(
-    private val extension: Extension
+    private val dataDirectory: File
 ) : McServerLib {
 
     init {
@@ -55,7 +54,7 @@ class MinestomServerLib(
 
     override val commandManager = MinestomCommandManager(this)
     override val permissionManager = PermissionManager()
-    override val channelManager = MinestomChannelManager(extension, this)
+    override val channelManager = MinestomChannelManager(this)
 
     override val worlds
         get() = MinecraftServer.getInstanceManager().instances.map(::getWorld)
@@ -69,15 +68,16 @@ class MinestomServerLib(
     override val version: String
         get() = MinecraftServer.VERSION_NAME
 
-    override val configsFolder: File = extension.dataDirectory.toFile()
+    override val configsFolder: File = dataDirectory
 
     fun onInitialize() {
         commandManager.registerCommands()
 
-        extension.eventNode.addListener(PlayerPluginMessageEvent::class.java, RegisterChannelHandler(this).pluginChannelRegisterFaker)
-        extension.eventNode.addListener(InstanceUnregisterEvent::class.java, instanceUnloadListener)
-        extension.eventNode.addListener(PlayerSpawnEvent::class.java, playerJoinListener)
-        extension.eventNode.addListener(PlayerDisconnectEvent::class.java, playerDisconnectListener)
+        var globalEventHandler = MinecraftServer.getGlobalEventHandler()
+        globalEventHandler.addListener(PlayerPluginMessageEvent::class.java, RegisterChannelHandler(this).pluginChannelRegisterFaker)
+        globalEventHandler.addListener(InstanceUnregisterEvent::class.java, instanceUnloadListener)
+        globalEventHandler.addListener(PlayerSpawnEvent::class.java, playerJoinListener)
+        globalEventHandler.addListener(PlayerDisconnectEvent::class.java, playerDisconnectListener)
     }
 
     fun onShutdown() {

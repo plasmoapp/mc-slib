@@ -2,15 +2,14 @@ package su.plo.slib.minestom.channel
 
 import com.google.common.collect.Multimaps
 import com.google.common.collect.SetMultimap
+import net.minestom.server.MinecraftServer
 import net.minestom.server.event.player.PlayerPluginMessageEvent
-import net.minestom.server.extensions.Extension
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.channel.McServerChannelHandler
 import su.plo.slib.api.server.channel.McServerChannelManager
 import java.util.function.Consumer
 
 class MinestomChannelManager(
-    extension: Extension,
     private val minecraftServer: McServerLib
 ) : McServerChannelManager {
 
@@ -53,6 +52,6 @@ class MinestomChannelManager(
     }
 
     init {
-        extension.eventNode.addListener(PlayerPluginMessageEvent::class.java, pluginChannelHandler)
+        MinecraftServer.getGlobalEventHandler().addListener(PlayerPluginMessageEvent::class.java, pluginChannelHandler)
     }
 }
