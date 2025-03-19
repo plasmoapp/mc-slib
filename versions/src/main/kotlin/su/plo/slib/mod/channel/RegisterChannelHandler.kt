@@ -35,6 +35,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl
 //#elseif NEOFORGE
 
 //$$ import io.netty.util.AttributeKey
+//$$ import net.minecraft.network.ConnectionProtocol
 //$$ import net.neoforged.bus.api.SubscribeEvent
 //$$ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 //$$ import net.neoforged.neoforge.network.registration.NetworkPayloadSetup
@@ -125,10 +126,11 @@ object RegisterChannelHandler
     //$$         .get()
     //$$         ?: return
     //$$
-    //$$     val channels = payloadSetup.channels
-    //$$         .takeIf { it.isNotEmpty() }
-    //$$         ?.map { it.toString() }
-    //$$         ?: return
+    //$$ val channels = ConnectionProtocol.entries
+    //$$     .flatMap { payloadSetup.getChannels(it).keys }
+    //$$     .takeIf { it.isNotEmpty() }
+    //$$     ?.map { it.toString() }
+    //$$     ?: return
     //$$
     //$$     firePlayerRegisterChannels(player, channels)
     //$$ }

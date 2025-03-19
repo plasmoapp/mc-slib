@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     compileOnly(project(":common"))
+    testCompileOnly(project(":common"))
     listOf(
         project(":api:api-common"),
         project(":api:api-server"),
@@ -24,6 +25,7 @@ dependencies {
         project(":common", "shadow")
     ).forEach {
         compileOnly(it)
+        testCompileOnly(it)
         shadowCommon(it) { isTransitive = false }
     }
 
@@ -40,10 +42,23 @@ dependencies {
             12006 -> "0.97.7+1.20.6"
             12100 -> "0.100.4+1.21"
             12102 -> "0.105.3+1.21.2"
+            12105 -> "0.119.1+1.21.5"
             else -> throw GradleException("Unsupported platform $platform")
         }
 
-        modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}")
+        fun fabricApiModules(vararg module: String) {
+            module.forEach {
+                modImplementation(fabricApi.module("fabric-$it", fabricApiVersion))
+            }
+        }
+
+        fabricApiModules("networking-api-v1", "lifecycle-events-v1")
+        if (platform.mcVersion >= 11900) {
+            fabricApiModules("command-api-v2")
+        } else {
+            fabricApiModules("command-api-v1")
+        }
+
         libs.fabric.permissions.also {
             modImplementation(it)
         }
