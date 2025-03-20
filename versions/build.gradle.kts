@@ -11,10 +11,6 @@ base.archivesName.set("slib-${platform.loaderStr}-${platform.mcVersionStr}")
 
 val shadowCommon by configurations.creating
 
-repositories {
-    maven("https://repo.essential.gg/repository/maven-public")
-}
-
 dependencies {
     compileOnly(project(":common"))
     testCompileOnly(project(":common"))

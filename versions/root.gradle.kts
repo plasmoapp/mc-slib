@@ -5,6 +5,7 @@ plugins {
 group = "$group.versions-root"
 
 preprocess {
+    strictExtraMappings.set(true)
 
     val fabric12105 = createNode("1.21.5-fabric", 12105, "official")
 
