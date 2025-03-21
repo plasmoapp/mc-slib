@@ -4,9 +4,6 @@ plugins {
 
 dependencies {
     compileOnly(libs.minestom)
-    compileOnly(libs.minestom.extension)
-    testCompileOnly(libs.minestom)
-    testCompileOnly(libs.minestom.extension)
 
     compileOnly(project(":common"))
     listOf(
