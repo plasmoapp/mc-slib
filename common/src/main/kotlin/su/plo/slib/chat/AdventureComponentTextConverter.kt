@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import net.kyori.adventure.text.serializer.json.JSONOptions
 import net.kyori.adventure.translation.GlobalTranslator
 import net.kyori.adventure.translation.Translator
 import su.plo.slib.api.chat.component.McTextComponent
@@ -18,6 +19,15 @@ import su.plo.slib.api.chat.style.McTextHoverEvent
 import su.plo.slib.api.chat.style.McTextStyle
 
 class AdventureComponentTextConverter : ServerTextConverter<Component> {
+
+    private val gsonComponentSerializer =
+        GsonComponentSerializer.gson()
+            .toBuilder()
+            .editOptions {
+                it.value(JSONOptions.EMIT_HOVER_EVENT_TYPE, JSONOptions.HoverEventValueMode.ALL)
+                    .value(JSONOptions.EMIT_CLICK_EVENT_TYPE, JSONOptions.ClickEventValueMode.BOTH)
+            }
+            .build()
 
     override fun convertToJson(language: String, text: McTextComponent): String {
         val translatedComponent = convert(language, text)
@@ -32,10 +42,10 @@ class AdventureComponentTextConverter : ServerTextConverter<Component> {
     }
 
     override fun convertToJson(text: Component) =
-        GsonComponentSerializer.gson().serialize(text)
+        gsonComponentSerializer.serialize(text)
 
     override fun convertFromJson(json: String) =
-        GsonComponentSerializer.gson().deserialize(json)
+        gsonComponentSerializer.deserialize(json)
 
     override fun convert(text: McTextComponent): Component {
         var component =
