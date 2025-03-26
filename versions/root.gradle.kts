@@ -8,6 +8,7 @@ preprocess {
     strictExtraMappings.set(true)
 
     val fabric12105 = createNode("1.21.5-fabric", 12105, "official")
+    val neoForge12105 = createNode("1.21.5-neoforge", 12105, "official")
 
     val fabric12102 = createNode("1.21.2-fabric", 12102, "official")
     val neoForge12102 = createNode("1.21.2-neoforge", 12102, "official")
@@ -43,6 +44,7 @@ preprocess {
     val forge11605 = createNode("1.16.5-forge", 11605, "official")
 
     fabric12105.link(fabric12102)
+    neoForge12105.link(neoForge12102)
 
     fabric12102.link(fabric12100)
     neoForge12102.link(neoForge12100)
