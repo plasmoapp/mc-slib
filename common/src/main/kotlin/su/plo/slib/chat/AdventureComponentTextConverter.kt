@@ -23,10 +23,7 @@ class AdventureComponentTextConverter : ServerTextConverter<Component> {
     private val gsonComponentSerializer =
         GsonComponentSerializer.gson()
             .toBuilder()
-            .editOptions {
-                it.value(JSONOptions.EMIT_HOVER_EVENT_TYPE, JSONOptions.HoverEventValueMode.ALL)
-                    .value(JSONOptions.EMIT_CLICK_EVENT_TYPE, JSONOptions.ClickEventValueMode.BOTH)
-            }
+            .editOptions { it.values(JSONOptions.compatibility()) }
             .build()
 
     override fun convertToJson(language: String, text: McTextComponent): String {
