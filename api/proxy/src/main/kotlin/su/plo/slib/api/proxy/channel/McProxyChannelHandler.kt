@@ -7,7 +7,7 @@ import su.plo.slib.api.proxy.connection.McProxyConnection
  *
  * Channel handlers can be registered using the [McProxyChannelHandler].
  */
-interface McProxyChannelHandler {
+fun interface McProxyChannelHandler {
 
     /**
      * Invoked when a message is received on the associated channel.

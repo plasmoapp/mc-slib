@@ -7,7 +7,7 @@ import su.plo.slib.api.server.entity.player.McServerPlayer
  *
  * Channel handlers can be registered using the [McServerChannelManager].
  */
-interface McServerChannelHandler {
+fun interface McServerChannelHandler {
 
     /**
      * Invoked when a message is received on the associated channel.
