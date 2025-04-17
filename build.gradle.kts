@@ -58,8 +58,8 @@ subprojects {
             }
 
             repositories {
-                maven("https://repo.plasmoverse.com/snapshots") {
-                    name = "plasmoverseSnapshots"
+                maven("https://repo.plasmoverse.com/releases") {
+                    name = "plasmoverseReleases"
 
                     credentials {
                         username = System.getenv("MAVEN_USERNAME")
