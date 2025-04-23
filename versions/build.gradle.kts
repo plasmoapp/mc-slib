@@ -80,6 +80,7 @@ tasks {
     shadowJar {
         configurations = listOf(shadowCommon)
 
+        mergeServiceFiles()
         exclude("META-INF/*.kotlin_module")
 
         if (platform.isForge) {
