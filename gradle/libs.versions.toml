@@ -17,8 +17,8 @@ bungee = "1.19-R0.1-SNAPSHOT"
 
 minestom = "39d445482f"
 
-adventure = "4.20.0+1.21.5-SNAPSHOT"
-adventure-platform = "4.3.5+1.21.5-SNAPSHOT"
+adventure = "4.21.0"
+adventure-platform = "4.4.0"
 fabric-permissions = "0.2-SNAPSHOT"
 
 [libraries]
@@ -37,12 +37,12 @@ bungee-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungee" }
 
 minestom = { module = "net.minestom:minestom-snapshots", version.ref = "minestom" }
 
-adventure-api = { module = "com.plasmoverse:adventure-api", version.ref = "adventure" }
-adventure-gson = { module = "com.plasmoverse:adventure-text-serializer-gson", version.ref = "adventure" }
-adventure-legacy = { module = "com.plasmoverse:adventure-text-serializer-legacy", version.ref = "adventure" }
-adventure-minimessage = { module = "com.plasmoverse:adventure-text-minimessage", version.ref = "adventure" }
-adventure-bukkit = { module = "com.plasmoverse:adventure-platform-bukkit", version.ref = "adventure-platform" }
-adventure-bungee = { module = "com.plasmoverse:adventure-platform-bungeecord", version.ref = "adventure-platform" }
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
+adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
+adventure-legacy = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure" }
+adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
+adventure-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform" }
+adventure-bungee = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 
 shadow = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
