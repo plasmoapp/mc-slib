@@ -1,33 +1,24 @@
 package su.plo.slib.spigot.command
 
-import net.kyori.adventure.audience.Audience
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.command.CommandSender
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.permission.PermissionTristate
 import su.plo.slib.spigot.SpigotServerLib
+import su.plo.slib.spigot.util.extension.sendActionBar
+import su.plo.slib.spigot.util.extension.sendMessage
 
 class SpigotDefaultCommandSource(
     private val minecraftServer: SpigotServerLib,
     private val source: CommandSender
 ) : McCommandSource {
 
-    private val audience: Audience
-        get() = minecraftServer.adventure.sender(source)
-
     override fun sendMessage(text: McTextComponent) {
-        val json = minecraftServer.textConverter.convertToJson(text)
-        val component = GsonComponentSerializer.gson().deserialize(json)
-
-        audience.sendMessage(component)
+        source.sendMessage(minecraftServer, text)
     }
 
     override fun sendActionBar(text: McTextComponent) {
-        val json = minecraftServer.textConverter.convertToJson(text)
-        val component = GsonComponentSerializer.gson().deserialize(json)
-
-        audience.sendActionBar(component)
+        source.sendActionBar(minecraftServer, text)
     }
 
     override val language: String

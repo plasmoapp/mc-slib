@@ -1,6 +1,5 @@
 package su.plo.slib.spigot.entity
 
-import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.GameMode
@@ -13,6 +12,8 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.permission.PermissionSupplier
 import su.plo.slib.spigot.SpigotServerLib
+import su.plo.slib.spigot.util.extension.sendActionBar
+import su.plo.slib.spigot.util.extension.sendMessage
 
 @Suppress("deprecation")
 class SpigotServerPlayer(
@@ -59,21 +60,12 @@ class SpigotServerPlayer(
             return field
         }
 
-    private val audience: Audience
-        get() = minecraftServer.adventure.player(instance)
-
     override fun sendMessage(text: McTextComponent) {
-        val json = minecraftServer.textConverter.convertToJson(text)
-        val component = GsonComponentSerializer.gson().deserialize(json)
-
-        audience.sendMessage(component)
+        instance.sendMessage(minecraftServer, text)
     }
 
     override fun sendActionBar(text: McTextComponent) {
-        val json = minecraftServer.textConverter.convertToJson(text)
-        val component = GsonComponentSerializer.gson().deserialize(json)
-
-        audience.sendActionBar(component)
+        instance.sendActionBar(minecraftServer, text)
     }
 
     override fun hasPermission(permission: String) =
