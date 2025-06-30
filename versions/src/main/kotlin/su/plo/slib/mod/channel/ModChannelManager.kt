@@ -52,6 +52,23 @@ class ModChannelManager : McServerChannelManager {
     //$$     val registrar = event.registrar("0").optional()
     //$$
     //$$     codecs.forEach { (channelKey, codec) ->
+    //#if MC>=12107
+    //$$         registrar.playBidirectional(
+    //$$             codec.type,
+    //$$             codec,
+    //$$             { payload, context ->
+    //$$                 val player = context.player() as? ServerPlayer ?: return@playBidirectional
+    //$$
+    //$$                 internalHandlers.get(channelKey)
+    //$$                       .forEach { channelHandler ->
+    //$$                           channelHandler.receive(player.toMcServerPlayer(), payload.data)
+    //$$                       }
+    //$$             },
+    //$$             { payload, context ->
+    //$$                 clientHandlers[channelKey]?.handle(payload, context)
+    //$$             }
+    //$$         )
+    //#else
     //$$         registrar.playBidirectional(
     //$$             codec.type,
     //$$             codec
@@ -67,6 +84,7 @@ class ModChannelManager : McServerChannelManager {
     //$$                     channelHandler.receive(player.toMcServerPlayer(), payload.data)
     //$$                 }
     //$$         }
+    //#endif
     //$$     }
     //$$ }
     //#endif
