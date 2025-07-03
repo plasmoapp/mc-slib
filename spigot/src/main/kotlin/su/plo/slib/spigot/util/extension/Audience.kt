@@ -66,17 +66,6 @@ private val nativeAudienceSendActionBarMethod = run {
 }
 
 fun CommandSender.sendMessage(minecraftServer: SpigotServerLib, text: McTextComponent) {
-    println(
-        listOf(
-            nativeComponentClass,
-            nativeAudienceSendMessageMethod,
-            nativeComponentDeserializeMethod,
-            nativeGsonGetterMethod,
-            nativeAudienceClass,
-            nativeGsonSerializerClass
-        )
-    )
-
     val json = minecraftServer.textConverter.convertToJson(text)
     if (
         nativeAudienceSendMessageMethod == null ||
