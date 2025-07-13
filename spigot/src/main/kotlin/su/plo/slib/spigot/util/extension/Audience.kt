@@ -1,5 +1,6 @@
 package su.plo.slib.spigot.util.extension
 
+import net.kyori.adventure.platform.bukkit.MinecraftComponentSerializer
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.command.CommandSender
 import su.plo.slib.api.chat.component.McTextComponent
@@ -68,6 +69,7 @@ private val nativeAudienceSendActionBarMethod = run {
 fun CommandSender.sendMessage(minecraftServer: SpigotServerLib, text: McTextComponent) {
     val json = minecraftServer.textConverter.convertToJson(text)
     if (
+        MinecraftComponentSerializer.isSupported() ||
         nativeAudienceSendMessageMethod == null ||
         nativeComponentDeserializeMethod == null ||
         nativeGsonGetterMethod == null ||
