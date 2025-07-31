@@ -20,6 +20,7 @@ import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
+import su.plo.slib.api.server.scheduler.McServerScheduler
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.integration.IntegrationLoader
@@ -33,6 +34,7 @@ import su.plo.slib.spigot.entity.SpigotServerEntity
 import su.plo.slib.spigot.entity.SpigotServerPlayer
 import su.plo.slib.spigot.extension.addChannel
 import su.plo.slib.spigot.permission.SpigotPermissionSupplier
+import su.plo.slib.spigot.scheduler.SpigotServerScheduler
 import su.plo.slib.spigot.util.SchedulerUtil
 import su.plo.slib.spigot.world.SpigotServerWorld
 import java.io.File
@@ -66,6 +68,8 @@ class SpigotServerLib(
     override val commandManager = SpigotCommandManager(this)
     override val permissionManager = PermissionManager()
     override val channelManager = SpigotChannelManager(loader, this)
+
+    override val scheduler: McServerScheduler = SpigotServerScheduler(loader)
 
     override val worlds
         get() = Bukkit.getWorlds().map(::getWorld)

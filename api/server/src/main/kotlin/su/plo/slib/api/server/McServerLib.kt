@@ -7,6 +7,7 @@ import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.entity.player.McServerPlayer
+import su.plo.slib.api.server.scheduler.McServerScheduler
 import su.plo.slib.api.server.world.McServerWorld
 import java.util.*
 
@@ -18,6 +19,11 @@ interface McServerLib : McLib {
      * @see McServerChannelManager
      */
     val channelManager: McServerChannelManager
+
+    /**
+     * Scheduler for executing tasks on the main thread.
+     */
+    val scheduler: McServerScheduler
 
     /**
      * Executes the task on the main thread.

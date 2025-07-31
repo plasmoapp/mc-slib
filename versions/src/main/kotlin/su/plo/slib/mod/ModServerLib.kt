@@ -17,6 +17,7 @@ import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.api.server.scheduler.McServerScheduler
 import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.mod.channel.ModChannelManager
@@ -26,6 +27,7 @@ import su.plo.slib.mod.entity.ModServerPlayer
 import su.plo.slib.mod.event.server.ServerStoppingEvent
 import su.plo.slib.mod.logging.Log4jLogger
 import su.plo.slib.mod.permission.ModPermissionSupplier
+import su.plo.slib.mod.scheduler.ModServerScheduler
 import su.plo.slib.mod.world.ModServerWorld
 import java.io.File
 import java.lang.Runnable
@@ -54,6 +56,8 @@ object ModServerLib : McServerLib {
     override val commandManager = ModCommandManager(this)
     override val permissionManager = PermissionManager()
     override val channelManager = ModChannelManager()
+
+    override val scheduler: McServerScheduler = ModServerScheduler()
 
     override val worlds
         get() = minecraftServer.allLevels.map { getWorld(it) }
