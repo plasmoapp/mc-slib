@@ -91,6 +91,7 @@ fun CommandSender.sendMessage(minecraftServer: SpigotServerLib, text: McTextComp
 fun CommandSender.sendActionBar(minecraftServer: SpigotServerLib, text: McTextComponent) {
     val json = minecraftServer.textConverter.convertToJson(text)
     if (
+        MinecraftComponentSerializer.isSupported() ||
         nativeAudienceSendActionBarMethod == null ||
         nativeComponentDeserializeMethod == null ||
         nativeGsonGetterMethod == null ||
