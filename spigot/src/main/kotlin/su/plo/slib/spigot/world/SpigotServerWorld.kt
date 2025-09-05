@@ -18,8 +18,12 @@ class SpigotServerWorld(
 
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
         val paperEntity = entity.getInstance<Entity>()
+
         loader.runSync(paperEntity) {
-            level.sendEntityGameEvent(paperEntity, gameEvent)
+            // because `sendGameEvent` can be invoked async
+            // entity's world can be different on the next thread tick
+            // so entity's world is used
+            paperEntity.world.sendEntityGameEvent(paperEntity, gameEvent)
         }
     }
 
