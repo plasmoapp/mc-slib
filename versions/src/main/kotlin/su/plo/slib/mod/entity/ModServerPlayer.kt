@@ -12,6 +12,7 @@ import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.mod.chat.ComponentTextConverter
 import su.plo.slib.mod.extension.getObjectiveBelowName
+import su.plo.slib.mod.extension.serverLevel
 import su.plo.slib.permission.PermissionSupplier
 
 //#if FABRIC
@@ -73,7 +74,7 @@ class ModServerPlayer(
         get() = instance.isDescending
 
     override val hasLabelScoreboard: Boolean
-        get() = instance.scoreboard.getObjectiveBelowName() != null
+        get() = instance.serverLevel().scoreboard.getObjectiveBelowName() != null
 
     override val isOnline: Boolean
         get() = !instance.hasDisconnected()

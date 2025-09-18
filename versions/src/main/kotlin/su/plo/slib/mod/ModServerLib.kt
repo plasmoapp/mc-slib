@@ -117,7 +117,9 @@ object ModServerLib : McServerLib {
     }
 
     override fun getGameProfile(playerId: UUID): McGameProfile? {
-        //#if MC>=11701
+        //#if MC>=12109
+        //$$ return minecraftServer.services().profileResolver.fetchById(playerId).orElse(null)?.let { convertGameProfile(it) }
+        //#elseif MC>=11701
         return minecraftServer.profileCache?.get(playerId)?.orElse(null)?.let { convertGameProfile(it) }
         //#else
         //$$ return minecraftServer.profileCache.get(playerId)?.let { convertGameProfile(it) }
@@ -125,7 +127,9 @@ object ModServerLib : McServerLib {
     }
 
     override fun getGameProfile(name: String): McGameProfile? {
-        //#if MC>=11701
+        //#if MC>=12109
+        //$$ return minecraftServer.services().profileResolver.fetchByName(name).orElse(null)?.let { convertGameProfile(it) }
+        //#elseif MC>=11701
         return minecraftServer.profileCache?.get(name)?.orElse(null)?.let { convertGameProfile(it) }
         //#else
         //$$ return minecraftServer.profileCache.get(name)?.let { convertGameProfile(it) }

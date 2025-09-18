@@ -24,7 +24,11 @@ class ModPermissionSupplier(
         require(player is ServerPlayer) { "player is not " + ServerPlayer::class.java }
 
         val permissionDefault = minecraftServerLib.permissionManager.getPermissionDefault(permission)
+        //#if MC>=12109
+        //$$ val isOp = minecraftServerLib.minecraftServer.playerList.isOp(player.nameAndId())
+        //#else
         val isOp = minecraftServerLib.minecraftServer.playerList.isOp(player.gameProfile)
+        //#endif
 
         return getPermission(player, permission).booleanValue(permissionDefault.getValue(isOp))
     }

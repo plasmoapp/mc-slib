@@ -7,6 +7,8 @@ group = "$group.versions-root"
 preprocess {
     strictExtraMappings.set(false)
 
+    val fabric12109 = createNode("1.21.9-fabric", 12109, "official")
+
     val neoForge12107 = createNode("1.21.7-neoforge", 12107, "official")
 
     val fabric12106 = createNode("1.21.6-fabric", 12106, "official")
@@ -47,6 +49,8 @@ preprocess {
 
     val fabric11605 = createNode("1.16.5-fabric", 11605, "official")
     val forge11605 = createNode("1.16.5-forge", 11605, "official")
+
+    fabric12109.link(fabric12106)
 
     neoForge12107.link(neoForge12106)
 
