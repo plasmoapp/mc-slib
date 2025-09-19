@@ -23,6 +23,12 @@ class AdventureServerTranslator : Translator, ServerTranslator {
             serverTranslator.defaultLanguage = value
         }
 
+    override var forcedLanguage: String?
+        get() = serverTranslator.forcedLanguage
+        set(value) {
+            serverTranslator.forcedLanguage = value
+        }
+
     override fun register(languageName: String, languageMap: Map<String, String>) {
         serverTranslator.register(languageName, languageMap)
     }

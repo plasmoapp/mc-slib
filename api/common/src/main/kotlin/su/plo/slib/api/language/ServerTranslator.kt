@@ -6,9 +6,14 @@ package su.plo.slib.api.language
 interface ServerTranslator {
 
     /**
-     * Default language used to translate components.
+     * Default language used when client's language doesn't exist.
      */
     var defaultLanguage: String
+
+    /**
+     * Translator will always use this specific [forcedLanguage] ignoring provided language name.
+     */
+    var forcedLanguage: String?
 
     /**
      * Registers the translations for translatable components.
