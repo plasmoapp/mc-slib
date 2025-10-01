@@ -28,7 +28,7 @@ jobs:
           cache-read-only: false
 
       - name: Build with Gradle
-        run: ./gradlew dokkaHtmlMultiModule
+        run: ./gradlew dokkaHtmlMultiModule --stacktrace
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
