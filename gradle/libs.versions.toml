@@ -19,7 +19,7 @@ minestom = "39d445482f"
 
 adventure = "4.21.0"
 adventure-platform = "4.4.0"
-fabric-permissions = "0.2-SNAPSHOT"
+fabric-permissions = "0.3.1"
 
 [libraries]
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
