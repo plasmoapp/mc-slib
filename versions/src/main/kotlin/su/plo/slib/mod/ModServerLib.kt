@@ -1,7 +1,6 @@
 package su.plo.slib.mod
 
 import com.google.common.collect.Maps
-import com.mojang.authlib.GameProfile
 import kotlinx.coroutines.*
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
@@ -34,6 +33,10 @@ import java.io.File
 import java.lang.Runnable
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
+
+//#if MC>=12109
+//$$ import com.mojang.authlib.GameProfile
+//#endif
 
 object ModServerLib : McServerLib {
 
@@ -119,7 +122,13 @@ object ModServerLib : McServerLib {
 
     override fun getGameProfile(playerId: UUID): McGameProfile? {
         //#if MC>=12109
-        //$$ return minecraftServer.services().profileResolver.fetchById(playerId).orElse(null)?.toMcGameProfile()
+        //$$ return minecraftServer.services().nameToIdCache.get(playerId)
+        //$$     .map {
+        //$$         minecraftServer.services().profileResolver.fetchById(playerId)
+        //$$             .orElse(GameProfile(it.id, it.name))
+        //$$     }
+        //$$     .map { it.toMcGameProfile() }
+        //$$     .orElse(null)
         //#elseif MC>=11701
         return minecraftServer.profileCache?.get(playerId)?.orElse(null)?.toMcGameProfile()
         //#else
@@ -129,7 +138,13 @@ object ModServerLib : McServerLib {
 
     override fun getGameProfile(name: String): McGameProfile? {
         //#if MC>=12109
-        //$$ return minecraftServer.services().profileResolver.fetchByName(name).orElse(null)?.toMcGameProfile()
+        //$$ return minecraftServer.services().nameToIdCache.get(name)
+        //$$     .map {
+        //$$         minecraftServer.services().profileResolver.fetchByName(name)
+        //$$             .orElse(GameProfile(it.id, it.name))
+        //$$     }
+        //$$     .map { it.toMcGameProfile() }
+        //$$     .orElse(null)
         //#elseif MC>=11701
         return minecraftServer.profileCache?.get(name)?.orElse(null)?.toMcGameProfile()
         //#else
