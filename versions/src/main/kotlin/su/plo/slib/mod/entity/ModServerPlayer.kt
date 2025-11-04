@@ -12,6 +12,7 @@ import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.mod.chat.ComponentTextConverter
 import su.plo.slib.mod.extension.getObjectiveBelowName
+import su.plo.slib.mod.extension.toMcGameProfile
 import su.plo.slib.mod.extension.serverLevel
 import su.plo.slib.permission.PermissionSupplier
 
@@ -62,7 +63,7 @@ class ModServerPlayer(
 ) : ModServerEntity<ServerPlayer>(minecraftServer, player), McServerPlayer {
 
     override val gameProfile: McGameProfile
-        get() = minecraftServer.getGameProfile(instance.uuid) ?: throw IllegalStateException("Game profile not found")
+        get() = instance.gameProfile.toMcGameProfile()
 
     override val name: String
         get() = instance.gameProfile.name

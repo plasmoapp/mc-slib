@@ -25,6 +25,7 @@ import su.plo.slib.mod.command.ModCommandManager
 import su.plo.slib.mod.entity.ModServerEntity
 import su.plo.slib.mod.entity.ModServerPlayer
 import su.plo.slib.mod.event.server.ServerStoppingEvent
+import su.plo.slib.mod.extension.toMcGameProfile
 import su.plo.slib.mod.logging.Log4jLogger
 import su.plo.slib.mod.permission.ModPermissionSupplier
 import su.plo.slib.mod.scheduler.ModServerScheduler
@@ -118,32 +119,22 @@ object ModServerLib : McServerLib {
 
     override fun getGameProfile(playerId: UUID): McGameProfile? {
         //#if MC>=12109
-        //$$ return minecraftServer.services().profileResolver.fetchById(playerId).orElse(null)?.let { convertGameProfile(it) }
+        //$$ return minecraftServer.services().profileResolver.fetchById(playerId).orElse(null)?.toMcGameProfile()
         //#elseif MC>=11701
-        return minecraftServer.profileCache?.get(playerId)?.orElse(null)?.let { convertGameProfile(it) }
+        return minecraftServer.profileCache?.get(playerId)?.orElse(null)?.toMcGameProfile()
         //#else
-        //$$ return minecraftServer.profileCache.get(playerId)?.let { convertGameProfile(it) }
+        //$$ return minecraftServer.profileCache.get(playerId)?.toMcGameProfile()
         //#endif
     }
 
     override fun getGameProfile(name: String): McGameProfile? {
         //#if MC>=12109
-        //$$ return minecraftServer.services().profileResolver.fetchByName(name).orElse(null)?.let { convertGameProfile(it) }
+        //$$ return minecraftServer.services().profileResolver.fetchByName(name).orElse(null)?.toMcGameProfile()
         //#elseif MC>=11701
-        return minecraftServer.profileCache?.get(name)?.orElse(null)?.let { convertGameProfile(it) }
+        return minecraftServer.profileCache?.get(name)?.orElse(null)?.toMcGameProfile()
         //#else
-        //$$ return minecraftServer.profileCache.get(name)?.let { convertGameProfile(it) }
+        //$$ return minecraftServer.profileCache.get(name)?.toMcGameProfile()
         //#endif
-    }
-
-    private fun convertGameProfile(gameProfile: GameProfile): McGameProfile {
-        return McGameProfile(
-            gameProfile.id,
-            gameProfile.name,
-            gameProfile.properties.values().map {
-                McGameProfile.Property(it.name, it.value, it.signature)
-            }
-        )
     }
 
     private fun worldsCleanupTick() {
