@@ -29,6 +29,10 @@ dependencies {
     }
 }
 
+repositories {
+    maven("https://repo.papermc.io/repository/maven-public/")
+}
+
 tasks {
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(8))
@@ -52,12 +56,6 @@ tasks {
 
     build {
         dependsOn(finalJar)
-    }
-
-    compileKotlin {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
     }
 }
 

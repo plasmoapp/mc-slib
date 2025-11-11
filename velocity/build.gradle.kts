@@ -18,14 +18,12 @@ dependencies {
     }
 }
 
+repositories {
+    maven("https://repo.papermc.io/repository/maven-public/")
+}
+
 tasks {
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(11))
-    }
-
-    compileKotlin {
-        kotlinOptions {
-            jvmTarget = "11"
-        }
     }
 }

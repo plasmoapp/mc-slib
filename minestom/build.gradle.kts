@@ -21,10 +21,4 @@ tasks {
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     }
-
-    compileKotlin {
-        kotlinOptions {
-            jvmTarget = "21"
-        }
-    }
 }

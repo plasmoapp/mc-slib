@@ -1,5 +1,3 @@
-import gg.essential.gradle.util.setJvmDefault
-
 plugins {
     idea
     `maven-publish`
@@ -7,11 +5,11 @@ plugins {
     kotlin("jvm") version(libs.versions.kotlin.get())
     alias(libs.plugins.dokka)
 
-    id("gg.essential.multi-version.root") apply(false)
+    alias(libs.plugins.architectury) apply false
 }
 
 subprojects {
-    if (project.buildFile.name.equals("root.gradle.kts")) return@subprojects
+    if (project in listOf(project(":modded"))) return@subprojects
 
     apply(plugin = "idea")
     apply(plugin = "maven-publish")
@@ -44,8 +42,11 @@ subprojects {
             filteringCharset = Charsets.UTF_8.name()
         }
 
-        compileKotlin {
-            setJvmDefault("all")
+        kotlin {
+            compilerOptions {
+                val key = "-Xjvm-default="
+                freeCompilerArgs.set(freeCompilerArgs.get().filterNot { it.startsWith(key) } + listOf(key + "all"))
+            }
         }
     }
 
@@ -58,6 +59,15 @@ subprojects {
             }
 
             repositories {
+                maven("https://repo.plasmoverse.com/snapshots") {
+                    name = "plasmoverseSnapshots"
+
+                    credentials {
+                        username = System.getenv("MAVEN_USERNAME")
+                        password = System.getenv("MAVEN_PASSWORD")
+                    }
+                }
+
                 maven("https://repo.plasmoverse.com/releases") {
                     name = "plasmoverseReleases"
 
@@ -76,12 +86,12 @@ allprojects {
         mavenLocal()
         mavenCentral()
 
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
+
         maven("https://repo.plasmoverse.com/snapshots")
         maven("https://repo.plo.su")
-        maven("https://oss.sonatype.org/content/repositories/snapshots")
-        maven("https://repo.papermc.io/repository/maven-public/")
+
         maven("https://jitpack.io/")
-        maven("https://maven.neoforged.net/releases")
     }
 }
 
