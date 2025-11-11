@@ -1,0 +1,20 @@
+{
+    "schemaVersion": 1,
+    "id": "slib",
+    "name": "slib",
+    "version": "${version}",
+    "environment": "*",
+    "authors": [
+        "Apehum"
+    ],
+    "mixins": [],
+    "depends": {
+        "fabricloader": "*"
+    },
+    "description": "slib",
+    "custom": {
+        "modmenu": {
+            "badges": [ "library" ]
+        }
+    }
+}

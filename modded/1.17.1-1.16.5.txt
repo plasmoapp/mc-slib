@@ -1,0 +1,11 @@
+net.minecraftforge.fmllegacy.network.NetworkDirection net.minecraftforge.fml.network.NetworkDirection
+net.minecraftforge.fmllegacy.network.NetworkEvent net.minecraftforge.fml.network.NetworkEvent
+net.minecraftforge.fmllegacy.network.NetworkRegistry net.minecraftforge.fml.network.NetworkRegistry
+net.minecraftforge.fmllegacy.network.event.EventNetworkChannel net.minecraftforge.fml.network.event.EventNetworkChannel
+
+net.minecraftforge.fmlserverevents.FMLServerStartedEvent net.minecraftforge.fml.event.server.FMLServerStartedEvent
+net.minecraftforge.fmlserverevents.FMLServerStoppingEvent net.minecraftforge.fml.event.server.FMLServerStoppingEvent
+
+# MixinServerGamePacketListenerImplKt
+packet.identifier packet.name
+packet.data packet.internalData

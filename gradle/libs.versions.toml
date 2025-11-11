@@ -3,6 +3,7 @@ kotlin = "2.0.21"
 kotlinx-coroutines = "1.7.3"
 dokka = "1.8.20"
 
+architectury = "1.13-SNAPSHOT"
 shadow = "8.1.1"
 asm = "9.6"
 
@@ -49,4 +50,5 @@ shadow = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
 asm = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 
 [plugins]
+architectury = { id = "dev.architectury.loom", version.ref = "architectury" }
 dokka  = { id = "org.jetbrains.dokka", version.ref = "dokka" }
