@@ -1,0 +1,3 @@
+net.minecraft.resources.ResourceLocation net.minecraft.resources.Identifier
+ResourceLocation Identifier
+dimension().location() dimension().identifier()

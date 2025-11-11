@@ -1,0 +1,7 @@
+net.minecraftforge.network.NetworkDirection net.minecraftforge.fmllegacy.network.NetworkDirection
+net.minecraftforge.network.NetworkEvent net.minecraftforge.fmllegacy.network.NetworkEvent
+net.minecraftforge.network.NetworkRegistry net.minecraftforge.fmllegacy.network.NetworkRegistry
+net.minecraftforge.network.event.EventNetworkChannel net.minecraftforge.fmllegacy.network.event.EventNetworkChannel
+
+net.minecraftforge.event.server.ServerStartedEvent net.minecraftforge.fmlserverevents.FMLServerStartedEvent
+net.minecraftforge.event.server.ServerStoppingEvent net.minecraftforge.fmlserverevents.FMLServerStoppingEvent

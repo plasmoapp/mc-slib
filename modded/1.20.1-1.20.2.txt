@@ -1,0 +1,7 @@
+net.minecraftforge.network.NetworkEvent net.minecraftforge.event.network.CustomPayloadEvent
+NetworkEvent CustomPayloadEvent
+net.minecraftforge.network.event.EventNetworkChannel net.minecraftforge.network.EventNetworkChannel
+
+net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
+net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket
+net.minecraft.network.protocol.game.ServerboundClientInformationPacket net.minecraft.server.level.ClientInformation
