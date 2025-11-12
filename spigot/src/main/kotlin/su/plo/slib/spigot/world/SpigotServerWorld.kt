@@ -27,6 +27,7 @@ class SpigotServerWorld(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T> getInstance() = level as T
 
     override fun equals(other: Any?) =

@@ -2,8 +2,8 @@ package su.plo.slib.bungee.player
 
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.md_5.bungee.api.connection.ProxiedPlayer
+import net.md_5.bungee.chat.ComponentSerializer
 import net.md_5.bungee.connection.InitialHandler
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.entity.player.McGameProfile
@@ -87,11 +87,9 @@ class BungeeProxyPlayer(
 
     override fun kick(reason: McTextComponent) {
         val json = minecraftProxy.textConverter.convertToJson(this, reason)
-        val component = GsonComponentSerializer.gson().deserialize(json)
+        val component = ComponentSerializer.deserialize(json)
 
-        val textReason = LegacyComponentSerializer.legacySection().serialize(component)
-
-        instance.disconnect(textReason)
+        instance.disconnect(component)
     }
 
     override fun hasPermission(permission: String) =

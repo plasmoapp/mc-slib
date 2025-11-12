@@ -15,7 +15,6 @@ import su.plo.slib.spigot.SpigotServerLib
 import su.plo.slib.spigot.util.extension.sendActionBar
 import su.plo.slib.spigot.util.extension.sendMessage
 
-@Suppress("deprecation")
 class SpigotServerPlayer(
     private val loader: JavaPlugin,
     minecraftServer: SpigotServerLib,
