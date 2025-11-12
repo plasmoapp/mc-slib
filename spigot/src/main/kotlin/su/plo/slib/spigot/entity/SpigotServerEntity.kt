@@ -64,6 +64,7 @@ open class SpigotServerEntity<E : LivingEntity>(
         return lookAngle
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T> getInstance() = instance as T
 
     override fun getServerPosition(): ServerPos3d {

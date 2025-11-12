@@ -9,13 +9,14 @@ class MinestomServerWorld(
     private val level: Instance
 ) : McServerWorld {
 
-    override val name: String = level.uniqueId.toString()
+    override val name: String = level.uuid.toString()
 
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
         // Minestom doesn't support this (yet)
         return
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T> getInstance() = level as T
 
     override fun equals(other: Any?) =

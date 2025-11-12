@@ -29,6 +29,7 @@ import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.JavaLogger
 import java.io.File
+import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -64,7 +65,7 @@ class BungeeProxyLib(
         get() = playerById.values
 
     override val port: Int
-        get() = proxyServer.config.listeners.first().host.port
+        get() = (proxyServer.config.listeners.first().socketAddress as? InetSocketAddress)?.port ?: 0
 
     override val configsFolder = File("plugins")
 
