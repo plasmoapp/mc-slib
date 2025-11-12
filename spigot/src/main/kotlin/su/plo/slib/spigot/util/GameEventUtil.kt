@@ -50,11 +50,12 @@ object GameEventUtil {
         gameEvents.computeIfAbsent(gameEventName) {
             val gameEventKey: NamespacedKey
             val split = gameEventName.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            gameEventKey = if (split.size == 2) {
-                NamespacedKey(split[0], split[1])
-            } else {
-                NamespacedKey("minecraft", gameEventName)
-            }
+            gameEventKey =
+                if (split.size == 2) {
+                    NamespacedKey.fromString(gameEventName)
+                } else {
+                    NamespacedKey.minecraft(gameEventName)
+                }!!
 
             val gameEventClass = Class.forName("org.bukkit.GameEvent")
             val gameEventByKeyMethod = gameEventClass.getMethod("getByKey", NamespacedKey::class.java)

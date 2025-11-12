@@ -17,6 +17,7 @@ class AdventureTranslatorIntegration(
 ) : Translator {
 
     init {
+        @Suppress("DEPRECATION")
         try {
             GlobalTranslator.translator().addSource(this)
         } catch (_: NoSuchMethodException) {

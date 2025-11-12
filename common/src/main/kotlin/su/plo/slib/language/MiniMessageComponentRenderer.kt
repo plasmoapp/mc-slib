@@ -9,7 +9,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.renderer.TranslatableComponentRenderer
 import net.kyori.adventure.translation.GlobalTranslator
-import java.util.*
+import java.util.Locale
 
 object MiniMessageComponentRenderer {
 
@@ -23,7 +23,16 @@ object MiniMessageComponentRenderer {
             miniMessageString
                 .let { convertLegacy(it) }
                 .let { convertArgsToTags(it) },
-            ArgumentTagResolver(component.args(), locale, renderer)
+            ArgumentTagResolver(
+                try {
+                    component.arguments().map { it.asComponent() }
+                } catch (_: ReflectiveOperationException) {
+                    @Suppress("DEPRECATION")
+                    component.args()
+                },
+                locale,
+                renderer,
+            )
         )
             .mergeStyle(component)
             .hoverEvent(

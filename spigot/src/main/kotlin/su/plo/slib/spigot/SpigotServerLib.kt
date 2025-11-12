@@ -143,6 +143,7 @@ class SpigotServerLib(
             .map(::getGameProfile)
             .orElse(null)
 
+    @Suppress("DEPRECATION")
     override fun getGameProfile(name: String): McGameProfile? =
         Optional.of(Bukkit.getServer().getOfflinePlayer(name))
             .filter { it.isOnline || it.hasPlayedBefore() }
