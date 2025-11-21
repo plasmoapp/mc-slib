@@ -36,7 +36,9 @@ class ServerPos3d @JvmOverloads constructor(
     var world: McServerWorld
         get() = worldReference.get()!!
         set(value) {
-            worldReference = WeakReference(value)
+            if (worldReference.get() != value) {
+                worldReference = WeakReference(value)
+            }
         }
 
     /**
