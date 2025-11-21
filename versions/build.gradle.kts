@@ -11,6 +11,17 @@ base.archivesName.set("slib-${platform.loaderStr}-${platform.mcVersionStr}")
 
 val shadowCommon by configurations.creating
 
+repositories {
+    maven {
+        name = "Maven for PR #2815" // https://github.com/neoforged/NeoForge/pull/2815
+        url = uri("https://prmaven.neoforged.net/NeoForge/pr2815")
+        content {
+            includeModule("net.neoforged", "neoforge")
+            includeModule("net.neoforged", "testframework")
+        }
+    }
+}
+
 dependencies {
     compileOnly(project(":common"))
     testCompileOnly(project(":common"))
@@ -41,6 +52,7 @@ dependencies {
             12105 -> "0.119.1+1.21.5"
             12106 -> "0.125.2+1.21.6"
             12109 -> "0.133.14+1.21.9"
+            12111 -> "0.139.1+1.21.11"
             else -> throw GradleException("Unsupported platform $platform")
         }
 
