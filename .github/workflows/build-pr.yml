@@ -36,4 +36,4 @@ jobs:
           cache-read-only: false
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build -Pmodded.versions_mode=ALL
