@@ -20,7 +20,7 @@ jobs:
       app_id: ${{ secrets.PLASMO_APP_ID }}
       app_private_key: ${{ secrets.PLASMO_APP_PRIVATE_KEY }}
     with:
-      gradle_publish_command: 'publishAllPublicationsToPlasmoverseSnapshotsRepository'
+      gradle_publish_command: 'publishAllPublicationsToPlasmoverseSnapshotsRepository -Pmodded.versions_mode=ALL'
       build_workflow_name: 'Build PR'
       artifact_group: 'su.plo.slib'
       artifact_id: '<module>'
