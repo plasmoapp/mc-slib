@@ -22,3 +22,5 @@ jobs:
     with:
       gradle_publish_command: 'publishAllPublicationsToPlasmoverseSnapshotsRepository'
       build_workflow_name: 'Build PR'
+      artifact_group: 'su.plo.slib'
+      artifact_id: '<module>'
