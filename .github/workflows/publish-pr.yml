@@ -15,7 +15,7 @@ on:
 
 jobs:
   publish-pr:
-    uses: plasmoapp/actions/.github/workflows/gradle-publish-pr.yml
+    uses: plasmoapp/actions/.github/workflows/gradle-publish-pr.yml@main
     secrets:
       app_id: ${{ secrets.PLASMO_APP_ID }}
       app_private_key: ${{ secrets.PLASMO_APP_PRIVATE_KEY }}
