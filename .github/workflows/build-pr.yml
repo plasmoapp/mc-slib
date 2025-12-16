@@ -1,17 +1,25 @@
-name: Publish
+name: Build PR
 
 on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
   push:
     branches:
-      - main
+      - 'feat/**'
+      - 'fix/**'
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Publish
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v5
+
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -28,7 +36,4 @@ jobs:
           cache-read-only: false
 
       - name: Build with Gradle
-        run: ./gradlew publishAllPublicationsToPlasmoverseReleasesRepository --stacktrace
-        env:
-          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+        run: ./gradlew build

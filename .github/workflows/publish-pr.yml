@@ -1,0 +1,24 @@
+name: Publish PR
+
+on:
+  pull_request_target:
+    types:
+      - opened
+  workflow_run:
+    workflows:
+      - 'Build PR'
+    types:
+      - completed
+  issue_comment:
+    types:
+      - edited
+
+jobs:
+  publish-pr:
+    uses: plasmoapp/actions/.github/workflows/gradle-publish-pr.yml
+    secrets:
+      app_id: ${{ secrets.PLASMO_APP_ID }}
+      app_private_key: ${{ secrets.PLASMO_APP_PRIVATE_KEY }}
+    with:
+      gradle_publish_command: 'publishAllPublicationsToPlasmoverseSnapshotsRepository'
+      build_workflow_name: 'Build PR'
