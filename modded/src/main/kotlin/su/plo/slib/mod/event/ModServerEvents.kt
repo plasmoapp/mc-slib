@@ -74,8 +74,8 @@ class ModServerEvents private constructor() {
     /^init {
         NeoForge.EVENT_BUS.register(this)
     //? if >=1.20.2 {
-        /^¹NeoForge.EVENT_BUS.register(RegisterChannelHandler)
-    ¹^///?}
+        NeoForge.EVENT_BUS.register(RegisterChannelHandler)
+    //?}
     }^///?} else {
     init {
         MinecraftForge.EVENT_BUS.register(this)
