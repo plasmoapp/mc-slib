@@ -14,7 +14,8 @@ LOGFILE=$(mktemp)
 FOUND_DIR=$(mktemp -d)
 trap "rm -rf $FOUND_DIR $LOGFILE" EXIT
 
-TIMEOUT=180
+TIMEOUT=${CI:+600}
+TIMEOUT=${TIMEOUT:-180}
 echo "Testing: $COMMAND"
 
 # Run server in background, write to file
