@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.utils.extendsFrom
+
 plugins {
     id("dev.architectury.loom")
     id("com.github.johnrengelman.shadow")
@@ -21,10 +23,48 @@ val javaVersion = when {
 }
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
+kotlin.jvmToolchain(javaVersion)
+tasks.runServer {
+    dependsOn(tasks.compileTestJava)
+    dependsOn(tasks.compileTestKotlin)
+    dependsOn(tasks.processTestResources)
+
+    javaLauncher = project.javaToolchains.launcherFor {
+        languageVersion = java.toolchain.languageVersion
+    }
+}
+
+// use gradle tasks
+loom.runs.forEach { it.ideConfigGenerated(false) }
 
 val shadowBundle: Configuration by configurations.creating {
     isCanBeResolved = true
     isCanBeConsumed = false
+}
+
+if (isFabric) {
+    tasks.runServer {
+        classpath += sourceSets.test.get().output
+    }
+}
+
+loom {
+    mods {
+        findByName("main")?.apply {
+            sourceSet(sourceSets.test.get())
+            mainResourceDirectory.set(sourceSets.test.get().output.resourcesDir)
+        }
+    }
+}
+
+if (isForge && stonecutter.eval(minecraftVersion, "<1.20.2")) {
+    loom.forge {
+        mixinConfig("slib-forge.mixins.json")
+    }
+}
+
+configurations {
+    loomDevelopmentDependencies.extendsFrom(implementation)
 }
 
 dependencies {
@@ -41,8 +81,12 @@ dependencies {
     ).forEach {
         compileOnly(it)
         testCompileOnly(it)
+        loomDevelopmentDependencies(it)
         shadowBundle(it) { isTransitive = false }
     }
+
+    testCompileOnly(testFixtures(project(":common-server")))
+    loomDevelopmentDependencies(testFixtures(project(":common-server")))
 
     if (isFabric) {
         modImplementation("net.fabricmc:fabric-loader:0.17.3")
@@ -63,7 +107,7 @@ dependencies {
         }
 
         libs.fabric.permissions.also {
-            modImplementation(it)
+            modImplementation(it) { isTransitive = false }
         }
     } else if (isNeoForge) {
         "neoForge"("net.neoforged:neoforge:${property("deps.neoforge")}")
@@ -95,6 +139,36 @@ tasks {
             "mcVersion" to minecraftVersion,
             "loader" to platform
         )
+    }
+
+    runServer {
+        doFirst {
+            val runDirectory = workingDir.resolve("run")
+            runDirectory.mkdirs()
+
+            val eulaFile = runDirectory.resolve("eula.txt")
+            if (!eulaFile.exists() || eulaFile.readText().contains("eula=false")) {
+                eulaFile.writeText("eula=true")
+            }
+        }
+    }
+}
+
+if (isForge && stonecutter.eval(minecraftVersion, ">1.20.3")) {
+    // https://github.com/architectury/architectury-loom/issues/191#issuecomment-2030567486
+    afterEvaluate {
+        tasks.runServer {
+            classpath = classpath.filter {
+                !it.toString().contains("org.lwjgl") && !it.toString().contains("fabric-log4j-util")
+            }
+        }
+    }
+
+    // https://github.com/architectury/architectury-loom/issues/191#issuecomment-2613841899
+    configurations.configureEach {
+        resolutionStrategy {
+            force("net.sf.jopt-simple:jopt-simple:5.0.4")
+        }
     }
 }
 
@@ -138,6 +212,7 @@ tasks {
                 exclude("slib-forge.mixins.json")
             }
         } else if (isNeoForge) {
+            exclude("fabric.mod.json")
             exclude("slib-forge.mixins.json")
             exclude("slib.mixins.json")
 

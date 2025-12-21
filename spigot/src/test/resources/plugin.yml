@@ -1,0 +1,4 @@
+name: slib-spigot-test
+version: dev
+main: su.plo.slib.spigot.SpigotPlugin
+api-version: "1.16"

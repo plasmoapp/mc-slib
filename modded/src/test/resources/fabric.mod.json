@@ -1,0 +1,20 @@
+{
+    "schemaVersion": 1,
+    "id": "slib_test_mod",
+    "name": "slib_test_mod",
+    "description": "slib_test_mod",
+    "version": "${version}",
+    "environment": "*",
+    "authors": [
+        "Apehum"
+    ],
+    "mixins": [
+        "slib.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": "*"
+    },
+    "entrypoints": {
+        "main": ["su.plo.slib.mod.TestFabricMod"]
+    }
+}

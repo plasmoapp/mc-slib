@@ -1,0 +1,25 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+
+[[mods]]
+modId = "slib_test_mod"
+version = "1.0.0"
+displayName = "slib_test_mod"
+description = '''slib_test_mod'''
+authors = ""
+logoFile = "icon.png"
+
+[[dependencies.slib_test_mod]]
+modId = "forge"
+mandatory = true
+ordering = "NONE"
+side = "BOTH"
+versionRange = "[1,)"
+
+[[dependencies.slib_test_mod]]
+modId = "minecraft"
+mandatory = true
+ordering = "NONE"
+side = "BOTH"
+versionRange = "[1,)"

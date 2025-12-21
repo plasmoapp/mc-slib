@@ -117,11 +117,11 @@ object RegisterChannelHandler
             .get()
             ?: return
 
-    val channels = ConnectionProtocol.entries
-        .flatMap { payloadSetup.getChannels(it).keys }
-        .takeIf { it.isNotEmpty() }
-        ?.map { it.toString() }
-        ?: return
+        val channels = ConnectionProtocol.entries
+            .flatMap { payloadSetup.getChannels(it).keys }
+            .takeIf { it.isNotEmpty() }
+            ?.map { it.toString() }
+            ?: return
 
         firePlayerRegisterChannels(player, channels)
     }

@@ -2,6 +2,7 @@
 kotlin = "2.0.21"
 kotlinx-coroutines = "1.7.3"
 dokka = "1.8.20"
+runpaper = "3.0.2"
 
 architectury = "1.13-SNAPSHOT"
 shadow = "8.1.1"
@@ -10,6 +11,7 @@ asm = "9.6"
 annotations = "23.0.0"
 guava = "33.3.1-jre"
 slf4j = "1.7.30"
+semver4j = "6.0.0"
 
 spigot = "1.16.5-R0.1-SNAPSHOT"
 folia = "1.20.1-R0.1-SNAPSHOT"
@@ -29,6 +31,7 @@ kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-j
 annotations  = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 guava        = { module = "com.google.guava:guava", version.ref = "guava" }
 slf4j        = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+semver4j     = { module = "org.semver4j:semver4j", version.ref = "semver4j" }
 
 spigot = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
 folia = { module = "dev.folia:folia-api", version.ref = "folia" }
@@ -52,3 +55,4 @@ asm = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 [plugins]
 architectury = { id = "dev.architectury.loom", version.ref = "architectury" }
 dokka  = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+runpaper = { id = "xyz.jpenilla.run-paper", version.ref = "runpaper"}

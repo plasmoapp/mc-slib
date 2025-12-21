@@ -1,0 +1,24 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+license = "MIT"
+
+[[mixins]]
+config="slib-neoforge.mixins.json"
+
+[[mods]]
+modId = "slib_test_mod"
+version = "1.0.0"
+displayName = "slib_test_mod"
+description = '''slib_test_mod'''
+authors = ""
+logoFile = "icon.png"
+
+[[dependencies.slib_test_mod]]
+modId = "neoforge"
+type = "required"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.slib_test_mod]]
+modId = "minecraft"
+type = "required"
