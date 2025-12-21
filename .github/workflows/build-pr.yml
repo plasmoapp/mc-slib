@@ -32,6 +32,7 @@ jobs:
           path: |
             ~/.gradle/caches/modules-2
             ~/.gradle/caches/jars-*
+            ~/.gradle/caches/fabric-loom
             ~/.gradle/wrapper
             **/loom-cache
           key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml', '**/gradle-wrapper.properties') }}
@@ -80,6 +81,7 @@ jobs:
           path: |
             ~/.gradle/caches/modules-2
             ~/.gradle/caches/jars-*
+            ~/.gradle/caches/fabric-loom
             ~/.gradle/wrapper
             **/loom-cache
           key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml', '**/gradle-wrapper.properties') }}
@@ -119,6 +121,7 @@ jobs:
           path: |
             ~/.gradle/caches/modules-2
             ~/.gradle/caches/jars-*
+            ~/.gradle/caches/fabric-loom
             ~/.gradle/wrapper
             **/loom-cache
           key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml', '**/gradle-wrapper.properties') }}
