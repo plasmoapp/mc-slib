@@ -25,7 +25,7 @@ class TestForgeMod {
     init {
         FMLJavaModLoadingContext.get().modEventBus.register(this)
         //? if >=1.20.5 {
-        /^ModChannelManager.getOrRegisterCodec(TestMod.channelKey)
+        /^ModChannelManager.getOrRegisterCodec(channelKey)
         ^///?}
     }
 
