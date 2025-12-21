@@ -81,6 +81,16 @@ jobs:
         with:
           cache-read-only: false
 
+      - name: Setup Gradle loom cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            **/loom-cache
+          key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml') }}
+          restore-keys: |
+            gradle-caches-${{ hashFiles('**/*.gradle*') }}
+            gradle-caches-
+
       - name: Run smoke test
         run: ./scripts/smoke-test-server.sh modded:${{ matrix.version }}:runServer -Pmodded.versions_dev=${{ matrix.version }}
 
@@ -111,6 +121,16 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
+
+      - name: Setup Gradle loom cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            **/loom-cache
+          key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml') }}
+          restore-keys: |
+            gradle-caches-${{ hashFiles('**/*.gradle*') }}
+            gradle-caches-
 
       - name: Run smoke test
         run: ./scripts/smoke-test-server.sh spigot:runServer -Pspigot.run_minecraft_version=${{ matrix.version }}
