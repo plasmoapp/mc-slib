@@ -26,17 +26,14 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          cache-read-only: false
-
-      - name: Setup Gradle loom cache
+      - name: Setup Gradle cache
         uses: actions/cache@v5
         with:
           path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
             **/loom-cache
-          key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml') }}
+          key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-caches-${{ hashFiles('**/*.gradle*') }}
             gradle-caches-
@@ -76,17 +73,14 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          cache-read-only: false
-
-      - name: Setup Gradle loom cache
+      - name: Setup Gradle cache
         uses: actions/cache@v5
         with:
           path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
             **/loom-cache
-          key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml') }}
+          key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-caches-${{ hashFiles('**/*.gradle*') }}
             gradle-caches-
@@ -117,17 +111,14 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          cache-read-only: false
-
-      - name: Setup Gradle loom cache
+      - name: Setup Gradle cache
         uses: actions/cache@v5
         with:
           path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
             **/loom-cache
-          key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml') }}
+          key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-caches-${{ hashFiles('**/*.gradle*') }}
             gradle-caches-
