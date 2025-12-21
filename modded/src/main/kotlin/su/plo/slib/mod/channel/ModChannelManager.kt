@@ -117,7 +117,7 @@ class ModChannelManager : McServerChannelManager {
         /*val forgeChannel = channels.computeIfAbsent(channelKey) {
             ChannelBuilder.named(channelKey)
         //? if >=1.20.2 {
-        /^        .optional()
+                /^.optional()
         ^///?} else {
                 .networkProtocolVersion { NetworkRegistry.ACCEPTVANILLA }
                 .clientAcceptedVersions(NetworkRegistry.acceptMissingOr(NetworkRegistry.ACCEPTVANILLA))
@@ -128,13 +128,13 @@ class ModChannelManager : McServerChannelManager {
 
         forgeChannel.addListener<NetworkEvent> { event ->
         //? if >=1.20.2 {
-        /^    val context = event.source
+            /^val context = event.source
         ^///?} else {
             val context = event.source.get()
         //?}
         if (
         //? if >=1.20.5 {
-        /^    context.isClientSide ||
+            /^context.isClientSide ||
         ^///?} else {
             context.direction != NetworkDirection.PLAY_TO_SERVER ||
         //?}

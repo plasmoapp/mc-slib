@@ -5,6 +5,8 @@ plugins {
 dependencies {
     implementation(libs.shadow)
     implementation(libs.asm)
+
+    implementation(libs.semver4j)
 }
 
 repositories {
