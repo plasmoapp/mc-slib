@@ -30,7 +30,8 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            ~/.gradle/caches
+            ~/.gradle/caches/modules-2
+            ~/.gradle/caches/jars-*
             ~/.gradle/wrapper
             **/loom-cache
           key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml', '**/gradle-wrapper.properties') }}
@@ -77,7 +78,8 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            ~/.gradle/caches
+            ~/.gradle/caches/modules-2
+            ~/.gradle/caches/jars-*
             ~/.gradle/wrapper
             **/loom-cache
           key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml', '**/gradle-wrapper.properties') }}
@@ -115,7 +117,8 @@ jobs:
         uses: actions/cache@v5
         with:
           path: |
-            ~/.gradle/caches
+            ~/.gradle/caches/modules-2
+            ~/.gradle/caches/jars-*
             ~/.gradle/wrapper
             **/loom-cache
           key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml', '**/gradle-wrapper.properties') }}
