@@ -28,7 +28,7 @@ jobs:
           cache-read-only: false
 
       - name: Build with Gradle
-        run: ./gradlew publishAllPublicationsToPlasmoverseReleasesRepository --stacktrace
+        run: ./gradlew publishAllPublicationsToPlasmoverseReleasesRepository -Pmodded.versions_mode=ALL --stacktrace
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
