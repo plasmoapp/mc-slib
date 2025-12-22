@@ -50,49 +50,52 @@ include("velocity")
 include("bungee")
 
 // Modded
-stonecutter {
-    centralScript = "build.gradle.kts"
-
-    create("modded") {
-        fun mc(mcVersion: String, vararg loaders: String) =
-            loaders.forEach { version("$mcVersion-$it", mcVersion) }
-
-        val configureVersions = providers.gradleProperty("modded.versions_mode").getOrElse("DEVELOPMENT")
-            .let { ConfigureVersions.valueOf(it) }
-
-        vcsVersion = "1.19.3-fabric"
-        mc("1.19.3", "fabric", "forge")
-
-        if (configureVersions == ConfigureVersions.ALL) {
-            mc("1.16.5", "fabric", "forge")
-            mc("1.17.1", "fabric", "forge")
-            mc("1.18.2", "fabric", "forge")
-            mc("1.19.2", "fabric", "forge")
-            mc("1.20.1", "fabric", "forge")
-            mc("1.20.2", "fabric", "forge")
-            mc("1.20.4", "fabric", "forge")
-            mc("1.20.6", "fabric")
-            mc("1.21", "fabric", "forge", "neoforge")
-            mc("1.21.2", "fabric", "neoforge")
-            mc("1.21.5", "fabric", "neoforge")
-            mc("1.21.6", "fabric", "neoforge")
-            mc("1.21.7", "neoforge")
-            mc("1.21.9", "fabric", "neoforge")
-            mc("1.21.11", "fabric", "neoforge")
-        } else {
-            val developmentVersions = providers.gradleProperty("modded.versions_dev").getOrElse("")
-                .split(",")
-                .filter { it.isNotBlank() }
-                .map { it.split("-") }
-
-            developmentVersions.forEach { version ->
-                mc(version[0], version[1])
-            }
-        }
-    }
-}
-
 enum class ConfigureVersions {
     ALL,
     DEVELOPMENT,
+    NONE,
+}
+
+val configureVersions = providers.gradleProperty("modded.versions_mode").getOrElse("DEVELOPMENT")
+    .let { ConfigureVersions.valueOf(it) }
+
+if (configureVersions != ConfigureVersions.NONE) {
+    stonecutter {
+        centralScript = "build.gradle.kts"
+
+        create("modded") {
+            fun mc(mcVersion: String, vararg loaders: String) =
+                loaders.forEach { version("$mcVersion-$it", mcVersion) }
+
+            vcsVersion = "1.19.3-fabric"
+            mc("1.19.3", "fabric", "forge")
+
+            if (configureVersions == ConfigureVersions.ALL) {
+                mc("1.16.5", "fabric", "forge")
+                mc("1.17.1", "fabric", "forge")
+                mc("1.18.2", "fabric", "forge")
+                mc("1.19.2", "fabric", "forge")
+                mc("1.20.1", "fabric", "forge")
+                mc("1.20.2", "fabric", "forge")
+                mc("1.20.4", "fabric", "forge")
+                mc("1.20.6", "fabric")
+                mc("1.21", "fabric", "forge", "neoforge")
+                mc("1.21.2", "fabric", "neoforge")
+                mc("1.21.5", "fabric", "neoforge")
+                mc("1.21.6", "fabric", "neoforge")
+                mc("1.21.7", "neoforge")
+                mc("1.21.9", "fabric", "neoforge")
+                mc("1.21.11", "fabric", "neoforge")
+            } else {
+                val developmentVersions = providers.gradleProperty("modded.versions_dev").getOrElse("")
+                    .split(",")
+                    .filter { it.isNotBlank() }
+                    .map { it.split("-") }
+
+                developmentVersions.forEach { version ->
+                    mc(version[0], version[1])
+                }
+            }
+        }
+    }
 }

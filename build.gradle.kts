@@ -9,7 +9,7 @@ plugins {
 }
 
 subprojects {
-    if (project in listOf(project(":modded"))) return@subprojects
+    if (project.path in listOf(":modded")) return@subprojects
 
     apply(plugin = "idea")
     apply(plugin = "maven-publish")
