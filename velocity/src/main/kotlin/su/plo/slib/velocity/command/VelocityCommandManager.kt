@@ -1,20 +1,25 @@
 package su.plo.slib.velocity.command
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
+import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
-import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierContext
+import su.plo.slib.api.entity.McEntity
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.command.McProxyCommand
 import su.plo.slib.api.proxy.event.command.McProxyCommandExecuteEvent
+import su.plo.slib.command.AbstractCommandManager
 import su.plo.slib.velocity.extension.textConverter
 
 class VelocityCommandManager(
     private val minecraftProxy: McProxyLib
-) : McCommandManager<McProxyCommand>() {
+) : AbstractCommandManager<McProxyCommand>() {
 
     @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {
@@ -40,6 +45,12 @@ class VelocityCommandManager(
         }
     }
 
+    override fun <S> getBrigadierContext(context: CommandContext<S>): McBrigadierContext {
+        val source = context.source as CommandSource
+
+        return BrigadierContext(getCommandSource(source))
+    }
+
     override fun getCommandSource(source: Any): McCommandSource {
         if (source !is CommandSource)
             throw IllegalArgumentException("source is not " + CommandSource::class.java)
@@ -51,11 +62,22 @@ class VelocityCommandManager(
 
     @Synchronized
     fun registerCommands(proxyServer: ProxyServer) {
-        commandByName.forEach { (name, command) ->
-            // todo: group commands and use aliases?
+        registerCommands { name, command ->
             val velocityCommand = VelocityCommand(minecraftProxy, this, command)
             proxyServer.commandManager.register(name, velocityCommand)
         }
+
+        registerBrigadierCommands { command ->
+            @Suppress("UNCHECKED_CAST")
+            val brigadierCommand = BrigadierCommand(command as LiteralArgumentBuilder<CommandSource>)
+            proxyServer.commandManager.register(brigadierCommand)
+        }
+
         registered = true
     }
+
+    private data class BrigadierContext(
+        override val source: McCommandSource,
+        override val executor: McEntity? = null,
+    ) : McBrigadierContext
 }

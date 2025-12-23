@@ -23,8 +23,8 @@ import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.Slf4jLogger
-import su.plo.slib.minestom.channel.RegisterChannelHandler
 import su.plo.slib.minestom.channel.MinestomChannelManager
+import su.plo.slib.minestom.channel.RegisterChannelHandler
 import su.plo.slib.minestom.command.MinestomCommandManager
 import su.plo.slib.minestom.entity.MinestomServerEntity
 import su.plo.slib.minestom.entity.MinestomServerPlayer
@@ -34,7 +34,7 @@ import su.plo.slib.minestom.world.MinestomServerWorld
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.util.*
+import java.util.UUID
 import java.util.function.Consumer
 
 class MinestomServerLib(
@@ -43,6 +43,7 @@ class MinestomServerLib(
 
     init {
         McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
+        instance = this
     }
 
     private val worldByInstance: MutableMap<Instance, McServerWorld> = Maps.newConcurrentMap()
@@ -176,5 +177,9 @@ class MinestomServerLib(
                 getPlayerByInstance(event.player)
         )
         playerById.remove(event.player.uuid)
+    }
+
+    companion object {
+        lateinit var instance: MinestomServerLib
     }
 }

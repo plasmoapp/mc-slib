@@ -1,0 +1,3 @@
+name: slib-bungee-test
+version: dev
+main: su.plo.slib.bungee.TestBungeePlugin

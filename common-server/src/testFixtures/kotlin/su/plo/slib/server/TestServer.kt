@@ -1,18 +1,23 @@
 package su.plo.slib.server
 
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.McServerLib
+import su.plo.slib.api.server.command.brigadier.McArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.api.server.event.player.McPlayerRegisterChannelsEvent
 
 class TestServer(
     val minecraftServer: McServerLib,
 ) {
-    private var logger = McLoggerFactory.createLogger("TestMod")
+    private var logger = McLoggerFactory.createLogger("TestServer")
 
     val channelKey = "slib:channels/test"
 
@@ -30,15 +35,77 @@ class TestServer(
         }
 
         McServerCommandsRegisterEvent.registerListener { commands, _ ->
-            commands.register("ping", object : McCommand {
-                override fun execute(
-                    source: McCommandSource,
-                    arguments: Array<String>,
-                ) {
-                    source.sendMessage("Pong")
-                }
-            })
-            logger.info("Command 'ping' registered")
+            commands.register(
+                "ping",
+                object : McCommand {
+                    override fun execute(
+                        source: McCommandSource,
+                        arguments: Array<String>,
+                    ) {
+                        source.sendMessage("Pong")
+                    }
+                },
+            )
+
+            commands.register(
+                LiteralArgumentBuilder.literal<Any>("brigadier-entity-selector")
+                    .then(
+                        LiteralArgumentBuilder.literal<Any>("entity")
+                            .then(
+                                RequiredArgumentBuilder.argument<Any, Any>("target", McArgumentTypes.entity())
+                                    .executes {
+                                        val entity = McArgumentResolver.getEntity(it, "target")
+
+                                        val context = commands.getBrigadierContext(it)
+                                        context.source.sendMessage("Found entity: $entity; Source: ${context.source}; Executor: ${context.executor}")
+
+                                        Command.SINGLE_SUCCESS
+                                    }
+                            )
+                    )
+                    .then(
+                        LiteralArgumentBuilder.literal<Any>("entities")
+                            .then(
+                                RequiredArgumentBuilder.argument<Any, Any>("target", McArgumentTypes.entities())
+                                    .executes {
+                                        val entities = McArgumentResolver.getEntities(it, "target")
+
+                                        val context = commands.getBrigadierContext(it)
+                                        context.source.sendMessage("Found entities: $entities; Source: ${context.source}; Executor: ${context.executor}")
+
+                                        Command.SINGLE_SUCCESS
+                                    }
+                            )
+                    )
+                    .then(
+                        LiteralArgumentBuilder.literal<Any>("player")
+                            .then(
+                                RequiredArgumentBuilder.argument<Any, Any>("target", McArgumentTypes.player())
+                                    .executes {
+                                        val player = McArgumentResolver.getPlayer(it, "target")
+
+                                        val context = commands.getBrigadierContext(it)
+                                        context.source.sendMessage("Found player: $player; Source: ${context.source}; Executor: ${context.executor}")
+
+                                        Command.SINGLE_SUCCESS
+                                    }
+                            )
+                    )
+                    .then(
+                        LiteralArgumentBuilder.literal<Any>("players")
+                            .then(
+                                RequiredArgumentBuilder.argument<Any, Any>("target", McArgumentTypes.players())
+                                    .executes {
+                                        val players = McArgumentResolver.getPlayers(it, "target")
+
+                                        val context = commands.getBrigadierContext(it)
+                                        context.source.sendMessage("Found players: $players; Source: ${context.source}; Executor: ${context.executor}")
+
+                                        Command.SINGLE_SUCCESS
+                                    }
+                            )
+                    )
+            )
         }
     }
 

@@ -2,7 +2,7 @@
 kotlin = "2.0.21"
 kotlinx-coroutines = "1.7.3"
 dokka = "1.8.20"
-runpaper = "3.0.2"
+run-task = "3.0.2"
 
 architectury = "1.13-SNAPSHOT"
 shadow = "8.1.1"
@@ -18,11 +18,13 @@ folia = "1.20.1-R0.1-SNAPSHOT"
 velocity = "3.1.1"
 bungee = "1.21-R0.4-SNAPSHOT"
 
-minestom = "39d445482f"
+minestom = "2025.10.05-1.21.8"
 
 adventure = "4.21.0"
 adventure-platform = "4.4.0"
 fabric-permissions = "0.3.1"
+
+reflection-remapper = "0.1.2"
 
 [libraries]
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -39,7 +41,7 @@ velocity = { module = "com.velocitypowered:velocity-api", version.ref = "velocit
 bungee-api = { module = "net.md-5:bungeecord-api", version.ref = "bungee" }
 bungee-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungee" }
 
-minestom = { module = "net.minestom:minestom-snapshots", version.ref = "minestom" }
+minestom = { module = "net.minestom:minestom", version.ref = "minestom" }
 
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
@@ -49,10 +51,14 @@ adventure-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref
 adventure-bungee = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 
+reflectionremapper = { module = "xyz.jpenilla:reflection-remapper", version.ref = "reflection-remapper" }
+
 shadow = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
 asm = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 
 [plugins]
 architectury = { id = "dev.architectury.loom", version.ref = "architectury" }
 dokka  = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-runpaper = { id = "xyz.jpenilla.run-paper", version.ref = "runpaper"}
+run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-task"}
+run-velocity = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task"}
+run-waterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task"}

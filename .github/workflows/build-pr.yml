@@ -104,3 +104,66 @@ jobs:
 
       - name: Run smoke test
         run: ./scripts/smoke-test-server.sh spigot:runServer -Pspigot.run_minecraft_version=${{ matrix.version }}
+
+  smoke-tests-minestom:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
+
+      - name: Run smoke test
+        run: ./scripts/smoke-test-server.sh minestom:runServer -Pmodded.versions_mode=NONE
+
+  smoke-tests-velocity:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
+
+      - name: Run smoke test
+        run: ./scripts/smoke-test-proxy.sh velocity:runVelocity -Pmodded.versions_mode=NONE
+
+  smoke-tests-bungee:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
+
+      - name: Run smoke test
+        run: ./scripts/smoke-test-proxy.sh bungee:runWaterfall -Pmodded.versions_mode=NONE

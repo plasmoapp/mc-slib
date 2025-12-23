@@ -21,6 +21,7 @@ subprojects {
         implementation(rootProject.libs.kotlinx.coroutines.jdk8)
 
         implementation(rootProject.libs.guava)
+        api("com.mojang:brigadier:1.0.18")
     }
 
     tasks {
@@ -87,6 +88,8 @@ allprojects {
         mavenCentral()
 
         maven("https://oss.sonatype.org/content/repositories/snapshots")
+
+        maven("https://repo.papermc.io/repository/maven-public/")
 
         maven("https://repo.plasmoverse.com/snapshots")
         maven("https://repo.plo.su")

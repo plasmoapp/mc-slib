@@ -1,6 +1,12 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.kotlin.dsl.register
+
 plugins {
     id("su.plo.slib.shadow-platform")
+    alias(libs.plugins.run.waterfall)
 }
+
+val testShadowBundle: Configuration by configurations.creating
 
 repositories {
     maven("https://repo.codemc.org/repository/maven-public/")
@@ -11,6 +17,9 @@ dependencies {
     compileOnly(libs.bungee.api)
     testCompileOnly(libs.bungee.api)
     compileOnly(libs.bungee.proxy)
+
+    testCompileOnly(testFixtures(project(":common-proxy")))
+    testShadowBundle(testFixtures(project(":common-proxy")))
 
     compileOnly(project(":common"))
     compileOnly(project(":common-integration"))
@@ -35,6 +44,10 @@ dependencies {
     }
 }
 
+runWaterfallExtension {
+    disablePluginJarDetection()
+}
+
 tasks {
     shadowJar {
         archiveClassifier = "all"
@@ -50,6 +63,21 @@ tasks {
 
         from(zipTree(shadowJar.get().archiveFile))
         from(project(":common-integration").sourceSets.main.get().output)
+    }
+
+    val testJar =
+        register("testJar", ShadowJar::class) {
+            configurations = listOf(testShadowBundle)
+
+            archiveClassifier.set("test")
+
+            from(zipTree(finalJar.get().archiveFile))
+            from(sourceSets.test.get().output)
+        }
+
+    runWaterfall {
+        waterfallVersion("1.21")
+        pluginJars.from(testJar)
     }
 
     build {

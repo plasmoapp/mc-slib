@@ -1,20 +1,25 @@
 package su.plo.slib.spigot.command
 
+import com.mojang.brigadier.context.CommandContext
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.SimpleCommandMap
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.api.command.McCommand
-import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierContext
+import su.plo.slib.api.entity.McEntity
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
+import su.plo.slib.command.AbstractCommandManager
 import su.plo.slib.spigot.SpigotServerLib
+import su.plo.slib.spigot.nms.ReflectionProxies
+import su.plo.slib.spigot.nms.getCommandDispatcher
 
 class SpigotCommandManager(
     private val minecraftServer: SpigotServerLib
-) : McCommandManager<McCommand>() {
+) : AbstractCommandManager<McCommand>() {
 
     private val logger = McLoggerFactory.createLogger("SpigotCommandManager")
 
@@ -22,11 +27,20 @@ class SpigotCommandManager(
     fun registerCommands(loader: JavaPlugin) {
         McServerCommandsRegisterEvent.invoker.onCommandsRegister(this, minecraftServer)
 
-        commandByName.forEach { (name, command) ->
+        registerCommands { name, command ->
             val spigotCommand = SpigotCommand(minecraftServer, this, command, name)
             val commandMap = loader.commandMap()
 
             commandMap.register("plasmovoice", spigotCommand)
+        }
+
+        try {
+            val dispatcher = loader.server.getCommandDispatcher()
+            registerBrigadierCommands { command ->
+                dispatcher.register(command)
+            }
+        } catch (e: Exception) {
+            logger.warn("Failed to get Brigadier dispatcher: ${e.message}")
         }
 
         registered = true
@@ -41,6 +55,18 @@ class SpigotCommandManager(
             .forEach { commandMap.unregister(it) }
 
         super.clear()
+    }
+
+    override fun <S> getBrigadierContext(context: CommandContext<S>): McBrigadierContext {
+        val sourceStack = context.source as Any
+
+        val source = ReflectionProxies.commandSourceStack.getBukkitSender(sourceStack)
+            .let { getCommandSource(it) }
+        val entity = ReflectionProxies.commandSourceStack.getEntity(sourceStack)
+            ?.let { ReflectionProxies.entity.getBukkitEntity(it) }
+            ?.let { minecraftServer.getEntityByInstance(it) }
+
+        return BrigadierContext(source, entity)
     }
 
     override fun getCommandSource(source: Any): McCommandSource  {
@@ -70,4 +96,9 @@ class SpigotCommandManager(
             .getDeclaredField("commandMap")
             .also { it.isAccessible = true }
             .get(server) as SimpleCommandMap
+
+    private data class BrigadierContext(
+        override val source: McCommandSource,
+        override val executor: McEntity?,
+    ): McBrigadierContext
 }

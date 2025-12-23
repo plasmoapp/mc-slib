@@ -3,7 +3,7 @@ import org.semver4j.Semver
 
 plugins {
     id("su.plo.slib.shadow-platform")
-    alias(libs.plugins.runpaper)
+    alias(libs.plugins.run.paper)
 }
 
 val testShadowBundle: Configuration by configurations.creating
@@ -11,6 +11,12 @@ val testShadowBundle: Configuration by configurations.creating
 dependencies {
     compileOnly(libs.spigot)
     testCompileOnly(libs.spigot)
+
+    compileOnly(libs.semver4j)
+    shadow(libs.semver4j)
+
+    compileOnly(libs.reflectionremapper)
+    shadow(libs.reflectionremapper)
 
     testCompileOnly(testFixtures(project(":common-server")))
     testShadowBundle(testFixtures(project(":common-server")))
@@ -44,13 +50,17 @@ repositories {
 
 tasks {
     java {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
     }
 
     shadowJar {
         archiveClassifier = "all"
 
         relocate("net.kyori", "su.plo.slib.libs.adventure")
+        relocate("xyz.jpenilla.reflectionremapper", "su.plo.slib.libs.reflectionremapper")
+        relocate("net.fabricmc.mappingio", "su.plo.slib.libs.mappingio")
+        relocate("org.jspecify", "su.plo.slib.libs.jspecify")
+        relocate("org.semver4j", "su.plo.slib.libs.semver4j")
     }
 
     val finalJar = register<Jar>("finalJar") {
@@ -89,9 +99,7 @@ tasks {
 
         val javaVersion = when {
             mcSemVersion.satisfies(">=1.20.5") -> 21
-            mcSemVersion.satisfies(">=1.18") -> 17
-            mcSemVersion.satisfies(">=1.17") -> 16
-            else -> 8
+            else -> 17
         }
 
         minecraftVersion(mcVersion)
