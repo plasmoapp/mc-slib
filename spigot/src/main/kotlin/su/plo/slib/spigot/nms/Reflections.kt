@@ -4,12 +4,14 @@ import com.mojang.brigadier.CommandDispatcher
 import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.semver4j.Semver
+import su.plo.slib.api.logging.McLoggerFactory
 import xyz.jpenilla.reflectionremapper.ReflectionRemapper
 import xyz.jpenilla.reflectionremapper.proxy.ReflectionProxyFactory
 
 object ReflectionProxies {
-    val minecraftServer: MinecraftServerProxy
-    val commands: CommandsProxy
+    private val logger = McLoggerFactory.createLogger("ReflectionProxies")
+
+    val commandsClass: Class<*>
     val commandSourceStack: CommandSourceStackProxy
     val entity: EntityProxy
     val entityArgument: EntityArgumentProxy
@@ -22,11 +24,11 @@ object ReflectionProxies {
         val remapper =
             try {
                 ReflectionRemapper.forReobfMappingsInPaperJar()
+                    .also { logger.info("Using mappings from paper jar") }
             } catch (_: Throwable) {
                 val mappingsVersion = listOf(
                     "1.21.6",
-                    "1.21.4",
-                    "1.20.4",
+                    "1.19.2",
                     "1.17.1",
                     "1.16.5",
                 )
@@ -38,12 +40,14 @@ object ReflectionProxies {
                     "source",
                     "target",
                 )
+                    .also {
+                        logger.info("Using mappings from resources: \"mappings/$mappingsVersion.tiny\"")
+                    }
             }
 
         val proxyFactory = ReflectionProxyFactory.create(remapper, javaClass.classLoader)
 
-        minecraftServer = proxyFactory.reflectionProxy()
-        commands = proxyFactory.reflectionProxy()
+        commandsClass = Class.forName(remapper.remapClassName("net.minecraft.commands.Commands"))
         commandSourceStack = proxyFactory.reflectionProxy()
         entity = proxyFactory.reflectionProxy()
         entityArgument = proxyFactory.reflectionProxy()
@@ -53,12 +57,22 @@ object ReflectionProxies {
         reflectionProxy(T::class.java)
 }
 
+@Suppress("UNCHECKED_CAST")
 fun Server.getCommandDispatcher(): CommandDispatcher<Any> {
     val minecraftServer = getMinecraftServer()
-    val commands = ReflectionProxies.minecraftServer.getCommands(minecraftServer)
-    val dispatcher = ReflectionProxies.commands.getDispatcher(commands)
 
-    return dispatcher
+    val getCommandsMethod = minecraftServer.javaClass.methods
+        .first { it.returnType == ReflectionProxies.commandsClass }
+
+    val commands = getCommandsMethod.invoke(minecraftServer)
+
+    val dispatcherField = commands.javaClass.declaredFields
+        .first { it.type == CommandDispatcher::class.java }
+    dispatcherField.isAccessible = true
+
+    val dispatcher = dispatcherField.get(commands)
+
+    return dispatcher as CommandDispatcher<Any>
 }
 
 fun Server.getMinecraftServer(): Any {
