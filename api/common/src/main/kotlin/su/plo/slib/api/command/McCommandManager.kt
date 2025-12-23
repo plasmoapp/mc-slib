@@ -1,7 +1,8 @@
 package su.plo.slib.api.command
 
-import com.google.common.collect.ImmutableMap
-import com.google.common.collect.Maps
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
+import su.plo.slib.api.command.brigadier.McBrigadierContext
 
 /**
  * Manages universal commands for multiple server implementations.
@@ -11,11 +12,30 @@ import com.google.common.collect.Maps
  *
  * @param T The type of commands managed by this manager.
  */
-abstract class McCommandManager<T : McCommand> {
+interface McCommandManager<T : McCommand> {
 
-    protected val commandByName: MutableMap<String, T> = Maps.newHashMap()
+    /**
+     * Retrieves a read-only map of registered commands.
+     *
+     * @return A map containing the registered commands with their names as keys.
+     */
+    val registeredCommands: Map<String, McCommand>
 
-    protected var registered = false
+    /**
+     * Retrieves a read-only map of registered brigadier commands.
+     *
+     * @return A list containing the registered commands with their names as keys.
+     */
+    val registeredBrigadierCommands: List<LiteralArgumentBuilder<*>>
+
+    /**
+     * Registers a brigadier command.
+     *
+     * @param command  The instance of the command to register.
+     * @throws IllegalStateException If attempting to register commands after commands have already been registered.
+     * @throws IllegalArgumentException If a command with the same name or alias already exists.
+     */
+    fun register(command: LiteralArgumentBuilder<Any>)
 
     /**
      * Registers a command with its name and optional aliases.
@@ -26,38 +46,20 @@ abstract class McCommandManager<T : McCommand> {
      * @throws IllegalStateException If attempting to register commands after commands have already been registered.
      * @throws IllegalArgumentException If a command with the same name or alias already exists.
      */
-    @Synchronized
-    fun register(name: String, command: T, vararg aliases: String) {
-        check(!registered) { "register after commands registration is not supported" }
-        require(!commandByName.containsKey(name)) { "Command with name '$name' already exist" }
-
-        for (alias in aliases) {
-            require(!commandByName.containsKey(alias)) { "Command with name '$alias' already exist" }
-        }
-
-        commandByName[name] = command
-        for (alias in aliases) {
-            commandByName[alias] = command
-        }
-    }
-
-    /**
-     * Retrieves a read-only map of registered commands.
-     *
-     * @return A map containing the registered commands with their names as keys.
-     */
-    @get:Synchronized
-    val registeredCommands: Map<String, McCommand>
-        get() = ImmutableMap.copyOf<String, McCommand>(commandByName)
+    fun register(name: String, command: T, vararg aliases: String)
 
     /**
      * Clears all registered commands and resets the registration state.
      */
-    @Synchronized
-    fun clear() {
-        commandByName.clear()
-        registered = false
-    }
+    fun clear()
+
+    /**
+     * Gets a brigadier context by server-specific instance.
+     *
+     * @param context The server-specific command context instance.
+     * @return A [McBrigadierContext] instance corresponding to the provided command source instance.
+     */
+    fun <S> getBrigadierContext(context: CommandContext<S>): McBrigadierContext
 
     /**
      * Gets a command source by server-specific instance.
@@ -69,5 +71,5 @@ abstract class McCommandManager<T : McCommand> {
      * @param source The server-specific command source instance.
      * @return A [McCommandSource] instance corresponding to the provided command source instance.
      */
-    abstract fun getCommandSource(source: Any): McCommandSource
+    fun getCommandSource(source: Any): McCommandSource
 }

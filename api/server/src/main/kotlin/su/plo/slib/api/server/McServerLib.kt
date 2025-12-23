@@ -1,15 +1,15 @@
 package su.plo.slib.api.server
 
 import su.plo.slib.api.McLib
-import su.plo.slib.api.server.channel.McServerChannelManager
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
-import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.server.channel.McServerChannelManager
+import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.server.scheduler.McServerScheduler
 import su.plo.slib.api.server.world.McServerWorld
-import java.util.*
+import java.util.UUID
 
 interface McServerLib : McLib {
 
@@ -113,7 +113,7 @@ interface McServerLib : McLib {
      * Creates a new [McServerEntity] instance of wrapped [instance].
      *
      * The [instance] parameter represents the server-specific entity instance:
-     *  - For Bukkit: [org.bukkit.entity.LivingEntity]
+     *  - For Bukkit: [org.bukkit.entity.Entity]
      *  - For modded servers (Fabric/Forge): [net.minecraft.world.entity.Entity]
      *
      * @return The entity.

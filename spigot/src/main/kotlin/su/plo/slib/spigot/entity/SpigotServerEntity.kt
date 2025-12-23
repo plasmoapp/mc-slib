@@ -1,6 +1,7 @@
 package su.plo.slib.spigot.entity
 
 import org.bukkit.Location
+import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import su.plo.slib.api.position.Pos3d
 import su.plo.slib.api.server.entity.McServerEntity
@@ -9,7 +10,7 @@ import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.spigot.SpigotServerLib
 import java.util.*
 
-open class SpigotServerEntity<E : LivingEntity>(
+open class SpigotServerEntity<E : Entity>(
     protected val minecraftServer: SpigotServerLib,
     protected val instance: E
 ) : McServerEntity {
@@ -26,7 +27,12 @@ open class SpigotServerEntity<E : LivingEntity>(
         get() = instance.uniqueId
 
     override val eyeHeight: Double
-        get() = instance.eyeHeight
+        get() =
+            if (instance is LivingEntity) {
+                instance.eyeHeight
+            } else {
+                0.0
+            }
 
     override val hitBoxWidth: Float
         get() = instance.boundingBox.widthX.toFloat()
