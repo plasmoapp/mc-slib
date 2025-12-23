@@ -1,0 +1,17 @@
+tiny	2	0	source	target
+c	net/minecraft/commands/CommandSourceStack	net/minecraft/commands/CommandListenerWrapper
+	f	Lnet/minecraft/world/entity/Entity;	entity	k
+c	net/minecraft/commands/Commands	net/minecraft/commands/CommandDispatcher
+	f	Lcom/mojang/brigadier/CommandDispatcher;	dispatcher	g
+c	net/minecraft/commands/arguments/EntityArgument	net/minecraft/commands/arguments/ArgumentEntity
+	m	()Lnet/minecraft/commands/arguments/EntityArgument;	entity	a
+	m	(Lcom/mojang/brigadier/context/CommandContext;Ljava/lang/String;)Lnet/minecraft/world/entity/Entity;	getEntity	a
+	m	()Lnet/minecraft/commands/arguments/EntityArgument;	entities	multipleEntities
+	m	(Lcom/mojang/brigadier/context/CommandContext;Ljava/lang/String;)Ljava/util/Collection;	getEntities	b
+	m	()Lnet/minecraft/commands/arguments/EntityArgument;	player	c
+	m	(Lcom/mojang/brigadier/context/CommandContext;Ljava/lang/String;)Lnet/minecraft/server/level/ServerPlayer;	getPlayer	e
+	m	()Lnet/minecraft/commands/arguments/EntityArgument;	players	d
+	m	(Lcom/mojang/brigadier/context/CommandContext;Ljava/lang/String;)Ljava/util/Collection;	getPlayers	f
+c	net/minecraft/server/MinecraftServer	net/minecraft/server/MinecraftServer
+	m	()Lnet/minecraft/commands/Commands;	getCommands	getCommandDispatcher
+c	net/minecraft/world/entity/Entity	net/minecraft/world/entity/Entity

@@ -6,6 +6,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
+import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -38,7 +39,8 @@ import su.plo.slib.spigot.scheduler.SpigotServerScheduler
 import su.plo.slib.spigot.util.SchedulerUtil
 import su.plo.slib.spigot.world.SpigotServerWorld
 import java.io.File
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 
 class SpigotServerLib(
     private val loader: JavaPlugin
@@ -54,6 +56,7 @@ class SpigotServerLib(
                     .apply { parent = loader.logger.parent }
             }
         }
+        instance = this
     }
 
     private val worldByInstance: MutableMap<World, McServerWorld> = Maps.newConcurrentMap()
@@ -155,7 +158,11 @@ class SpigotServerLib(
         McGameProfile(offlinePlayer.uniqueId, offlinePlayer.name ?: "", ImmutableList.of())
 
     override fun getEntityByInstance(instance: Any): McServerEntity {
-        require(instance is LivingEntity) { "instance is not ${LivingEntity::class.java}" }
+        require(instance is Entity) { "instance is not ${Entity::class.java}" }
+
+        if (instance is Player) {
+            return getPlayerByInstance(instance)
+        }
 
         return SpigotServerEntity(
             this,
@@ -185,5 +192,9 @@ class SpigotServerLib(
             getPlayerByInstance(event.player)
         )
         playerById.remove(event.player.uniqueId)
+    }
+
+    companion object {
+        lateinit var instance: SpigotServerLib
     }
 }
