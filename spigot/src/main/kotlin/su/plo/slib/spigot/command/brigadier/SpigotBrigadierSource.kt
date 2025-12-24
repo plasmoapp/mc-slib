@@ -1,6 +1,5 @@
 package su.plo.slib.spigot.command.brigadier
 
-import com.mojang.brigadier.context.CommandContext
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.entity.McEntity
@@ -15,8 +14,8 @@ data class SpigotBrigadierSource(
 class SpigotBrigadierSourceProvider : McBrigadierSource.Provider {
     private val minecraftServer by lazy { SpigotServerLib.instance }
 
-    override fun <S> getBrigadierSource(context: CommandContext<S>): McBrigadierSource {
-        val sourceStack = context.source as Any
+    override fun <S> getBrigadierSource(sourceStack: S): McBrigadierSource {
+        val sourceStack = sourceStack as Any
 
         val source = ReflectionProxies.commandSourceStack.getBukkitSender(sourceStack)
             .let { minecraftServer.commandManager.getCommandSource(it) }

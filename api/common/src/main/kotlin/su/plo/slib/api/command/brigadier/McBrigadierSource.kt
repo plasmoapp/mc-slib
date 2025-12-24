@@ -23,14 +23,24 @@ interface McBrigadierSource {
          * Gets a brigadier source by server-specific instance.
          *
          * @param context The server-specific command context instance.
-         * @return A [McBrigadierSource] instance corresponding to the provided command source instance.
+         * @return A [McBrigadierSource] instance corresponding to the provided brigadier source instance.
          */
         @JvmStatic
         fun <S> from(context: CommandContext<S>): McBrigadierSource =
+            from(context.source)
+
+        /**
+         * Gets a brigadier source by server-specific instance.
+         *
+         * @param context The server-specific command context instance.
+         * @return A [McBrigadierSource] instance corresponding to the provided brigadier source instance.
+         */
+        @JvmStatic
+        fun <S> from(context: S): McBrigadierSource =
             provider.getBrigadierSource(context)
     }
 
     interface Provider {
-        fun <S> getBrigadierSource(context: CommandContext<S>): McBrigadierSource
+        fun <S> getBrigadierSource(source: S): McBrigadierSource
     }
 }
