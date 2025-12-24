@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
@@ -56,8 +57,8 @@ class TestServer(
                                     .executes {
                                         val entity = McArgumentResolver.getEntity(it, "target")
 
-                                        val context = commands.getBrigadierContext(it)
-                                        context.source.sendMessage("Found entity: $entity; Source: ${context.source}; Executor: ${context.executor}")
+                                        val source = McBrigadierSource.from(it)
+                                        source.source.sendMessage("Found entity: $entity; Source: ${source.source}; Executor: ${source.executor}")
 
                                         Command.SINGLE_SUCCESS
                                     }
@@ -70,8 +71,8 @@ class TestServer(
                                     .executes {
                                         val entities = McArgumentResolver.getEntities(it, "target")
 
-                                        val context = commands.getBrigadierContext(it)
-                                        context.source.sendMessage("Found entities: $entities; Source: ${context.source}; Executor: ${context.executor}")
+                                        val source = McBrigadierSource.from(it)
+                                        source.source.sendMessage("Found entities: $entities; Source: ${source.source}; Executor: ${source.executor}")
 
                                         Command.SINGLE_SUCCESS
                                     }
@@ -84,8 +85,8 @@ class TestServer(
                                     .executes {
                                         val player = McArgumentResolver.getPlayer(it, "target")
 
-                                        val context = commands.getBrigadierContext(it)
-                                        context.source.sendMessage("Found player: $player; Source: ${context.source}; Executor: ${context.executor}")
+                                        val source = McBrigadierSource.from(it)
+                                        source.source.sendMessage("Found player: $player; Source: ${source.source}; Executor: ${source.executor}")
 
                                         Command.SINGLE_SUCCESS
                                     }
@@ -98,8 +99,8 @@ class TestServer(
                                     .executes {
                                         val players = McArgumentResolver.getPlayers(it, "target")
 
-                                        val context = commands.getBrigadierContext(it)
-                                        context.source.sendMessage("Found players: $players; Source: ${context.source}; Executor: ${context.executor}")
+                                        val source = McBrigadierSource.from(it)
+                                        source.source.sendMessage("Found players: $players; Source: ${source.source}; Executor: ${source.executor}")
 
                                         Command.SINGLE_SUCCESS
                                     }

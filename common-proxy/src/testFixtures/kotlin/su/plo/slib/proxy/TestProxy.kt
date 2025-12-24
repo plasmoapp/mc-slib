@@ -3,6 +3,7 @@ package su.plo.slib.proxy
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
@@ -34,7 +35,7 @@ class TestProxy {
             commands.register(
                 LiteralArgumentBuilder.literal<Any>("brigadier-ping")
                     .executes {
-                        val context = commands.getBrigadierContext(it)
+                        val context = McBrigadierSource.from(it)
                         context.source.sendMessage("Pong")
 
                         Command.SINGLE_SUCCESS

@@ -29,12 +29,12 @@ import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
-import su.plo.slib.api.command.brigadier.McBrigadierContext
 import su.plo.slib.api.entity.McEntity
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.command.AbstractCommandManager
 import su.plo.slib.minestom.command.brigadier.MinestomArgumentType
+import su.plo.slib.minestom.command.brigadier.MinestomBrigadierSource
 
 class MinestomCommandManager(
     private val minecraftServer: McServerLib
@@ -65,9 +65,6 @@ class MinestomCommandManager(
 
         registered = true
     }
-
-    override fun <S> getBrigadierContext(context: CommandContext<S>): McBrigadierContext =
-        context.source as McBrigadierContext
 
     override fun getCommandSource(source: Any): McCommandSource  {
         require(source is CommandSender) { "source is not ${CommandSender::class.java}" }
@@ -136,7 +133,7 @@ class MinestomCommandManager(
 
                 @Suppress("UNCHECKED_CAST")
                 val brigadierContext = CommandContext(
-                    BrigadierContext(sender, source, source as? McEntity),
+                    MinestomBrigadierSource(sender, source, source as? McEntity),
                     context.input,
                     context.map.mapValues { ParsedArgument(0, 0, it.value) },
                     this@toMinestom as com.mojang.brigadier.Command<Any>,
@@ -166,10 +163,4 @@ class MinestomCommandManager(
                 }
             }
         }
-
-    data class BrigadierContext(
-        val sender: CommandSender,
-        override val source: McCommandSource,
-        override val executor: McEntity?
-    ) : McBrigadierContext
 }

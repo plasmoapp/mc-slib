@@ -44,7 +44,7 @@ class MinestomEntityArguments : McArgumentTypes.Provider, McArgumentResolver.Pro
 
     override fun <S> getEntity(context: CommandContext<S>, name: String): McServerEntity {
         val finder = context.getArgument(name, EntityFinder::class.java)
-        val brigadierContext = context.source as MinestomCommandManager.BrigadierContext
+        val brigadierContext = context.source as MinestomBrigadierSource
 
         val entity = finder.findFirstEntity(brigadierContext.sender)
             ?: throw IllegalArgumentException("No entity found")
@@ -55,14 +55,14 @@ class MinestomEntityArguments : McArgumentTypes.Provider, McArgumentResolver.Pro
 
     override fun <S> getEntities(context: CommandContext<S>, name: String): Collection<McServerEntity> {
         val finder = context.getArgument(name, EntityFinder::class.java)
-        val brigadierContext = context.source as MinestomCommandManager.BrigadierContext
+        val brigadierContext = context.source as MinestomBrigadierSource
 
         return finder.find(brigadierContext.sender).map { serverLib.getEntityByInstance(it) }
     }
 
     override fun <S> getPlayer(context: CommandContext<S>, name: String): McServerPlayer {
         val finder = context.getArgument(name, EntityFinder::class.java)
-        val brigadierContext = context.source as MinestomCommandManager.BrigadierContext
+        val brigadierContext = context.source as MinestomBrigadierSource
 
         val player = finder.findFirstPlayer(brigadierContext.sender)
             ?: throw IllegalArgumentException("No player found")
@@ -72,7 +72,7 @@ class MinestomEntityArguments : McArgumentTypes.Provider, McArgumentResolver.Pro
 
     override fun <S> getPlayers(context: CommandContext<S>, name: String): Collection<McServerPlayer> {
         val finder = context.getArgument(name, EntityFinder::class.java)
-        val brigadierContext = context.source as MinestomCommandManager.BrigadierContext
+        val brigadierContext = context.source as MinestomBrigadierSource
 
         return finder.find(brigadierContext.sender)
             .filterIsInstance<Player>()
