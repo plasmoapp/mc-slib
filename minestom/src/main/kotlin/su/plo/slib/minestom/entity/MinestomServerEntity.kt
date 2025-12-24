@@ -1,14 +1,14 @@
 package su.plo.slib.minestom.entity
 
-import net.minestom.server.entity.LivingEntity
+import net.minestom.server.entity.Entity
+import su.plo.slib.api.position.Pos3d
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
-import su.plo.slib.api.position.Pos3d
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.api.server.world.McServerWorld
-import java.util.*
+import java.util.UUID
 
-open class MinestomServerEntity<E : LivingEntity>(
+open class MinestomServerEntity<E : Entity>(
     protected val minecraftServer: McServerLib,
     protected val instance: E
 ) : McServerEntity {
