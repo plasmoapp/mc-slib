@@ -1,6 +1,5 @@
 package su.plo.slib.mod.command.brigadier
 
-import com.mojang.brigadier.context.CommandContext
 import net.minecraft.commands.CommandSourceStack
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.command.brigadier.McBrigadierSource
@@ -15,8 +14,7 @@ data class ModBrigadierSource(
 class ModBrigadierSourceProvider : McBrigadierSource.Provider {
     private val minecraftServer by lazy { ModServerLib }
 
-    override fun <S> getBrigadierSource(context: CommandContext<S>): McBrigadierSource {
-        val sourceStack = context.source
+    override fun <S> getBrigadierSource(sourceStack: S): McBrigadierSource {
         require(sourceStack is CommandSourceStack) { "source is not " + CommandSourceStack::class.java }
 
         val executor = sourceStack.entity?.let { minecraftServer.getEntityByInstance(it) }

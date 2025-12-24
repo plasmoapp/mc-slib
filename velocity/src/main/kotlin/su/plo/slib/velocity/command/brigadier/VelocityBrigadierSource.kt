@@ -1,6 +1,5 @@
 package su.plo.slib.velocity.command.brigadier
 
-import com.mojang.brigadier.context.CommandContext
 import com.velocitypowered.api.command.CommandSource
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.command.brigadier.McBrigadierSource
@@ -15,8 +14,8 @@ data class VelocityBrigadierSource(
 class VelocityBrigadierSourceProvider : McBrigadierSource.Provider {
     private val minecraftProxy by lazy { VelocityProxyLib.instance }
 
-    override fun <S> getBrigadierSource(context: CommandContext<S>): McBrigadierSource {
-        val source = context.source as CommandSource
+    override fun <S> getBrigadierSource(source: S): McBrigadierSource {
+        require(source is CommandSource)
 
         return VelocityBrigadierSource(minecraftProxy.commandManager.getCommandSource(source))
     }
