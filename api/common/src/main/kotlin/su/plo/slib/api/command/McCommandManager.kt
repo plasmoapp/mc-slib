@@ -1,8 +1,6 @@
 package su.plo.slib.api.command
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import com.mojang.brigadier.context.CommandContext
-import su.plo.slib.api.command.brigadier.McBrigadierContext
 
 /**
  * Manages universal commands for multiple server implementations.
@@ -52,14 +50,6 @@ interface McCommandManager<T : McCommand> {
      * Clears all registered commands and resets the registration state.
      */
     fun clear()
-
-    /**
-     * Gets a brigadier context by server-specific instance.
-     *
-     * @param context The server-specific command context instance.
-     * @return A [McBrigadierContext] instance corresponding to the provided command source instance.
-     */
-    fun <S> getBrigadierContext(context: CommandContext<S>): McBrigadierContext
 
     /**
      * Gets a command source by server-specific instance.

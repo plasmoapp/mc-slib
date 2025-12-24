@@ -36,6 +36,7 @@ class VelocityProxyLib(
 
     init {
         McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
+        instance = this
     }
 
     private val playerById: MutableMap<UUID, McProxyPlayer> = Maps.newConcurrentMap()
@@ -154,5 +155,9 @@ class VelocityProxyLib(
         proxyServer.allServers.forEach {
             getServerInfoByServerInstance(it)
         }
+    }
+
+    companion object {
+        lateinit var instance: VelocityProxyLib
     }
 }
