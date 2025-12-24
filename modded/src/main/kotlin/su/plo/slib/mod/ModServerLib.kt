@@ -114,6 +114,10 @@ object ModServerLib : McServerLib {
     override fun getEntityByInstance(instance: Any): McServerEntity {
         require(instance is Entity) { "instance is not " + Entity::class.java }
 
+        if (instance is ServerPlayer) {
+            return getPlayerByInstance(instance)
+        }
+
         return ModServerEntity(
             this,
             instance
