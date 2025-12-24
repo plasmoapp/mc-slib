@@ -2,7 +2,7 @@ package su.plo.slib.api.server.command.brigadier
 
 import com.mojang.brigadier.arguments.ArgumentType
 import org.jetbrains.annotations.ApiStatus
-import java.util.ServiceLoader
+import su.plo.slib.api.service.lazyService
 
 /**
  * Vanilla Minecraft argument types.
@@ -33,12 +33,7 @@ object McArgumentTypes {
     @JvmStatic
     fun players(): ArgumentType<Any> = provider.players()
 
-    private val provider: Provider =
-        // some loaders can't find service by class's classloader,
-        // some can't find it by context class loader
-        // so we're just trying both
-        ServiceLoader.load(Provider::class.java).firstOrNull()
-            ?: ServiceLoader.load(Provider::class.java, Provider::class.java.classLoader).first()
+    private val provider: Provider by lazyService()
 
     @ApiStatus.Internal
     interface Provider {
