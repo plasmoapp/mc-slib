@@ -4,7 +4,8 @@
     "package": "su.plo.slib.mod.mixin",
     "mixins": [
         "MixinPlayerList",
-        "MixinServerPlayer"
+        "MixinServerPlayer",
+        "accessor.CommandSourceStackAccessor"
     ],
     "client": [
     ],
