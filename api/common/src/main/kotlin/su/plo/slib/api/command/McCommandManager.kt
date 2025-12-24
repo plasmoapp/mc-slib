@@ -10,21 +10,21 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
  *
  * @param T The type of commands managed by this manager.
  */
-interface McCommandManager<T : McCommand> {
+abstract class McCommandManager<T : McCommand> {
 
     /**
      * Retrieves a read-only map of registered commands.
      *
      * @return A map containing the registered commands with their names as keys.
      */
-    val registeredCommands: Map<String, McCommand>
+    abstract val registeredCommands: Map<String, McCommand>
 
     /**
      * Retrieves a read-only map of registered brigadier commands.
      *
      * @return A list containing the registered commands with their names as keys.
      */
-    val registeredBrigadierCommands: List<LiteralArgumentBuilder<*>>
+    abstract val registeredBrigadierCommands: List<LiteralArgumentBuilder<*>>
 
     /**
      * Registers a brigadier command.
@@ -33,7 +33,7 @@ interface McCommandManager<T : McCommand> {
      * @throws IllegalStateException If attempting to register commands after commands have already been registered.
      * @throws IllegalArgumentException If a command with the same name or alias already exists.
      */
-    fun register(command: LiteralArgumentBuilder<Any>)
+    abstract fun register(command: LiteralArgumentBuilder<Any>)
 
     /**
      * Registers a command with its name and optional aliases.
@@ -44,12 +44,12 @@ interface McCommandManager<T : McCommand> {
      * @throws IllegalStateException If attempting to register commands after commands have already been registered.
      * @throws IllegalArgumentException If a command with the same name or alias already exists.
      */
-    fun register(name: String, command: T, vararg aliases: String)
+    abstract fun register(name: String, command: T, vararg aliases: String)
 
     /**
      * Clears all registered commands and resets the registration state.
      */
-    fun clear()
+    abstract fun clear()
 
     /**
      * Gets a command source by server-specific instance.
@@ -61,5 +61,5 @@ interface McCommandManager<T : McCommand> {
      * @param source The server-specific command source instance.
      * @return A [McCommandSource] instance corresponding to the provided command source instance.
      */
-    fun getCommandSource(source: Any): McCommandSource
+    abstract fun getCommandSource(source: Any): McCommandSource
 }
