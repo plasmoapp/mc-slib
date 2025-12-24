@@ -8,7 +8,7 @@ import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.logging.McLoggerFactory
 
-abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T> {
+abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
     private val logger = McLoggerFactory.createLogger("CommandManager")
 
     protected val commandByName: MutableMap<String, T> = Maps.newHashMap()
