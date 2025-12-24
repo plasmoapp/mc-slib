@@ -8,6 +8,7 @@ import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.command.AbstractCommandManager
+import su.plo.slib.mod.mixin.accessor.CommandSourceStackAccessor
 
 class ModCommandManager(
     private val minecraftServer: McServerLib
@@ -28,13 +29,14 @@ class ModCommandManager(
         this.registered = true
     }
 
-    override fun getCommandSource(source: Any): McCommandSource {
-        require(source is CommandSourceStack) { "source is not " + CommandSourceStack::class.java }
+    override fun getCommandSource(sourceStack: Any): McCommandSource {
+        require(sourceStack is CommandSourceStack) { "source is not " + CommandSourceStack::class.java }
+        require(sourceStack is CommandSourceStackAccessor) { "source is not " + CommandSourceStack::class.java }
 
-        val entity = source.entity
+        val source = sourceStack.slib_getSource()
 
-        return if (entity is Player) {
-            minecraftServer.getPlayerByInstance(entity)
-        } else ModDefaultCommandSource(minecraftServer, source)
+        return if (source is Player) {
+            minecraftServer.getPlayerByInstance(source)
+        } else ModDefaultCommandSource(minecraftServer, sourceStack)
     }
 }

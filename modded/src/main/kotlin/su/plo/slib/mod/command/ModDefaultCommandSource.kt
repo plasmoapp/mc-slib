@@ -1,15 +1,15 @@
 package su.plo.slib.mod.command
 
 import net.minecraft.commands.CommandSourceStack
-import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.permission.PermissionTristate
+import su.plo.slib.api.server.McServerLib
 import su.plo.slib.mod.chat.ComponentTextConverter
 
 class ModDefaultCommandSource(
     private val minecraftServer: McServerLib,
-    private val source: CommandSourceStack
+    private val source: CommandSourceStack,
 ) : McCommandSource {
 
     override val language: String
