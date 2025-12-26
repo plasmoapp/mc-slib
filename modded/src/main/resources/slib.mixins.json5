@@ -1,0 +1,24 @@
+{
+    "required": true,
+    "minVersion": "0.7",
+    "package": "su.plo.slib.mod.mixin",
+    "mixins": [
+        "MixinPlayerList",
+        "MixinServerPlayer",
+        "accessor.CommandSourceStackAccessor"
+        //? if forge && <1.20.2 {
+        /*,"MixinServerGamePacketListenerImpl"
+        *///?}
+        //? if >=1.21.10 {
+        /*,"accessor.ServerPlayerCommandSourceAccessor"
+        *///?}
+    ],
+    "client": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+    //? if !neoforge {
+    ,"refmap": "slib-${loader}-${mcVersion}-modded_${mcVersion}-${loader}-refmap.json",
+    //?}
+}

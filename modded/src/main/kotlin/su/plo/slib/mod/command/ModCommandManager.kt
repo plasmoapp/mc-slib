@@ -1,14 +1,22 @@
 package su.plo.slib.mod.command
 
 import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.world.entity.player.Player
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.command.AbstractCommandManager
+import su.plo.slib.command.copyFor
+import su.plo.slib.command.proxied
+import su.plo.slib.mod.command.brigadier.ModBrigadierSource
 import su.plo.slib.mod.mixin.accessor.CommandSourceStackAccessor
+
+//? if >=1.21.10 {
+/*import su.plo.slib.mod.mixin.accessor.ServerPlayerCommandSourceAccessor
+*///?}
 
 class ModCommandManager(
     private val minecraftServer: McServerLib
@@ -23,7 +31,12 @@ class ModCommandManager(
 
         @Suppress("UNCHECKED_CAST")
         registerBrigadierCommands { command ->
-            dispatcher.register(command as LiteralArgumentBuilder<CommandSourceStack>)
+            dispatcher.register(
+                command.proxied(
+                    ModBrigadierSource::from,
+                    { it.toMc() },
+                )
+            )
         }
 
         this.registered = true
@@ -35,8 +48,20 @@ class ModCommandManager(
 
         val source = sourceStack.slib_getSource()
 
-        return if (source is Player) {
-            minecraftServer.getPlayerByInstance(source)
-        } else ModDefaultCommandSource(minecraftServer, sourceStack)
+        //? if >=1.21.10 {
+        /*val player = (source as? ServerPlayerCommandSourceAccessor)
+            ?.let { minecraftServer.getPlayerByInstance(it.slib_getServerPlayer()) }
+        *///?} else {
+        val player = (source as? Player)?.let { minecraftServer.getPlayerByInstance(it) }
+        //?}
+
+        return player ?: ModDefaultCommandSource(minecraftServer, sourceStack)
     }
 }
+
+fun CommandContext<McBrigadierSource>.toSourceStack(): CommandContext<CommandSourceStack> =
+    copyFor(source.getInstance() as CommandSourceStack)
+
+fun CommandContext<CommandSourceStack>.toMc(): CommandContext<McBrigadierSource> =
+    copyFor(ModBrigadierSource.from(source))
+

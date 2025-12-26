@@ -3,16 +3,25 @@ package su.plo.slib.command
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.Maps
+import com.mojang.brigadier.RedirectModifier
+import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.tree.ArgumentCommandNode
+import com.mojang.brigadier.tree.CommandNode
+import com.mojang.brigadier.tree.LiteralCommandNode
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.logging.McLoggerFactory
 
 abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
     private val logger = McLoggerFactory.createLogger("CommandManager")
 
     protected val commandByName: MutableMap<String, T> = Maps.newHashMap()
-    protected var brigadierCommands: MutableList<LiteralArgumentBuilder<Any>> = mutableListOf()
+    protected var brigadierCommands: MutableList<LiteralArgumentBuilder<McBrigadierSource>> = mutableListOf()
 
     protected var registered = false
 
@@ -21,11 +30,11 @@ abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
         get() = ImmutableMap.copyOf<String, McCommand>(commandByName)
 
     @get:Synchronized
-    override val registeredBrigadierCommands: List<LiteralArgumentBuilder<Any>>
+    override val registeredBrigadierCommands: List<LiteralArgumentBuilder<McBrigadierSource>>
         get() = ImmutableList.copyOf(brigadierCommands)
 
     @Synchronized
-    override fun register(command: LiteralArgumentBuilder<Any>) {
+    override fun register(command: LiteralArgumentBuilder<McBrigadierSource>) {
         check(!registered) { "register after commands registration is not supported" }
         require(brigadierCommands.none { it.literal == command.literal }) { "Command with name '${command.literal}' already exist" }
 
@@ -60,10 +69,75 @@ abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
         }
     }
 
-    protected fun registerBrigadierCommands(register: (LiteralArgumentBuilder<Any>) -> Unit) {
+    protected fun registerBrigadierCommands(register: (LiteralArgumentBuilder<McBrigadierSource>) -> Unit) {
         brigadierCommands.forEach { command ->
             register(command)
             logger.info("Command '${command.literal}' registered")
         }
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <S, T> CommandContext<S>.copyFor(source: T): CommandContext<T> =
+    (this as CommandContext<T>).copyFor(source)
+
+fun <T> LiteralArgumentBuilder<McBrigadierSource>.proxied(
+    sourceFactory: (T) -> McBrigadierSource,
+    contextFactory: (CommandContext<T>) -> CommandContext<McBrigadierSource>,
+): LiteralArgumentBuilder<T> =
+    build().toProxyNode<T>(sourceFactory, contextFactory) as LiteralArgumentBuilder<T>
+
+fun <T> CommandNode<McBrigadierSource>.toProxyNode(
+    sourceFactory: (T) -> McBrigadierSource,
+    contextFactory: (CommandContext<T>) -> CommandContext<McBrigadierSource>,
+): ArgumentBuilder<T, *> {
+    val node =
+        when (this) {
+            is LiteralCommandNode -> LiteralArgumentBuilder.literal<T>(literal)
+            is ArgumentCommandNode<McBrigadierSource, *> ->
+                RequiredArgumentBuilder.argument<T, Any>(name, type as ArgumentType<Any>)
+            else -> throw IllegalArgumentException("Unsupported command node: $this")
+        }
+
+    redirect?.let { redirect ->
+        val modifier = redirectModifier
+
+        if (modifier == null) {
+            node.redirect(redirect.toProxyNode(sourceFactory, contextFactory).build())
+        } else {
+            val proxiedModifier = object : RedirectModifier<T> {
+                override fun apply(context: CommandContext<T>): Collection<T> {
+                    val context = contextFactory(context)
+
+                    return modifier.apply(context).map { it.getInstance() }
+                }
+            }
+
+            node.fork(
+                redirect.toProxyNode(sourceFactory, contextFactory).build(),
+                proxiedModifier,
+            )
+        }
+    }
+
+    children
+        .map { it.toProxyNode<T>(sourceFactory, contextFactory) }
+        .forEach { node.then(it) }
+
+    requirement?.let { requirement ->
+        node.requires { sourceStack ->
+            val source = sourceFactory(sourceStack)
+            requirement.test(source)
+        }
+    }
+
+    command?.let { command ->
+        node.executes { context ->
+            val context = contextFactory(context)
+
+            command.run(context)
+        }
+    }
+
+    return node
 }

@@ -6,6 +6,7 @@ import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     id("com.gradleup.shadow")
+    alias(libs.plugins.fletchingtable)
 }
 
 val minecraftVersion = stonecutter.current.project.substringBefore('-')
@@ -72,14 +73,20 @@ loom.mods.findByName("main")?.apply {
     mainResourceDirectory.set(sourceSets.test.get().output.resourcesDir)
 }
 
-if (isForge && stonecutter.eval(minecraftVersion, "<1.20.2")) {
+if (isForge) {
     loom.forge {
-        mixinConfig("slib-forge.mixins.json")
+        mixinConfig("slib.mixins.json")
     }
 }
 
 configurations {
     named("loomDevelopmentDependencies") { extendsFrom(configurations.getByName("implementation")) }
+}
+
+fletchingTable {
+    j52j.register("main") {
+        extension("json", "*.json5")
+    }
 }
 
 dependencies {
@@ -230,30 +237,10 @@ tasks {
         mergeServiceFiles()
         exclude("META-INF/*.kotlin_module")
 
-        // todo: neoforge should use its own mixin without refmap
-
         if (isForge) {
             exclude("fabric.mod.json")
-            exclude("slib-no-refmap.mixins.json")
-
-            if (stonecutter.eval(minecraftVersion, ">=1.20.2")) {
-                exclude("slib-forge.mixins.json")
-            }
         } else if (isNeoForge) {
             exclude("fabric.mod.json")
-            exclude("slib-forge.mixins.json")
-            exclude("slib.mixins.json")
-
-            rename("slib-no-refmap.mixins.json", "slib.mixins.json")
-        } else {
-            exclude("slib-forge.mixins.json")
-
-            if (stonecutter.eval(minecraftVersion, ">=26.1")) {
-                exclude("slib.mixins.json")
-                rename("slib-no-refmap.mixins.json", "slib.mixins.json")
-            } else {
-                exclude("slib-no-refmap.mixins.json")
-            }
         }
     }
 

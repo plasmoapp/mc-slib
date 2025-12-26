@@ -133,7 +133,7 @@ class MinestomCommandManager(
 
                 @Suppress("UNCHECKED_CAST")
                 val brigadierContext = CommandContext(
-                    MinestomBrigadierSource(sender, source, source as? McEntity),
+                    MinestomBrigadierSource(source, source as? McEntity, sender),
                     context.input,
                     context.map.mapValues { ParsedArgument(0, 0, it.value) },
                     this@toMinestom as com.mojang.brigadier.Command<Any>,

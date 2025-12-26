@@ -19,6 +19,8 @@ pluginManagement {
         maven("https://repo.plo.su")
         maven("https://repo.plasmoverse.com/snapshots")
 
+        maven("https://maven.kikugie.dev/snapshots")
+
         maven("https://repo.essential.gg/repository/maven-public")
     }
 }

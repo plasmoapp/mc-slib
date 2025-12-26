@@ -8,19 +8,23 @@ import su.plo.slib.mod.ModServerLib
 
 data class ModBrigadierSource(
     override val source: McCommandSource,
-    override val executor: McEntity?
-) : McBrigadierSource
+    override val executor: McEntity?,
+    private val instance: CommandSourceStack,
+) : McBrigadierSource {
 
-class ModBrigadierSourceProvider : McBrigadierSource.Provider {
-    private val minecraftServer by lazy { ModServerLib }
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> getInstance(): T =
+        instance as T
 
-    override fun <S> getBrigadierSource(sourceStack: S): McBrigadierSource {
-        require(sourceStack is CommandSourceStack) { "source is not " + CommandSourceStack::class.java }
+    companion object {
+        private val minecraftServer by lazy { ModServerLib }
 
-        val executor = sourceStack.entity?.let { minecraftServer.getEntityByInstance(it) }
+        fun from(sourceStack: CommandSourceStack): ModBrigadierSource {
+            val executor = sourceStack.entity?.let { minecraftServer.getEntityByInstance(it) }
 
-        val source = minecraftServer.commandManager.getCommandSource(sourceStack)
+            val source = minecraftServer.commandManager.getCommandSource(sourceStack)
 
-        return ModBrigadierSource(source, executor)
+            return ModBrigadierSource(source, executor, sourceStack)
+        }
     }
 }

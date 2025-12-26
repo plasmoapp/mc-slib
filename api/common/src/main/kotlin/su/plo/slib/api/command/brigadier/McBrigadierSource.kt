@@ -1,9 +1,7 @@
 package su.plo.slib.api.command.brigadier
 
-import com.mojang.brigadier.context.CommandContext
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.entity.McEntity
-import su.plo.slib.api.service.lazyService
 
 interface McBrigadierSource {
     /**
@@ -16,31 +14,17 @@ interface McBrigadierSource {
      */
     val executor: McEntity?
 
-    companion object {
-        private val provider: Provider by lazyService()
-
-        /**
-         * Gets a brigadier source by server-specific instance.
-         *
-         * @param context The server-specific command context instance.
-         * @return A [McBrigadierSource] instance corresponding to the provided brigadier source instance.
-         */
-        @JvmStatic
-        fun <S> from(context: CommandContext<S>): McBrigadierSource =
-            from(context.source)
-
-        /**
-         * Gets a brigadier source by server-specific instance.
-         *
-         * @param context The server-specific command context instance.
-         * @return A [McBrigadierSource] instance corresponding to the provided brigadier source instance.
-         */
-        @JvmStatic
-        fun <S> from(context: S): McBrigadierSource =
-            provider.getBrigadierSource(context)
-    }
-
-    interface Provider {
-        fun <S> getBrigadierSource(source: S): McBrigadierSource
-    }
+    /**
+     * Gets the server's implementation instance for this source.
+     *
+     * The return type may vary depending on the server platform:
+     *   - For servers (Paper/Fabric/Forge/NeoForge): [net.minecraft.commands.CommandSourceStack]
+     *   - For Minestom: [net.minestom.server.command.CommandSender]
+     *   - For BungeeCord: [net.md_5.bungee.api.CommandSender]
+     *   - For Velocity: [com.velocitypowered.api.command.CommandSource]
+     *
+     * @return The server's implementation object associated with this source.
+     * @param T The expected type of the server's implementation instance.
+     */
+    fun <T> getInstance(): T
 }

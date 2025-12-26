@@ -1,5 +1,6 @@
 package su.plo.slib.spigot.command
 
+import com.mojang.brigadier.context.CommandContext
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.SimpleCommandMap
@@ -7,10 +8,14 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.command.AbstractCommandManager
+import su.plo.slib.command.copyFor
+import su.plo.slib.command.proxied
 import su.plo.slib.spigot.SpigotServerLib
+import su.plo.slib.spigot.command.brigadier.SpigotBrigadierSource
 import su.plo.slib.spigot.nms.getCommandDispatcher
 
 class SpigotCommandManager(
@@ -33,7 +38,12 @@ class SpigotCommandManager(
         try {
             val dispatcher = loader.server.getCommandDispatcher()
             registerBrigadierCommands { command ->
-                dispatcher.register(command)
+                dispatcher.register(
+                    command.proxied(
+                        SpigotBrigadierSource::from,
+                        { it.toMc() },
+                    )
+                )
             }
         } catch (e: Exception) {
             logger.warn("Failed to get Brigadier dispatcher: ${e.message}")
@@ -81,3 +91,10 @@ class SpigotCommandManager(
             .also { it.isAccessible = true }
             .get(server) as SimpleCommandMap
 }
+
+fun CommandContext<McBrigadierSource>.toSourceStack(): CommandContext<Any> =
+    copyFor<McBrigadierSource, Any>(source.getInstance())
+
+fun CommandContext<Any>.toMc(): CommandContext<McBrigadierSource> =
+    copyFor<Any, McBrigadierSource>(SpigotBrigadierSource.from(source))
+
