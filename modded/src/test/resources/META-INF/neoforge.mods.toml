@@ -3,7 +3,7 @@ loaderVersion = "[2,)"
 license = "MIT"
 
 [[mixins]]
-config="slib-no-refmap.mixins.json"
+config="slib.mixins.json"
 
 [[mods]]
 modId = "slib_test_mod"

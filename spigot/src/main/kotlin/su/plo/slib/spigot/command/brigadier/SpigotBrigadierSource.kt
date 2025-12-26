@@ -9,20 +9,24 @@ import su.plo.slib.spigot.nms.ReflectionProxies
 data class SpigotBrigadierSource(
     override val source: McCommandSource,
     override val executor: McEntity?,
-): McBrigadierSource
+    private val instance: Any,
+): McBrigadierSource {
 
-class SpigotBrigadierSourceProvider : McBrigadierSource.Provider {
-    private val minecraftServer by lazy { SpigotServerLib.instance }
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> getInstance(): T =
+        instance as T
 
-    override fun <S> getBrigadierSource(sourceStack: S): McBrigadierSource {
-        val sourceStack = sourceStack as Any
+    companion object {
+        private val minecraftServer by lazy { SpigotServerLib.instance }
 
-        val source = ReflectionProxies.commandSourceStack.getBukkitSender(sourceStack)
-            .let { minecraftServer.commandManager.getCommandSource(it) }
-        val entity = ReflectionProxies.commandSourceStack.getEntity(sourceStack)
-            ?.let { ReflectionProxies.entity.getBukkitEntity(it) }
-            ?.let { minecraftServer.getEntityByInstance(it) }
+        fun from(sourceStack: Any): SpigotBrigadierSource {
+            val source = ReflectionProxies.commandSourceStack.getBukkitSender(sourceStack)
+                .let { minecraftServer.commandManager.getCommandSource(it) }
+            val entity = ReflectionProxies.commandSourceStack.getEntity(sourceStack)
+                ?.let { ReflectionProxies.entity.getBukkitEntity(it) }
+                ?.let { minecraftServer.getEntityByInstance(it) }
 
-        return SpigotBrigadierSource(source, entity)
+            return SpigotBrigadierSource(source, entity, sourceStack)
+        }
     }
 }

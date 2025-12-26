@@ -9,14 +9,16 @@ import su.plo.slib.velocity.VelocityProxyLib
 data class VelocityBrigadierSource(
     override val source: McCommandSource,
     override val executor: McEntity? = null,
-) : McBrigadierSource
+    private val instance: CommandSource,
+) : McBrigadierSource {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> getInstance(): T =
+        instance as T
 
-class VelocityBrigadierSourceProvider : McBrigadierSource.Provider {
-    private val minecraftProxy by lazy { VelocityProxyLib.instance }
+    companion object {
+        private val minecraftProxy by lazy { VelocityProxyLib.instance }
 
-    override fun <S> getBrigadierSource(source: S): McBrigadierSource {
-        require(source is CommandSource)
-
-        return VelocityBrigadierSource(minecraftProxy.commandManager.getCommandSource(source))
+        fun from(source: CommandSource): VelocityBrigadierSource =
+            VelocityBrigadierSource(minecraftProxy.commandManager.getCommandSource(source), instance = source)
     }
 }

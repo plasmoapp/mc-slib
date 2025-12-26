@@ -2,11 +2,13 @@ package su.plo.slib.spigot.command.brigadier
 
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.context.CommandContext
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.server.command.brigadier.McArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.spigot.SpigotServerLib
+import su.plo.slib.spigot.command.toSourceStack
 import su.plo.slib.spigot.nms.ReflectionProxies
 import java.lang.reflect.UndeclaredThrowableException
 
@@ -22,18 +24,18 @@ class SpigotBrigadierArguments: McArgumentTypes.Provider, McArgumentResolver.Pro
 
     override fun players(): ArgumentType<Any> = ReflectionProxies.entityArgument.players()
 
-    override fun <S> getEntity(context: CommandContext<S>, name: String): McServerEntity {
+    override fun getEntity(context: CommandContext<McBrigadierSource>, name: String): McServerEntity {
         val entity = rethrowProxyException {
-            ReflectionProxies.entityArgument.getEntity(context, name)
+            ReflectionProxies.entityArgument.getEntity(context.toSourceStack(), name)
         }
 
         val bukkitEntity = ReflectionProxies.entity.getBukkitEntity(entity)
         return serverLib.getEntityByInstance(bukkitEntity)
     }
 
-    override fun <S> getEntities(context: CommandContext<S>, name: String): Collection<McServerEntity> {
+    override fun getEntities(context: CommandContext<McBrigadierSource>, name: String): Collection<McServerEntity> {
         val entities = rethrowProxyException {
-            ReflectionProxies.entityArgument.getEntities(context, name)
+            ReflectionProxies.entityArgument.getEntities(context.toSourceStack(), name)
         }
 
         return entities.map { entity ->
@@ -42,18 +44,18 @@ class SpigotBrigadierArguments: McArgumentTypes.Provider, McArgumentResolver.Pro
         }
     }
 
-    override fun <S> getPlayer(context: CommandContext<S>, name: String): McServerPlayer {
+    override fun getPlayer(context: CommandContext<McBrigadierSource>, name: String): McServerPlayer {
         val player = rethrowProxyException {
-            ReflectionProxies.entityArgument.getPlayer(context, name)
+            ReflectionProxies.entityArgument.getPlayer(context.toSourceStack(), name)
         }
 
         val bukkitPlayer = ReflectionProxies.entity.getBukkitEntity(player)
         return serverLib.getPlayerByInstance(bukkitPlayer)
     }
 
-    override fun <S> getPlayers(context: CommandContext<S>, name: String): Collection<McServerPlayer> {
+    override fun getPlayers(context: CommandContext<McBrigadierSource>, name: String): Collection<McServerPlayer> {
         val players = rethrowProxyException {
-            ReflectionProxies.entityArgument.getPlayers(context, name)
+            ReflectionProxies.entityArgument.getPlayers(context.toSourceStack(), name)
         }
 
         return players.map { player ->

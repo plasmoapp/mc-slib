@@ -1,6 +1,9 @@
 package su.plo.slib.api.command
 
+import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 
 /**
  * Manages universal commands for multiple server implementations.
@@ -33,7 +36,7 @@ abstract class McCommandManager<T : McCommand> {
      * @throws IllegalStateException If attempting to register commands after commands have already been registered.
      * @throws IllegalArgumentException If a command with the same name or alias already exists.
      */
-    abstract fun register(command: LiteralArgumentBuilder<Any>)
+    abstract fun register(command: LiteralArgumentBuilder<McBrigadierSource>)
 
     /**
      * Registers a command with its name and optional aliases.
@@ -62,4 +65,14 @@ abstract class McCommandManager<T : McCommand> {
      * @return A [McCommandSource] instance corresponding to the provided command source instance.
      */
     abstract fun getCommandSource(source: Any): McCommandSource
+
+    companion object {
+        @JvmStatic
+        fun literal(name: String): LiteralArgumentBuilder<McBrigadierSource> =
+            LiteralArgumentBuilder.literal<McBrigadierSource>(name)
+
+        @JvmStatic
+        fun <T> argument(name: String, argument: ArgumentType<T>): RequiredArgumentBuilder<McBrigadierSource, T> =
+            RequiredArgumentBuilder.argument<McBrigadierSource, T>(name, argument)
+    }
 }

@@ -1,11 +1,9 @@
 package su.plo.slib.server
 
 import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import su.plo.slib.api.command.McCommand
+import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
-import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
@@ -49,15 +47,15 @@ class TestServer(
             )
 
             commands.register(
-                LiteralArgumentBuilder.literal<Any>("brigadier-entity-selector")
+                McCommandManager.literal("brigadier-entity-selector")
                     .then(
-                        LiteralArgumentBuilder.literal<Any>("entity")
+                        McCommandManager.literal("entity")
                             .then(
-                                RequiredArgumentBuilder.argument<Any, Any>("target", McArgumentTypes.entity())
+                                McCommandManager.argument("target", McArgumentTypes.entity())
                                     .executes {
                                         val entity = McArgumentResolver.getEntity(it, "target")
 
-                                        val source = McBrigadierSource.from(it)
+                                        val source = it.source
                                         source.source.sendMessage("Found entity: $entity; Source: ${source.source}; Executor: ${source.executor}")
 
                                         Command.SINGLE_SUCCESS
@@ -65,13 +63,13 @@ class TestServer(
                             )
                     )
                     .then(
-                        LiteralArgumentBuilder.literal<Any>("entities")
+                        McCommandManager.literal("entities")
                             .then(
-                                RequiredArgumentBuilder.argument<Any, Any>("target", McArgumentTypes.entities())
+                                McCommandManager.argument("target", McArgumentTypes.entities())
                                     .executes {
                                         val entities = McArgumentResolver.getEntities(it, "target")
 
-                                        val source = McBrigadierSource.from(it)
+                                        val source = it.source
                                         source.source.sendMessage("Found entities: $entities; Source: ${source.source}; Executor: ${source.executor}")
 
                                         Command.SINGLE_SUCCESS
@@ -79,13 +77,13 @@ class TestServer(
                             )
                     )
                     .then(
-                        LiteralArgumentBuilder.literal<Any>("player")
+                        McCommandManager.literal("player")
                             .then(
-                                RequiredArgumentBuilder.argument<Any, Any>("target", McArgumentTypes.player())
+                                McCommandManager.argument("target", McArgumentTypes.player())
                                     .executes {
                                         val player = McArgumentResolver.getPlayer(it, "target")
 
-                                        val source = McBrigadierSource.from(it)
+                                        val source = it.source
                                         source.source.sendMessage("Found player: $player; Source: ${source.source}; Executor: ${source.executor}")
 
                                         Command.SINGLE_SUCCESS
@@ -93,13 +91,13 @@ class TestServer(
                             )
                     )
                     .then(
-                        LiteralArgumentBuilder.literal<Any>("players")
+                        McCommandManager.literal("players")
                             .then(
-                                RequiredArgumentBuilder.argument<Any, Any>("target", McArgumentTypes.players())
+                                McCommandManager.argument("target", McArgumentTypes.players())
                                     .executes {
                                         val players = McArgumentResolver.getPlayers(it, "target")
 
-                                        val source = McBrigadierSource.from(it)
+                                        val source = it.source
                                         source.source.sendMessage("Found players: $players; Source: ${source.source}; Executor: ${source.executor}")
 
                                         Command.SINGLE_SUCCESS

@@ -6,12 +6,11 @@ import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.entity.McEntity
 
 data class MinestomBrigadierSource(
-    val sender: CommandSender,
     override val source: McCommandSource,
-    override val executor: McEntity?
-) : McBrigadierSource
-
-class MinestomBrigadierSourceProvider : McBrigadierSource.Provider {
-    override fun <S> getBrigadierSource(source: S): McBrigadierSource =
-        source as MinestomBrigadierSource
+    override val executor: McEntity?,
+    private val instance: CommandSender,
+) : McBrigadierSource {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> getInstance(): T =
+        instance as T
 }

@@ -1,6 +1,6 @@
 package su.plo.slib.velocity.command
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
 import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.event.Subscribe
@@ -8,10 +8,14 @@ import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.command.McProxyCommand
 import su.plo.slib.api.proxy.event.command.McProxyCommandExecuteEvent
 import su.plo.slib.command.AbstractCommandManager
+import su.plo.slib.command.copyFor
+import su.plo.slib.command.proxied
+import su.plo.slib.velocity.command.brigadier.VelocityBrigadierSource
 import su.plo.slib.velocity.extension.textConverter
 
 class VelocityCommandManager(
@@ -60,10 +64,19 @@ class VelocityCommandManager(
 
         registerBrigadierCommands { command ->
             @Suppress("UNCHECKED_CAST")
-            val brigadierCommand = BrigadierCommand(command as LiteralArgumentBuilder<CommandSource>)
+            val brigadierCommand = BrigadierCommand(
+                command.proxied(
+                    VelocityBrigadierSource::from,
+                    { it.toMc() },
+                )
+            )
             proxyServer.commandManager.register(brigadierCommand)
         }
 
         registered = true
     }
 }
+
+fun CommandContext<CommandSource>.toMc(): CommandContext<McBrigadierSource> =
+    copyFor(VelocityBrigadierSource.from(source))
+

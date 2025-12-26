@@ -8,21 +8,21 @@ import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.TabExecutor
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.chat.style.McTextStyle
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.bungee.command.BungeeCommandManager
 
 class BungeeBrigadierCommand(
     private val commandManager: BungeeCommandManager,
-    private val command: LiteralArgumentBuilder<Any>,
+    private val command: LiteralArgumentBuilder<McBrigadierSource>,
 ) : Command(command.literal), TabExecutor {
-    private val dispatcher = CommandDispatcher<BungeeBrigadierSource>()
+    private val dispatcher = CommandDispatcher<McBrigadierSource>()
 
     init {
-        @Suppress("UNCHECKED_CAST")
-        dispatcher.register(command as LiteralArgumentBuilder<BungeeBrigadierSource>)
+        dispatcher.register(command)
     }
 
     override fun execute(sender: CommandSender, arguments: Array<out String>) {
-        val context = BungeeBrigadierSource(commandManager.getCommandSource(sender))
+        val context = BungeeBrigadierSource(commandManager.getCommandSource(sender), instance = sender)
         val input = listOf(command.literal, *arguments).joinToString(" ")
 
         try {
@@ -44,7 +44,7 @@ class BungeeBrigadierCommand(
     }
 
     override fun onTabComplete(sender: CommandSender, arguments: Array<out String>): Iterable<String> {
-        val context = BungeeBrigadierSource(commandManager.getCommandSource(sender))
+        val context = BungeeBrigadierSource(commandManager.getCommandSource(sender), instance = sender)
         val input = listOf(command.literal, *arguments).joinToString(" ")
 
         return dispatcher.getCompletionSuggestions(
