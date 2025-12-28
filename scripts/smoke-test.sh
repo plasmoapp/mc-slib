@@ -16,10 +16,10 @@ COMMAND="$*"
 
 case "$ENV_TYPE" in
     server)
-        PATTERNS=("Done \\(.*\\)!" "Command 'ping' registered" "Command 'brigadier-entity-selector' registered")
+        PATTERNS=("Done \\(.*\\)!" "Command 'ping' registered" "Command 'brigadier-entity-selector' registered" "Command 'brigadier-custom-type' registered")
         ;;
     proxy)
-        PATTERNS=("Listening on" "Command 'ping' registered" "Command 'brigadier-ping' registered")
+        PATTERNS=("Listening on" "Command 'ping' registered" "Command 'brigadier-ping' registered" "Command 'brigadier-custom-type' registered")
         ;;
     *)
         echo "Error: Invalid environment type '$ENV_TYPE'. Must be 'server' or 'proxy'"

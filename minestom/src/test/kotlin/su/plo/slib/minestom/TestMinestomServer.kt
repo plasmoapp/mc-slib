@@ -1,5 +1,6 @@
 package su.plo.slib.minestom
 
+import net.minecrell.terminalconsole.SimpleTerminalConsole
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
@@ -7,12 +8,12 @@ import net.minestom.server.event.Event
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.event.player.PlayerSpawnEvent
-import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.server.TestServer
 import java.io.File
+import kotlin.system.exitProcess
 import kotlin.time.measureTime
 
-private val logger = McLoggerFactory.createLogger("Server")
+private val logger = MinecraftServer.LOGGER
 
 fun main() {
     val startTime = measureTime { startServer() }
@@ -45,6 +46,35 @@ fun startServer() {
     }
 
     minecraftServer.start("0.0.0.0", 25565)
+
+    Console().start()
+}
+
+class Console : SimpleTerminalConsole() {
+    private val commandManager = MinecraftServer.getCommandManager()
+
+    override fun isRunning(): Boolean =
+        MinecraftServer.isStarted() && !MinecraftServer.isStopping()
+
+    override fun runCommand(command: String) {
+        try {
+            commandManager.execute(commandManager.consoleSender, command)
+        } catch (e: Throwable) {
+            logger.error("Failed to execute command: /$command", e)
+        }
+    }
+
+    override fun shutdown() {
+        logger.info("Shutting down...")
+        try {
+            MinecraftServer.stopCleanly()
+            exitProcess(0)
+        } catch (e: Throwable) {
+            logger.error("An error occurred while shutting down", e)
+            exitProcess(1)
+        }
+    }
+
 }
 
 private inline fun <reified T : Event> GlobalEventHandler.addListener(crossinline listener: (T) -> Unit) {

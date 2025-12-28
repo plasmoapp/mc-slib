@@ -31,7 +31,7 @@ class ModCommandManager(
 
         @Suppress("UNCHECKED_CAST")
         registerBrigadierCommands { command ->
-            dispatcher.register(
+            dispatcher.root.addChild(
                 command.proxied(
                     ModBrigadierSource::from,
                     { it.toMc() },

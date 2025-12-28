@@ -13,36 +13,36 @@ object McArgumentTypes {
      * Returns an argument type that selects a single entity.
      */
     @JvmStatic
-    fun entity(): ArgumentType<Any> = provider.entity()
+    fun entity(): ArgumentType<McEntityArgumentResolver> = provider.entity()
 
     /**
      * Returns an argument type that selects multiple entities.
      */
     @JvmStatic
-    fun entities(): ArgumentType<Any> = provider.entities()
+    fun entities(): ArgumentType<McEntitiesArgumentResolver> = provider.entities()
 
     /**
      * Returns an argument type that selects a single player.
      */
     @JvmStatic
-    fun player(): ArgumentType<Any> = provider.player()
+    fun player(): ArgumentType<McPlayerArgumentResolver> = provider.player()
 
     /**
      * Returns an argument type that selects multiple players.
      */
     @JvmStatic
-    fun players(): ArgumentType<Any> = provider.players()
+    fun players(): ArgumentType<McPlayersArgumentResolver> = provider.players()
 
     private val provider: Provider by lazyService()
 
     @ApiStatus.Internal
     interface Provider {
-        fun entity(): ArgumentType<Any>
+        fun entity(): ArgumentType<McEntityArgumentResolver>
 
-        fun entities(): ArgumentType<Any>
+        fun entities(): ArgumentType<McEntitiesArgumentResolver>
 
-        fun player(): ArgumentType<Any>
+        fun player(): ArgumentType<McPlayerArgumentResolver>
 
-        fun players(): ArgumentType<Any>
+        fun players(): ArgumentType<McPlayersArgumentResolver>
     }
 }

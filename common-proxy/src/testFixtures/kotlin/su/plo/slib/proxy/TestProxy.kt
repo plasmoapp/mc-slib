@@ -10,6 +10,8 @@ import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.proxy.command.McProxyCommand
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
+import su.plo.slib.proxy.command.UuidArgumentType
+import java.util.UUID
 
 class TestProxy {
     private var logger = McLoggerFactory.createLogger("TestProxy")
@@ -41,6 +43,20 @@ class TestProxy {
 
                         Command.SINGLE_SUCCESS
                     }
+            )
+
+            commands.register(
+                McCommandManager.literal("brigadier-custom-type")
+                    .then(
+                        McCommandManager.argument("uuid", UuidArgumentType())
+                            .executes {
+                                val uuid = it.getArgument<UUID>("uuid", UUID::class.java)
+
+                                it.source.source.sendMessage(uuid.toString())
+
+                                Command.SINGLE_SUCCESS
+                            }
+                    )
             )
         }
     }

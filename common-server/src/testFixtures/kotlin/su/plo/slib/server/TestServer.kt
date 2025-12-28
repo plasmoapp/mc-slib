@@ -8,10 +8,15 @@ import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.McServerLib
-import su.plo.slib.api.server.command.brigadier.McArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
+import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.api.server.event.player.McPlayerRegisterChannelsEvent
+import su.plo.slib.server.command.UuidArgumentType
+import java.util.UUID
 
 class TestServer(
     val minecraftServer: McServerLib,
@@ -47,13 +52,31 @@ class TestServer(
             )
 
             commands.register(
+                McCommandManager.literal("brigadier-custom-type")
+                    .then(
+                        McCommandManager.argument("uuid", UuidArgumentType())
+                            .executes {
+                                val uuid = it.getArgument<UUID>("uuid", UUID::class.java)
+
+                                it.source.source.sendMessage(uuid.toString())
+
+                                Command.SINGLE_SUCCESS
+                            }
+                    )
+            )
+
+            commands.register(
                 McCommandManager.literal("brigadier-entity-selector")
                     .then(
                         McCommandManager.literal("entity")
                             .then(
                                 McCommandManager.argument("target", McArgumentTypes.entity())
                                     .executes {
-                                        val entity = McArgumentResolver.getEntity(it, "target")
+                                        val resolver = it.getArgument<McEntityArgumentResolver>(
+                                            "target",
+                                            McEntityArgumentResolver::class.java,
+                                        )
+                                        val entity = resolver.resolve(it.source)
 
                                         val source = it.source
                                         source.source.sendMessage("Found entity: $entity; Source: ${source.source}; Executor: ${source.executor}")
@@ -67,7 +90,11 @@ class TestServer(
                             .then(
                                 McCommandManager.argument("target", McArgumentTypes.entities())
                                     .executes {
-                                        val entities = McArgumentResolver.getEntities(it, "target")
+                                        val resolver = it.getArgument<McEntitiesArgumentResolver>(
+                                            "target",
+                                            McEntitiesArgumentResolver::class.java,
+                                        )
+                                        val entities = resolver.resolve(it.source)
 
                                         val source = it.source
                                         source.source.sendMessage("Found entities: $entities; Source: ${source.source}; Executor: ${source.executor}")
@@ -81,7 +108,11 @@ class TestServer(
                             .then(
                                 McCommandManager.argument("target", McArgumentTypes.player())
                                     .executes {
-                                        val player = McArgumentResolver.getPlayer(it, "target")
+                                        val resolver = it.getArgument<McPlayerArgumentResolver>(
+                                            "target",
+                                            McPlayerArgumentResolver::class.java,
+                                        )
+                                        val player = resolver.resolve(it.source)
 
                                         val source = it.source
                                         source.source.sendMessage("Found player: $player; Source: ${source.source}; Executor: ${source.executor}")
@@ -95,7 +126,11 @@ class TestServer(
                             .then(
                                 McCommandManager.argument("target", McArgumentTypes.players())
                                     .executes {
-                                        val players = McArgumentResolver.getPlayers(it, "target")
+                                        val resolver = it.getArgument<McPlayersArgumentResolver>(
+                                            "target",
+                                            McPlayersArgumentResolver::class.java,
+                                        )
+                                        val players = resolver.resolve(it.source)
 
                                         val source = it.source
                                         source.source.sendMessage("Found players: $players; Source: ${source.source}; Executor: ${source.executor}")
