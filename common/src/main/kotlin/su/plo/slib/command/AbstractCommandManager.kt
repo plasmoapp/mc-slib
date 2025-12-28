@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap
 import com.google.common.collect.Maps
 import com.mojang.brigadier.RedirectModifier
 import com.mojang.brigadier.arguments.ArgumentType
-import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
@@ -14,8 +13,10 @@ import com.mojang.brigadier.tree.CommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
+import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.command.brigadier.buildCustom
 
 abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
     private val logger = McLoggerFactory.createLogger("CommandManager")
@@ -81,21 +82,21 @@ abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
 fun <S, T> CommandContext<S>.copyFor(source: T): CommandContext<T> =
     (this as CommandContext<T>).copyFor(source)
 
-fun <T> LiteralArgumentBuilder<McBrigadierSource>.proxied(
-    sourceFactory: (T) -> McBrigadierSource,
-    contextFactory: (CommandContext<T>) -> CommandContext<McBrigadierSource>,
-): LiteralArgumentBuilder<T> =
-    build().toProxyNode<T>(sourceFactory, contextFactory) as LiteralArgumentBuilder<T>
+fun <S> LiteralArgumentBuilder<McBrigadierSource>.proxied(
+    sourceFactory: (S) -> McBrigadierSource,
+    contextFactory: (CommandContext<S>) -> CommandContext<McBrigadierSource>,
+): LiteralCommandNode<S> =
+    build().toProxyNode<S>(sourceFactory, contextFactory) as LiteralCommandNode<S>
 
-fun <T> CommandNode<McBrigadierSource>.toProxyNode(
-    sourceFactory: (T) -> McBrigadierSource,
-    contextFactory: (CommandContext<T>) -> CommandContext<McBrigadierSource>,
-): ArgumentBuilder<T, *> {
+fun <S> CommandNode<McBrigadierSource>.toProxyNode(
+    sourceFactory: (S) -> McBrigadierSource,
+    contextFactory: (CommandContext<S>) -> CommandContext<McBrigadierSource>,
+): CommandNode<S> {
     val node =
         when (this) {
-            is LiteralCommandNode -> LiteralArgumentBuilder.literal<T>(literal)
+            is LiteralCommandNode -> LiteralArgumentBuilder.literal<S>(literal)
             is ArgumentCommandNode<McBrigadierSource, *> ->
-                RequiredArgumentBuilder.argument<T, Any>(name, type as ArgumentType<Any>)
+                RequiredArgumentBuilder.argument<S, Any>(name, type as ArgumentType<Any>)
             else -> throw IllegalArgumentException("Unsupported command node: $this")
         }
 
@@ -103,10 +104,10 @@ fun <T> CommandNode<McBrigadierSource>.toProxyNode(
         val modifier = redirectModifier
 
         if (modifier == null) {
-            node.redirect(redirect.toProxyNode(sourceFactory, contextFactory).build())
+            node.redirect(redirect.toProxyNode(sourceFactory, contextFactory))
         } else {
-            val proxiedModifier = object : RedirectModifier<T> {
-                override fun apply(context: CommandContext<T>): Collection<T> {
+            val proxiedModifier = object : RedirectModifier<S> {
+                override fun apply(context: CommandContext<S>): Collection<S> {
                     val context = contextFactory(context)
 
                     return modifier.apply(context).map { it.getInstance() }
@@ -114,14 +115,14 @@ fun <T> CommandNode<McBrigadierSource>.toProxyNode(
             }
 
             node.fork(
-                redirect.toProxyNode(sourceFactory, contextFactory).build(),
+                redirect.toProxyNode(sourceFactory, contextFactory),
                 proxiedModifier,
             )
         }
     }
 
     children
-        .map { it.toProxyNode<T>(sourceFactory, contextFactory) }
+        .map { it.toProxyNode<S>(sourceFactory, contextFactory) }
         .forEach { node.then(it) }
 
     requirement?.let { requirement ->
@@ -135,9 +136,19 @@ fun <T> CommandNode<McBrigadierSource>.toProxyNode(
         node.executes { context ->
             val context = contextFactory(context)
 
-            command.run(context)
+            try {
+                command.run(context)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                throw e
+            }
         }
     }
 
-    return node
+    if (node is RequiredArgumentBuilder<S, *> && node.type is CustomArgumentType<*, *>) {
+        @Suppress("UNCHECKED_CAST")
+        return (node as RequiredArgumentBuilder<S, Any>).buildCustom<S, Any, Any>()
+    }
+
+    return node.build()
 }

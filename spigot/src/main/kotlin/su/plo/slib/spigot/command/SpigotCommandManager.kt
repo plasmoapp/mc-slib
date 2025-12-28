@@ -38,7 +38,7 @@ class SpigotCommandManager(
         try {
             val dispatcher = loader.server.getCommandDispatcher()
             registerBrigadierCommands { command ->
-                dispatcher.register(
+                dispatcher.root.addChild(
                     command.proxied(
                         SpigotBrigadierSource::from,
                         { it.toMc() },
@@ -46,7 +46,8 @@ class SpigotCommandManager(
                 )
             }
         } catch (e: Exception) {
-            logger.warn("Failed to get Brigadier dispatcher: ${e.message}")
+            logger.warn("Failed to get Brigadier dispatcher: {}", e)
+            e.printStackTrace()
         }
 
         registered = true

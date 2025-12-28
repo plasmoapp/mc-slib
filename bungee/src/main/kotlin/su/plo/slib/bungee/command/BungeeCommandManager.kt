@@ -13,6 +13,7 @@ import su.plo.slib.api.proxy.event.command.McProxyCommandExecuteEvent
 import su.plo.slib.bungee.BungeeProxyLib
 import su.plo.slib.bungee.command.brigadier.BungeeBrigadierCommand
 import su.plo.slib.command.AbstractCommandManager
+import su.plo.slib.command.proxied
 
 class BungeeCommandManager(
     private val minecraftProxy: BungeeProxyLib
@@ -34,7 +35,10 @@ class BungeeCommandManager(
         }
 
         registerBrigadierCommands { command ->
-            proxyServer.pluginManager.registerCommand(plugin, BungeeBrigadierCommand(this, command))
+            proxyServer.pluginManager.registerCommand(
+                plugin,
+                BungeeBrigadierCommand(this, command.proxied({ it }, { it })),
+            )
         }
 
         registered = true

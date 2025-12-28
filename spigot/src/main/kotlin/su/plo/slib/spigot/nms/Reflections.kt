@@ -15,6 +15,7 @@ object ReflectionProxies {
     val commandSourceStack: CommandSourceStackProxy
     val entity: EntityProxy
     val entityArgument: EntityArgumentProxy
+    val entitySelector: EntitySelectorProxy
 
     init {
         val bukkitVersion = Bukkit.getVersion()
@@ -27,7 +28,7 @@ object ReflectionProxies {
                     .also { logger.info("Using mappings from paper jar") }
             } catch (_: Throwable) {
                 val mappingsVersion = listOf(
-                    "1.21.6",
+                    "1.21.4",
                     "1.19.2",
                     "1.17.1",
                     "1.16.5",
@@ -51,6 +52,7 @@ object ReflectionProxies {
         commandSourceStack = proxyFactory.reflectionProxy()
         entity = proxyFactory.reflectionProxy()
         entityArgument = proxyFactory.reflectionProxy()
+        entitySelector = proxyFactory.reflectionProxy()
     }
 
     private inline fun <reified T> ReflectionProxyFactory.reflectionProxy() =

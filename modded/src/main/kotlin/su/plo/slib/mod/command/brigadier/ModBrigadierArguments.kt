@@ -1,58 +1,55 @@
 package su.plo.slib.mod.command.brigadier
 
+import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
-import com.mojang.brigadier.context.CommandContext
 import net.minecraft.commands.arguments.EntityArgument
-import su.plo.slib.api.command.brigadier.McBrigadierSource
-import su.plo.slib.api.server.command.brigadier.McArgumentResolver
+import net.minecraft.commands.arguments.selector.EntitySelector
+import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
-import su.plo.slib.api.server.entity.McServerEntity
-import su.plo.slib.api.server.entity.player.McServerPlayer
+import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
 import su.plo.slib.mod.ModServerLib
-import su.plo.slib.mod.command.toSourceStack
 
-@Suppress("UNCHECKED_CAST")
-class ModBrigadierArguments : McArgumentTypes.Provider, McArgumentResolver.Provider {
-
+class ModBrigadierArguments : McArgumentTypes.Provider {
     private val serverLib by lazy { ModServerLib }
 
-    override fun entity(): ArgumentType<Any> = EntityArgument.entity() as ArgumentType<Any>
+    override fun entity(): ArgumentType<McEntityArgumentResolver> =
+        argumentResolver(EntityArgument.entity()) { selector ->
+            McEntityArgumentResolver { source ->
+                serverLib.getEntityByInstance(selector.findSingleEntity(source.getInstance()))
+            }
+        }
 
-    override fun entities(): ArgumentType<Any> = EntityArgument.entities() as ArgumentType<Any>
+    override fun entities(): ArgumentType<McEntitiesArgumentResolver> =
+        argumentResolver(EntityArgument.entities()) { selector ->
+            McEntitiesArgumentResolver { source ->
+                selector.findEntities(source.getInstance()).map { serverLib.getEntityByInstance(it) }
+            }
+        }
 
-    override fun player(): ArgumentType<Any> = EntityArgument.player() as ArgumentType<Any>
+    override fun player(): ArgumentType<McPlayerArgumentResolver> =
+        argumentResolver(EntityArgument.player()) { selector ->
+            McPlayerArgumentResolver { source ->
+                serverLib.getPlayerByInstance(selector.findSinglePlayer(source.getInstance()))
+            }
+        }
 
-    override fun players(): ArgumentType<Any> = EntityArgument.players() as ArgumentType<Any>
+    override fun players(): ArgumentType<McPlayersArgumentResolver> =
+        argumentResolver(EntityArgument.players()) { selector ->
+            McPlayersArgumentResolver { source ->
+                selector.findPlayers(source.getInstance()).map { serverLib.getPlayerByInstance(it) }
+            }
+        }
 
-    override fun getEntity(
-        context: CommandContext<McBrigadierSource>,
-        name: String,
-    ): McServerEntity {
-        val entity = EntityArgument.getEntity(context.toSourceStack(), name)
-        return serverLib.getEntityByInstance(entity)
-    }
+    private fun <T> argumentResolver(
+        nativeType: ArgumentType<EntitySelector>,
+        resolverFactory: (EntitySelector) -> T,
+    ): CustomArgumentType<T, EntitySelector> =
+        object : CustomArgumentType<T, EntitySelector> {
+            override val nativeType = nativeType
 
-    override fun getEntities(
-        context: CommandContext<McBrigadierSource>,
-        name: String,
-    ): Collection<McServerEntity> {
-        val entities = EntityArgument.getEntities(context.toSourceStack(), name)
-        return entities.map { serverLib.getEntityByInstance(it) }
-    }
-
-    override fun getPlayer(
-        context: CommandContext<McBrigadierSource>,
-        name: String,
-    ): McServerPlayer {
-        val player = EntityArgument.getPlayer(context.toSourceStack(), name)
-        return serverLib.getPlayerByInstance(player)
-    }
-
-    override fun getPlayers(
-        context: CommandContext<McBrigadierSource>,
-        name: String,
-    ): Collection<McServerPlayer> {
-        val players = EntityArgument.getPlayers(context.toSourceStack(), name)
-        return players.map { serverLib.getPlayerByInstance(it) }
-    }
+            override fun parse(reader: StringReader) = resolverFactory(nativeType.parse(reader))
+        }
 }
