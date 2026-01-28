@@ -1,6 +1,6 @@
 tiny	2	0	source	target
 c	net/minecraft/commands/CommandSourceStack	net/minecraft/commands/CommandListenerWrapper
-	f	Lnet/minecraft/world/entity/Entity;	entity	k
+	f	Lnet/minecraft/world/entity/Entity;	entity	l
 c	net/minecraft/commands/Commands	net/minecraft/commands/CommandDispatcher
 c	net/minecraft/commands/arguments/EntityArgument	net/minecraft/commands/arguments/ArgumentEntity
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	entity	a
@@ -19,8 +19,8 @@ c	net/minecraft/commands/arguments/selector/EntitySelector	net/minecraft/command
 	m	(Lnet/minecraft/commands/CommandSourceStack;)Ljava/util/List;	findPlayers	d
 c	net/minecraft/world/entity/Entity	net/minecraft/world/entity/Entity
 c	net/minecraft/world/phys/Vec2	net/minecraft/world/phys/Vec2F
-	f	F	x	i
-	f	F	y	j
+	f	F	x	j
+	f	F	y	k
 c	net/minecraft/world/phys/Vec3	net/minecraft/world/phys/Vec3D
 	m	()D	x	a
 	m	()D	y	b

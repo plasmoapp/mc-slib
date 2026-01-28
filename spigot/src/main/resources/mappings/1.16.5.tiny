@@ -7,9 +7,21 @@ c	net/minecraft/commands/arguments/EntityArgument	net/minecraft/server/v1_16_R3/
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	entities	multipleEntities
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	player	c
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	players	d
+c	net/minecraft/commands/arguments/coordinates/BlockPosArgument	net/minecraft/server/v1_16_R3/ArgumentPosition
+	m	()Lnet/minecraft/commands/arguments/coordinates/BlockPosArgument;	blockPos	a
+c	net/minecraft/commands/arguments/coordinates/Coordinates	net/minecraft/server/v1_16_R3/IVectorPosition
+	m	(Lnet/minecraft/commands/CommandSourceStack;)Lnet/minecraft/world/phys/Vec3;	getPosition	a
+	m	(Lnet/minecraft/commands/CommandSourceStack;)Lnet/minecraft/world/phys/Vec2;	getRotation	b
 c	net/minecraft/commands/arguments/selector/EntitySelector	net/minecraft/server/v1_16_R3/EntitySelector
 	m	(Lnet/minecraft/commands/CommandSourceStack;)Lnet/minecraft/world/entity/Entity;	findSingleEntity	a
 	m	(Lnet/minecraft/commands/CommandSourceStack;)Ljava/util/List;	findEntities	getEntities
 	m	(Lnet/minecraft/commands/CommandSourceStack;)Lnet/minecraft/server/level/ServerPlayer;	findSinglePlayer	c
 	m	(Lnet/minecraft/commands/CommandSourceStack;)Ljava/util/List;	findPlayers	d
 c	net/minecraft/world/entity/Entity	net/minecraft/server/v1_16_R3/Entity
+c	net/minecraft/world/phys/Vec2	net/minecraft/server/v1_16_R3/Vec2F
+	f	F	x	i
+	f	F	y	j
+c	net/minecraft/world/phys/Vec3	net/minecraft/server/v1_16_R3/Vec3D
+	m	()D	x	getX
+	m	()D	y	getY
+	m	()D	z	getZ

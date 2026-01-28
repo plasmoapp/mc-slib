@@ -87,4 +87,7 @@ class ServerPos3d @JvmOverloads constructor(
 
             return pos
         }
+
+    override fun toString(): String =
+        "ServerPos3d(world=${worldReference.get()}, x=$x, y=$y, z=$z, yaw=$yaw, pitch=$pitch)"
 }

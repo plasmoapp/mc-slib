@@ -2,13 +2,17 @@ package su.plo.slib.minestom.command.brigadier
 
 import com.mojang.brigadier.arguments.ArgumentType
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity
+import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeBlockPosition
+import net.minestom.server.entity.Entity
 import net.minestom.server.entity.Player
-import net.minestom.server.utils.entity.EntityFinder
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
+import su.plo.slib.api.server.command.brigadier.ServerPos3dResolver
+import su.plo.slib.api.server.entity.McServerEntity
+import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.minestom.MinestomServerLib
 
 class MinestomEntityArguments : McArgumentTypes.Provider {
@@ -57,9 +61,30 @@ class MinestomEntityArguments : McArgumentTypes.Provider {
             }
         }
 
-    private fun <T> argumentResolver(
-        finderArgumentType: MinestomArgumentType<EntityFinder>,
-        resolverFactory: (EntityFinder) -> T,
+    override fun position(): ArgumentType<ServerPos3dResolver> =
+        argumentResolver(
+            MinestomArgumentType { name -> ArgumentRelativeBlockPosition(name) }
+        ) { resolver ->
+            ServerPos3dResolver { source ->
+                val entity = source.executor as? McServerEntity
+                val entityPosition = entity?.getServerPosition()
+
+                val position = resolver.from(entity?.getInstance<Entity>())
+
+                ServerPos3d(
+                    entity?.world,
+                    position.x(),
+                    position.y(),
+                    position.z(),
+                    entityPosition?.yaw ?: 0f,
+                    entityPosition?.pitch ?: 0f,
+                )
+            }
+        }
+
+    private fun <S, T> argumentResolver(
+        finderArgumentType: MinestomArgumentType<S>,
+        resolverFactory: (S) -> T,
     ): ArgumentType<T> =
         MinestomArgumentType { name ->
             finderArgumentType.argumentBuilder(name).map { resolverFactory(it) }

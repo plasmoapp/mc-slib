@@ -8,6 +8,9 @@ import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
+import su.plo.slib.api.server.command.brigadier.ServerPos3dResolver
+import su.plo.slib.api.server.entity.McServerEntity
+import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.spigot.SpigotServerLib
 import su.plo.slib.spigot.nms.ReflectionProxies
 import java.lang.reflect.UndeclaredThrowableException
@@ -61,6 +64,25 @@ class SpigotBrigadierArguments: McArgumentTypes.Provider {
                     val bukkitPlayer = ReflectionProxies.entity.getBukkitEntity(it)
                     serverLib.getPlayerByInstance(bukkitPlayer)
                 }
+            }
+        }
+
+    override fun position(): ArgumentType<ServerPos3dResolver> =
+        argumentResolver(ReflectionProxies.blockPosArgument.blockPos()) { coordinates ->
+            ServerPos3dResolver { source ->
+                val position = ReflectionProxies.coordinatesProxy.getPosition(coordinates, source.getInstance())
+                val rotation = ReflectionProxies.coordinatesProxy.getRotation(coordinates, source.getInstance())
+
+                val world = (source.executor as? McServerEntity)?.world
+
+                ServerPos3d(
+                    world,
+                    ReflectionProxies.vec3Proxy.x(position),
+                    ReflectionProxies.vec3Proxy.y(position),
+                    ReflectionProxies.vec3Proxy.z(position),
+                    ReflectionProxies.vec2Proxy.y(rotation),
+                    ReflectionProxies.vec2Proxy.x(rotation),
+                )
             }
         }
 

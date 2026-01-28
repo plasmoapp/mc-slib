@@ -13,6 +13,7 @@ import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
+import su.plo.slib.api.server.command.brigadier.ServerPos3dResolver
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.api.server.event.player.McPlayerRegisterChannelsEvent
 import su.plo.slib.server.command.UuidArgumentType
@@ -138,6 +139,25 @@ class TestServer(
                                         Command.SINGLE_SUCCESS
                                     }
                             )
+                    )
+            )
+
+            commands.register(
+                McCommandManager.literal("brigadier-position-selector")
+                    .then(
+                        McCommandManager.argument("position", McArgumentTypes.position())
+                            .executes {
+                                val resolver = it.getArgument<ServerPos3dResolver>(
+                                    "position",
+                                    ServerPos3dResolver::class.java,
+                                )
+                                val position = resolver.resolve(it.source)
+
+                                val source = it.source
+                                source.source.sendMessage("Position: $position; Source: ${source.source}; Executor: ${source.executor}")
+
+                                Command.SINGLE_SUCCESS
+                            }
                     )
             )
         }

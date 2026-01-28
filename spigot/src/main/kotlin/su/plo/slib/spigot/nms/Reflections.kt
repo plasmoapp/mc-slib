@@ -16,6 +16,10 @@ object ReflectionProxies {
     val entity: EntityProxy
     val entityArgument: EntityArgumentProxy
     val entitySelector: EntitySelectorProxy
+    val blockPosArgument: BlockPosArgumentProxy
+    val coordinatesProxy: CoordinatesProxy
+    val vec3Proxy: Vec3Proxy
+    val vec2Proxy: Vec2Proxy
 
     init {
         val bukkitVersion = Bukkit.getVersion()
@@ -53,6 +57,10 @@ object ReflectionProxies {
         entity = proxyFactory.reflectionProxy()
         entityArgument = proxyFactory.reflectionProxy()
         entitySelector = proxyFactory.reflectionProxy()
+        blockPosArgument = proxyFactory.reflectionProxy()
+        coordinatesProxy = proxyFactory.reflectionProxy()
+        vec3Proxy = proxyFactory.reflectionProxy()
+        vec2Proxy = proxyFactory.reflectionProxy()
     }
 
     private inline fun <reified T> ReflectionProxyFactory.reflectionProxy() =
