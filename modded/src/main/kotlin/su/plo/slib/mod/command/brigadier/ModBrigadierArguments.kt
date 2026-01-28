@@ -2,14 +2,18 @@ package su.plo.slib.mod.command.brigadier
 
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
-import net.minecraft.commands.arguments.selector.EntitySelector
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
+import su.plo.slib.api.server.command.brigadier.ServerPos3dResolver
+import su.plo.slib.api.server.entity.McServerEntity
+import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.mod.ModServerLib
 
 class ModBrigadierArguments : McArgumentTypes.Provider {
@@ -43,11 +47,31 @@ class ModBrigadierArguments : McArgumentTypes.Provider {
             }
         }
 
-    private fun <T> argumentResolver(
-        nativeType: ArgumentType<EntitySelector>,
-        resolverFactory: (EntitySelector) -> T,
-    ): CustomArgumentType<T, EntitySelector> =
-        object : CustomArgumentType<T, EntitySelector> {
+    override fun position(): ArgumentType<ServerPos3dResolver> =
+        argumentResolver(BlockPosArgument.blockPos()) { coordinates ->
+            ServerPos3dResolver { source ->
+                val stack = source.getInstance<CommandSourceStack>()
+                val position = coordinates.getPosition(stack)
+                val rotation = coordinates.getRotation(stack)
+
+                val world = (source.executor as? McServerEntity)?.world
+
+                ServerPos3d(
+                    world,
+                    position.x(),
+                    position.y(),
+                    position.z(),
+                    rotation.y,
+                    rotation.x,
+                )
+            }
+        }
+
+    private fun <S, T> argumentResolver(
+        nativeType: ArgumentType<S>,
+        resolverFactory: (S) -> T,
+    ): CustomArgumentType<T, S> =
+        object : CustomArgumentType<T, S> {
             override val nativeType = nativeType
 
             override fun parse(reader: StringReader) = resolverFactory(nativeType.parse(reader))

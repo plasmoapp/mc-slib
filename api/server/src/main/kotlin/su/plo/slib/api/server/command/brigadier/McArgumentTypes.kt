@@ -33,6 +33,12 @@ object McArgumentTypes {
     @JvmStatic
     fun players(): ArgumentType<McPlayersArgumentResolver> = provider.players()
 
+    /**
+     * Returns an argument type that resolves position.
+     */
+    @JvmStatic
+    fun position(): ArgumentType<ServerPos3dResolver> = provider.position()
+
     private val provider: Provider by lazyService()
 
     @ApiStatus.Internal
@@ -44,5 +50,7 @@ object McArgumentTypes {
         fun player(): ArgumentType<McPlayerArgumentResolver>
 
         fun players(): ArgumentType<McPlayersArgumentResolver>
+
+        fun position(): ArgumentType<ServerPos3dResolver>
     }
 }

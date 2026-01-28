@@ -8,22 +8,22 @@ import xyz.jpenilla.reflectionremapper.proxy.annotation.Type
 )
 interface EntitySelectorProxy {
     fun findSingleEntity(
-        @Type(className = "net.minecraft.commands.arguments.selector") instance: Any,
+        @Type(className = "net.minecraft.commands.arguments.selector.EntitySelector") instance: Any,
         @Type(className = "net.minecraft.commands.CommandSourceStack") source: Any,
     ): Any
 
     fun findEntities(
-        @Type(className = "net.minecraft.commands.arguments.selector") instance: Any,
+        @Type(className = "net.minecraft.commands.arguments.selector.EntitySelector") instance: Any,
         @Type(className = "net.minecraft.commands.CommandSourceStack") source: Any,
     ): List<Any>
 
     fun findSinglePlayer(
-        @Type(className = "net.minecraft.commands.arguments.selector") instance: Any,
+        @Type(className = "net.minecraft.commands.arguments.selector.EntitySelector") instance: Any,
         @Type(className = "net.minecraft.commands.CommandSourceStack") source: Any,
     ): Any
 
     fun findPlayers(
-        @Type(className = "net.minecraft.commands.arguments.selector") instance: Any,
+        @Type(className = "net.minecraft.commands.arguments.selector.EntitySelector") instance: Any,
         @Type(className = "net.minecraft.commands.CommandSourceStack") source: Any,
     ): List<Any>
 }
