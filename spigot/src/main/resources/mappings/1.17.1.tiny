@@ -7,6 +7,8 @@ c	net/minecraft/commands/arguments/EntityArgument	net/minecraft/commands/argumen
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	entities	multipleEntities
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	player	c
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	players	d
+c	net/minecraft/commands/arguments/GameProfileArgument	net/minecraft/commands/arguments/ArgumentProfile
+	m	()Lnet/minecraft/commands/arguments/GameProfileArgument;	gameProfile	a
 c	net/minecraft/commands/arguments/coordinates/BlockPosArgument	net/minecraft/commands/arguments/coordinates/ArgumentPosition
 	m	()Lnet/minecraft/commands/arguments/coordinates/BlockPosArgument;	blockPos	a
 c	net/minecraft/commands/arguments/coordinates/Coordinates	net/minecraft/commands/arguments/coordinates/IVectorPosition

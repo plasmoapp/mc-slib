@@ -17,9 +17,10 @@ object ReflectionProxies {
     val entityArgument: EntityArgumentProxy
     val entitySelector: EntitySelectorProxy
     val blockPosArgument: BlockPosArgumentProxy
-    val coordinatesProxy: CoordinatesProxy
+    val coordinates: CoordinatesProxy
     val vec3Proxy: Vec3Proxy
     val vec2Proxy: Vec2Proxy
+    val gameProfileArgument: GameProfileArgumentProxy
 
     init {
         val bukkitVersion = Bukkit.getVersion()
@@ -58,9 +59,10 @@ object ReflectionProxies {
         entityArgument = proxyFactory.reflectionProxy()
         entitySelector = proxyFactory.reflectionProxy()
         blockPosArgument = proxyFactory.reflectionProxy()
-        coordinatesProxy = proxyFactory.reflectionProxy()
+        coordinates = proxyFactory.reflectionProxy()
         vec3Proxy = proxyFactory.reflectionProxy()
         vec2Proxy = proxyFactory.reflectionProxy()
+        gameProfileArgument = proxyFactory.reflectionProxy()
     }
 
     private inline fun <reified T> ReflectionProxyFactory.reflectionProxy() =
