@@ -4,7 +4,7 @@ c	net/minecraft/commands/CommandSourceStack	net/minecraft/commands/CommandListen
 c	net/minecraft/commands/Commands	net/minecraft/commands/CommandDispatcher
 c	net/minecraft/commands/arguments/EntityArgument	net/minecraft/commands/arguments/ArgumentEntity
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	entity	a
-	m	()Lnet/minecraft/commands/arguments/EntityArgument;	entities	b
+	m	()Lnet/minecraft/commands/arguments/EntityArgument;	entities	multipleEntities
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	player	c
 	m	()Lnet/minecraft/commands/arguments/EntityArgument;	players	d
 c	net/minecraft/commands/arguments/GameProfileArgument	net/minecraft/commands/arguments/ArgumentProfile
@@ -16,7 +16,7 @@ c	net/minecraft/commands/arguments/coordinates/Coordinates	net/minecraft/command
 	m	(Lnet/minecraft/commands/CommandSourceStack;)Lnet/minecraft/world/phys/Vec2;	getRotation	b
 c	net/minecraft/commands/arguments/selector/EntitySelector	net/minecraft/commands/arguments/selector/EntitySelector
 	m	(Lnet/minecraft/commands/CommandSourceStack;)Lnet/minecraft/world/entity/Entity;	findSingleEntity	a
-	m	(Lnet/minecraft/commands/CommandSourceStack;)Ljava/util/List;	findEntities	b
+	m	(Lnet/minecraft/commands/CommandSourceStack;)Ljava/util/List;	findEntities	getEntities
 	m	(Lnet/minecraft/commands/CommandSourceStack;)Lnet/minecraft/server/level/ServerPlayer;	findSinglePlayer	c
 	m	(Lnet/minecraft/commands/CommandSourceStack;)Ljava/util/List;	findPlayers	d
 c	net/minecraft/world/entity/Entity	net/minecraft/world/entity/Entity

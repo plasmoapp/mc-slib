@@ -11,6 +11,7 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McGameProfilesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
 import su.plo.slib.api.server.command.brigadier.ServerPos3dResolver
@@ -139,6 +140,25 @@ class TestServer(
                                         Command.SINGLE_SUCCESS
                                     }
                             )
+                    )
+            )
+
+            commands.register(
+                McCommandManager.literal("brigadier-game-profiles-selector")
+                    .then(
+                        McCommandManager.argument("targets", McArgumentTypes.gameProfiles())
+                            .executes {
+                                val resolver = it.getArgument<McGameProfilesArgumentResolver>(
+                                    "targets",
+                                    McGameProfilesArgumentResolver::class.java,
+                                )
+                                val gameProfiles = resolver.resolve(it.source)
+
+                                val source = it.source
+                                source.source.sendMessage("Found game profiles: $gameProfiles; Source: ${source.source}; Executor: ${source.executor}")
+
+                                Command.SINGLE_SUCCESS
+                            }
                     )
             )
 

@@ -21,6 +21,7 @@ case "$ENV_TYPE" in
           "Command 'ping' registered"
           "Command 'brigadier-entity-selector' registered"
           "Command 'brigadier-position-selector' registered"
+          "Command 'brigadier-game-profiles-selector' registered"
           "Command 'brigadier-custom-type' registered"
         )
         ;;

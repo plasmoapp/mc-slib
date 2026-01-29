@@ -1,13 +1,16 @@
 package su.plo.slib.minestom.command.brigadier
 
 import com.mojang.brigadier.arguments.ArgumentType
+import net.minestom.server.MinecraftServer
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeBlockPosition
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.Player
+import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McGameProfilesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
 import su.plo.slib.api.server.command.brigadier.ServerPos3dResolver
@@ -15,7 +18,7 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.minestom.MinestomServerLib
 
-class MinestomEntityArguments : McArgumentTypes.Provider {
+class MinestomBrigadierArguments : McArgumentTypes.Provider {
     private val serverLib by lazy { MinestomServerLib.instance }
 
     override fun entity(): ArgumentType<McEntityArgumentResolver> =
@@ -58,6 +61,18 @@ class MinestomEntityArguments : McArgumentTypes.Provider {
                 finder.find((source as MinestomBrigadierSource).getInstance())
                     .filterIsInstance<Player>()
                     .map { serverLib.getPlayerByInstance(it) }
+            }
+        }
+
+    // todo: there's no way to get cached game profiles in minestom
+    override fun gameProfiles(): ArgumentType<McGameProfilesArgumentResolver> =
+        argumentResolver(
+            MinestomArgumentType { name -> ArgumentEntity(name).singleEntity(false).onlyPlayers(true) }
+        ) { finder ->
+            McGameProfilesArgumentResolver { source ->
+                finder.find((source as MinestomBrigadierSource).getInstance())
+                    .filterIsInstance<Player>()
+                    .map { McGameProfile(it.uuid, it.username, emptyList()) }
             }
         }
 

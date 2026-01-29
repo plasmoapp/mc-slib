@@ -34,6 +34,12 @@ object McArgumentTypes {
     fun players(): ArgumentType<McPlayersArgumentResolver> = provider.players()
 
     /**
+     * Returns an argument type that resolves multiple game profiles.
+     */
+    @JvmStatic
+    fun gameProfiles(): ArgumentType<McGameProfilesArgumentResolver> = provider.gameProfiles()
+
+    /**
      * Returns an argument type that resolves position.
      */
     @JvmStatic
@@ -50,6 +56,8 @@ object McArgumentTypes {
         fun player(): ArgumentType<McPlayerArgumentResolver>
 
         fun players(): ArgumentType<McPlayersArgumentResolver>
+
+        fun gameProfiles(): ArgumentType<McGameProfilesArgumentResolver>
 
         fun position(): ArgumentType<ServerPos3dResolver>
     }

@@ -4,17 +4,20 @@ import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
+import net.minecraft.commands.arguments.GameProfileArgument
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McGameProfilesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
 import su.plo.slib.api.server.command.brigadier.ServerPos3dResolver
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.mod.ModServerLib
+import su.plo.slib.mod.extension.toMcGameProfile
 
 class ModBrigadierArguments : McArgumentTypes.Provider {
     private val serverLib by lazy { ModServerLib }
@@ -37,6 +40,14 @@ class ModBrigadierArguments : McArgumentTypes.Provider {
         argumentResolver(EntityArgument.player()) { selector ->
             McPlayerArgumentResolver { source ->
                 serverLib.getPlayerByInstance(selector.findSinglePlayer(source.getInstance()))
+            }
+        }
+
+    override fun gameProfiles(): ArgumentType<McGameProfilesArgumentResolver> =
+        argumentResolver(GameProfileArgument.gameProfile()) { selector ->
+            McGameProfilesArgumentResolver { source ->
+                selector.getNames(source.getInstance())
+                    .map { it.toMcGameProfile() }
             }
         }
 

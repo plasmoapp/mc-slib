@@ -3,9 +3,11 @@ package su.plo.slib.spigot.command.brigadier
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
 import su.plo.slib.api.command.brigadier.CustomArgumentType
+import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McEntityArgumentResolver
+import su.plo.slib.api.server.command.brigadier.McGameProfilesArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayerArgumentResolver
 import su.plo.slib.api.server.command.brigadier.McPlayersArgumentResolver
 import su.plo.slib.api.server.command.brigadier.ServerPos3dResolver
@@ -13,7 +15,9 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.spigot.SpigotServerLib
 import su.plo.slib.spigot.nms.ReflectionProxies
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.UndeclaredThrowableException
+import java.util.UUID
 
 class SpigotBrigadierArguments: McArgumentTypes.Provider {
     private val serverLib by lazy { SpigotServerLib.instance }
@@ -67,11 +71,40 @@ class SpigotBrigadierArguments: McArgumentTypes.Provider {
             }
         }
 
+    override fun gameProfiles(): ArgumentType<McGameProfilesArgumentResolver> =
+        argumentResolver(ReflectionProxies.gameProfileArgument.gameProfile()) { selector ->
+            McGameProfilesArgumentResolver { source ->
+                val getNamesMethod = selector.javaClass.declaredMethods
+                    .first()
+                    .also { it.isAccessible = true }
+
+                @Suppress("UNCHECKED_CAST")
+                val names = rethrowProxyException {
+                    getNamesMethod.invoke(selector, source.getInstance()) as Collection<Any>
+                }
+
+                names.map {
+                    // 1.21.9+ uses NameAndId, so we can't just use GameProfile here
+                    val uuidMethod = it.javaClass.declaredMethods
+                        .first { it.returnType == UUID::class.java }
+                        .also { it.isAccessible = true }
+                    val nameMethod = it.javaClass.declaredMethods
+                        .first { it.returnType == String::class.java }
+                        .also { it.isAccessible = true }
+
+                    val uuid = uuidMethod.invoke(it) as UUID
+                    val name = nameMethod.invoke(it) as String
+
+                    McGameProfile(uuid, name, emptyList())
+                }
+            }
+        }
+
     override fun position(): ArgumentType<ServerPos3dResolver> =
         argumentResolver(ReflectionProxies.blockPosArgument.blockPos()) { coordinates ->
             ServerPos3dResolver { source ->
-                val position = ReflectionProxies.coordinatesProxy.getPosition(coordinates, source.getInstance())
-                val rotation = ReflectionProxies.coordinatesProxy.getRotation(coordinates, source.getInstance())
+                val position = ReflectionProxies.coordinates.getPosition(coordinates, source.getInstance())
+                val rotation = ReflectionProxies.coordinates.getRotation(coordinates, source.getInstance())
 
                 val world = (source.executor as? McServerEntity)?.world
 
@@ -99,6 +132,8 @@ class SpigotBrigadierArguments: McArgumentTypes.Provider {
     private fun <T> rethrowProxyException(block: () -> T): T {
         try {
             return block()
+        } catch (e: InvocationTargetException) {
+            throw e.targetException
         } catch (e: UndeclaredThrowableException) {
             throw e.undeclaredThrowable
         }
