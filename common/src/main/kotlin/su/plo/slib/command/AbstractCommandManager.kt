@@ -135,12 +135,16 @@ fun <S> CommandNode<McBrigadierSource>.toProxyNode(
     command?.let { command ->
         node.executes { context ->
             val context = contextFactory(context)
+            command.run(context)
+        }
+    }
 
-            try {
-                command.run(context)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-                throw e
+    if (this is ArgumentCommandNode<McBrigadierSource, *>) {
+        val node = node as RequiredArgumentBuilder<S, *>
+        if (this.customSuggestions != null) {
+            node.suggests { context, builder ->
+                val context = contextFactory(context)
+                listSuggestions(context, builder)
             }
         }
     }
