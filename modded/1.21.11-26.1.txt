@@ -1,0 +1,5 @@
+playC2S serverboundPlay
+playS2C clientboundPlay
+
+S2CPlayChannelEvents ClientboundPlayChannelEvents
+S2CConfigurationChannelEvents ClientboundConfigurationChannelEvents

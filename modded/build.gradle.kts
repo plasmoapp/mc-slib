@@ -1,12 +1,32 @@
+import net.fabricmc.loom.LoomGradlePlugin
+import net.fabricmc.loom.LoomNoRemapGradlePlugin
+import net.fabricmc.loom.api.LoomGradleExtensionAPI
+import net.fabricmc.loom.api.fabricapi.FabricApiExtension
+import net.fabricmc.loom.task.RemapJarTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.utils.extendsFrom
 
 plugins {
-    id("dev.architectury.loom")
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
 }
 
 val minecraftVersion = stonecutter.current.project.substringBefore('-')
 val platform = stonecutter.current.project.substringAfter('-')
+
+val noMappings = stonecutter.eval(minecraftVersion, ">=26.1")
+
+if (noMappings) {
+    apply<LoomNoRemapGradlePlugin>()
+
+    configurations.api.get().extendsFrom(configurations.create("modApi"))
+    configurations.implementation.get().extendsFrom(configurations.create("modImplementation"))
+    configurations.compileOnly.get().extendsFrom(configurations.create("modCompileOnly"))
+    configurations.runtimeOnly.get().extendsFrom(configurations.create("modRuntimeOnly"))
+} else {
+    apply<LoomGradlePlugin>()
+}
+
+val loom = the<LoomGradleExtensionAPI>()
 
 group = rootProject.group
 base.archivesName.set("slib-$platform-$minecraftVersion")
@@ -16,6 +36,7 @@ val isForge = stonecutter.constants.getOrDefault("forge", false)
 val isNeoForge = stonecutter.constants.getOrDefault("neoforge", false)
 
 val javaVersion = when {
+    stonecutter.eval(minecraftVersion, ">=26.1") -> 25
     stonecutter.eval(minecraftVersion, ">=1.20.5") -> 21
     stonecutter.eval(minecraftVersion, ">=1.18") -> 17
     stonecutter.eval(minecraftVersion, ">=1.17") -> 16
@@ -24,7 +45,7 @@ val javaVersion = when {
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
 kotlin.jvmToolchain(javaVersion)
-tasks.runServer {
+tasks.named<JavaExec>("runServer") {
     dependsOn(tasks.compileTestJava)
     dependsOn(tasks.compileTestKotlin)
     dependsOn(tasks.processTestResources)
@@ -43,18 +64,14 @@ val shadowBundle: Configuration by configurations.creating {
 }
 
 if (isFabric) {
-    tasks.runServer {
+    tasks.named<JavaExec>("runServer") {
         classpath += sourceSets.test.get().output
     }
 }
 
-loom {
-    mods {
-        findByName("main")?.apply {
-            sourceSet(sourceSets.test.get())
-            mainResourceDirectory.set(sourceSets.test.get().output.resourcesDir)
-        }
-    }
+loom.mods.findByName("main")?.apply {
+    sourceSet(sourceSets.test.get())
+    mainResourceDirectory.set(sourceSets.test.get().output.resourcesDir)
 }
 
 if (isForge && stonecutter.eval(minecraftVersion, "<1.20.2")) {
@@ -64,12 +81,17 @@ if (isForge && stonecutter.eval(minecraftVersion, "<1.20.2")) {
 }
 
 configurations {
-    loomDevelopmentDependencies.extendsFrom(implementation)
+    named("loomDevelopmentDependencies") { extendsFrom(configurations.getByName("implementation")) }
 }
 
 dependencies {
-    minecraft("net.minecraft:minecraft:$minecraftVersion")
-    mappings(loom.officialMojangMappings())
+    val minecraftVersionDep = (findProperty("deps.minecraft") as? String)
+        ?: stonecutter.current.project.substringBefore('-')
+
+    "minecraft"("com.mojang:minecraft:$minecraftVersionDep")
+    if (!noMappings) {
+        "mappings"(loom.officialMojangMappings())
+    }
 
     compileOnly(project(":common"))
     testCompileOnly(project(":common"))
@@ -81,21 +103,22 @@ dependencies {
     ).forEach {
         compileOnly(it)
         testCompileOnly(it)
-        loomDevelopmentDependencies(it)
+        "loomDevelopmentDependencies"(it)
         shadowBundle(it) { isTransitive = false }
     }
 
     testCompileOnly(testFixtures(project(":common-server")))
-    loomDevelopmentDependencies(testFixtures(project(":common-server")))
+    "loomDevelopmentDependencies"(testFixtures(project(":common-server")))
 
     if (isFabric) {
-        modImplementation("net.fabricmc:fabric-loader:0.17.3")
+        "modImplementation"("net.fabricmc:fabric-loader:0.18.4")
 
         val fabricApiVersion = property("deps.fabric_api") as String
 
         fun fabricApiModules(vararg module: String) {
             module.forEach {
-                modImplementation(fabricApi.module("fabric-$it", fabricApiVersion))
+                val fabricApi = project.extensions.getByName("fabricApi") as FabricApiExtension
+                "modImplementation"(fabricApi.module("fabric-$it", fabricApiVersion))
             }
         }
 
@@ -106,8 +129,14 @@ dependencies {
             fabricApiModules("command-api-v1")
         }
 
-        libs.fabric.permissions.also {
-            modImplementation(it) { isTransitive = false }
+        if (stonecutter.eval(minecraftVersion, ">=26.1")) {
+            "modImplementation"("me.lucko:fabric-permissions-api:0.6.3+26.1-SNAPSHOT") {
+                isTransitive = false
+            }
+        } else {
+            libs.fabric.permissions.also {
+                "modImplementation"(it) { isTransitive = false }
+            }
         }
     } else if (isNeoForge) {
         "neoForge"("net.neoforged:neoforge:${property("deps.neoforge")}")
@@ -141,7 +170,7 @@ tasks {
         )
     }
 
-    runServer {
+    named<JavaExec>("runServer") {
         doFirst {
             val runDirectory = workingDir.resolve("run")
             runDirectory.mkdirs()
@@ -157,7 +186,7 @@ tasks {
 if (isForge && stonecutter.eval(minecraftVersion, ">1.20.3")) {
     // https://github.com/architectury/architectury-loom/issues/191#issuecomment-2030567486
     afterEvaluate {
-        tasks.runServer {
+        tasks.named<JavaExec>("runServer") {
             classpath = classpath.filter {
                 !it.toString().contains("org.lwjgl") && !it.toString().contains("fabric-log4j-util")
             }
@@ -193,6 +222,7 @@ stonecutter {
     fromFile(eval(current.version, "<1.17"), "1.17.1-1.16.5.txt")
     fromFile(eval(current.version, ">1.20.1"), "1.20.1-1.20.2.txt")
     fromFile(eval(current.version, ">1.21.9"), "1.21.9-1.21.10.txt")
+    fromFile(eval(current.version, ">1.21.11"), "1.21.11-26.1.txt")
 }
 
 tasks {
@@ -223,9 +253,11 @@ tasks {
         }
     }
 
-    remapJar {
-        dependsOn(shadowJar)
-        inputFile.set(shadowJar.get().archiveFile)
+    if (!noMappings) {
+        named<RemapJarTask>("remapJar") {
+            dependsOn(shadowJar)
+            inputFile.set(shadowJar.get().archiveFile)
+        }
     }
 }
 
