@@ -1,12 +1,12 @@
 [versions]
-kotlin = "2.0.21"
-kotlinx-coroutines = "1.7.3"
-dokka = "1.8.20"
+kotlin = "2.3.10"
+kotlinx-coroutines = "1.10.2"
+dokka = "2.1.0"
 runpaper = "3.0.2"
 
-architectury = "1.13-SNAPSHOT"
-shadow = "8.1.1"
-asm = "9.6"
+architectury = "1.15.45"
+shadow = "9.3.2"
+asm = "9.9.1"
 
 annotations = "23.0.0"
 guava = "33.3.1-jre"
@@ -49,10 +49,10 @@ adventure-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref
 adventure-bungee = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
 fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 
-shadow = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
+shadow = { module = "com.gradleup.shadow:com.gradleup.shadow.gradle.plugin", version.ref = "shadow" }
 asm = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 
 [plugins]
-architectury = { id = "dev.architectury.loom", version.ref = "architectury" }
+architectury = { id = "gg.essential.loom", version.ref = "architectury" }
 dokka  = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 runpaper = { id = "xyz.jpenilla.run-paper", version.ref = "runpaper"}

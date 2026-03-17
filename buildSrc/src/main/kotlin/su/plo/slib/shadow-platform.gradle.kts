@@ -2,7 +2,7 @@ package su.plo.slib
 
 plugins {
     java
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
 }
 
 tasks {

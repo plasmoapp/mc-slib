@@ -30,6 +30,10 @@ subprojects {
             toolchain.languageVersion.set(JavaLanguageVersion.of(8))
         }
 
+        test {
+            failOnNoDiscoveredTests = false
+        }
+
         compileJava {
             options.encoding = Charsets.UTF_8.name()
         }

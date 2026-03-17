@@ -54,6 +54,7 @@ jobs:
           - 1.21.9-neoforge
           - 1.21.11-fabric
           - 1.21.11-neoforge
+          - 26.1-fabric
     runs-on: ubuntu-latest
     needs: build
 

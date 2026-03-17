@@ -18,6 +18,8 @@ pluginManagement {
 
         maven("https://repo.plo.su")
         maven("https://repo.plasmoverse.com/snapshots")
+
+        maven("https://repo.essential.gg/repository/maven-public")
     }
 }
 
@@ -86,6 +88,7 @@ if (configureVersions != ConfigureVersions.NONE) {
                 mc("1.21.7", "neoforge")
                 mc("1.21.9", "fabric", "neoforge")
                 mc("1.21.11", "fabric", "neoforge")
+                mc("26.1", "fabric")
             } else {
                 val developmentVersions = providers.gradleProperty("modded.versions_dev").getOrElse("")
                     .split(",")
