@@ -3,8 +3,6 @@ import net.fabricmc.loom.LoomNoRemapGradlePlugin
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.api.fabricapi.FabricApiExtension
 import net.fabricmc.loom.task.RemapJarTask
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.utils.extendsFrom
 
 plugins {
     id("com.gradleup.shadow")
@@ -257,6 +255,13 @@ tasks {
         named<RemapJarTask>("remapJar") {
             dependsOn(shadowJar)
             inputFile.set(shadowJar.get().archiveFile)
+        }
+    } else {
+        configurations {
+            listOf(apiElements, runtimeElements).forEach {
+                it.get().outgoing.artifacts.clear()
+                it.get().outgoing.artifact(shadowJar)
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ kotlinx-coroutines = "1.10.2"
 dokka = "2.1.0"
 runpaper = "3.0.2"
 
-architectury = "1.15.45"
+architectury = "1.15.48"
 shadow = "9.3.2"
 asm = "9.9.1"
 
