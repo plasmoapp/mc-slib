@@ -32,6 +32,7 @@ dependencies {
         exclude("net.kyori", "adventure-text-minimessage")
         exclude("net.kyori", "examination-api")
         exclude("net.kyori", "examination-string")
+        exclude("org.jspecify", "jspecify")
     }
 }
 
