@@ -28,12 +28,12 @@ jobs:
           cache-read-only: false
 
       - name: Build with Gradle
-        run: ./gradlew dokkaHtmlMultiModule --stacktrace
+        run: ./gradlew dokkaGeneratePublicationHtml --stacktrace
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./build/dokka/htmlMultiModule
+          path: ./build/dokka/html
 
   deploy:
     needs: build
