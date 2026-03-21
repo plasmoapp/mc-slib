@@ -84,14 +84,20 @@ class AdventureComponentTextConverter : ServerTextConverter<Component> {
     private fun applyClickEvent(
         component: Component,
         clickEvent: McTextClickEvent?
-    ): Component =
-        if (clickEvent == null) component
-        else component.clickEvent(
-            ClickEvent.clickEvent(
-                ClickEvent.Action.valueOf(clickEvent.action.name),
-                clickEvent.value
-            )
-        )
+    ): Component {
+        if (clickEvent == null) return component
+
+        val adventure = when (clickEvent.action) {
+            McTextClickEvent.Action.OPEN_URL -> ClickEvent.openUrl(clickEvent.value)
+            McTextClickEvent.Action.OPEN_FILE -> ClickEvent.openFile(clickEvent.value)
+            McTextClickEvent.Action.RUN_COMMAND -> ClickEvent.runCommand(clickEvent.value)
+            McTextClickEvent.Action.SUGGEST_COMMAND -> ClickEvent.suggestCommand(clickEvent.value)
+            McTextClickEvent.Action.CHANGE_PAGE -> ClickEvent.changePage(clickEvent.value)
+            McTextClickEvent.Action.COPY_TO_CLIPBOARD -> ClickEvent.copyToClipboard(clickEvent.value)
+        }
+
+        return component.clickEvent(adventure)
+    }
 
     private fun applyHoverEvent(
         component: Component,
