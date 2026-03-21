@@ -234,7 +234,7 @@ tasks {
 
         if (isForge) {
             exclude("fabric.mod.json")
-            exclude("slib-neoforge.mixins.json")
+            exclude("slib-no-refmap.mixins.json")
 
             if (stonecutter.eval(minecraftVersion, ">=1.20.2")) {
                 exclude("slib-forge.mixins.json")
@@ -244,10 +244,16 @@ tasks {
             exclude("slib-forge.mixins.json")
             exclude("slib.mixins.json")
 
-            rename("slib-neoforge.mixins.json", "slib.mixins.json")
+            rename("slib-no-refmap.mixins.json", "slib.mixins.json")
         } else {
             exclude("slib-forge.mixins.json")
-            exclude("slib-neoforge.mixins.json")
+
+            if (stonecutter.eval(minecraftVersion, ">=26.1")) {
+                exclude("slib.mixins.json")
+                rename("slib-no-refmap.mixins.json", "slib.mixins.json")
+            } else {
+                exclude("slib-no-refmap.mixins.json")
+            }
         }
     }
 
