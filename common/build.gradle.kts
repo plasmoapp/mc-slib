@@ -17,6 +17,7 @@ dependencies {
         shadow(it) {
             exclude("org.jetbrains", "annotations")
             exclude("com.google.code.gson", "gson")
+            exclude("org.jspecify", "jspecify")
         }
     }
 
