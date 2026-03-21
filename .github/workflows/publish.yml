@@ -27,7 +27,19 @@ jobs:
         with:
           cache-read-only: false
 
-      - name: Build with Gradle
+      - name: Check if already published
+        id: check
+        run: |
+          VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
+          if curl -sf "https://repo.plasmoverse.com/releases/su/plo/slib/common/${VERSION}/common-${VERSION}.pom" > /dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "Version ${VERSION} already published, skipping"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish
+        if: steps.check.outputs.published != 'true'
         run: ./gradlew publishAllPublicationsToPlasmoverseReleasesRepository -Pmodded.versions_mode=ALL --stacktrace
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
