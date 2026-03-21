@@ -87,6 +87,15 @@ subprojects {
 
 dependencies {
     dokka(project(":api"))
+    dokkaHtmlPlugin("org.jetbrains.dokka:versioning-plugin")
+}
+
+dokka {
+    pluginsConfiguration {
+        versioning {
+            olderVersionsDir.set(projectDir.resolve("previousDocVersions"))
+        }
+    }
 }
 
 allprojects {
