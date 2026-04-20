@@ -3,3 +3,5 @@ playS2C clientboundPlay
 
 S2CPlayChannelEvents ClientboundPlayChannelEvents
 S2CConfigurationChannelEvents ClientboundConfigurationChannelEvents
+
+field_54403 this$0
