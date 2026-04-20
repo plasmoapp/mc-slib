@@ -99,6 +99,7 @@ tasks {
         val mcSemVersion = Semver(mcVersion)
 
         val javaVersion = when {
+            mcSemVersion.satisfies(">=26.1") -> 25
             mcSemVersion.satisfies(">=1.20.5") -> 21
             else -> 17
         }
