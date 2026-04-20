@@ -18,7 +18,7 @@
     "injectors": {
         "defaultRequire": 1
     }
-    //? if !neoforge {
+    //? if !neoforge && <26.1 {
     ,"refmap": "slib-${loader}-${mcVersion}-modded_${mcVersion}-${loader}-refmap.json",
     //?}
 }
