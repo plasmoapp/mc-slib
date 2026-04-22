@@ -22,7 +22,7 @@ abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
     private val logger = McLoggerFactory.createLogger("CommandManager")
 
     protected val commandByName: MutableMap<String, T> = Maps.newHashMap()
-    protected var brigadierCommands: MutableList<LiteralArgumentBuilder<McBrigadierSource>> = mutableListOf()
+    protected var brigadierCommands: MutableList<LiteralCommandNode<McBrigadierSource>> = mutableListOf()
 
     protected var registered = false
 
@@ -31,11 +31,11 @@ abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
         get() = ImmutableMap.copyOf<String, McCommand>(commandByName)
 
     @get:Synchronized
-    override val registeredBrigadierCommands: List<LiteralArgumentBuilder<McBrigadierSource>>
+    override val registeredBrigadierCommands: List<LiteralCommandNode<McBrigadierSource>>
         get() = ImmutableList.copyOf(brigadierCommands)
 
     @Synchronized
-    override fun register(command: LiteralArgumentBuilder<McBrigadierSource>) {
+    override fun register(command: LiteralCommandNode<McBrigadierSource>) {
         check(!registered) { "register after commands registration is not supported" }
         require(brigadierCommands.none { it.literal == command.literal }) { "Command with name '${command.literal}' already exist" }
 
@@ -70,9 +70,9 @@ abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
         }
     }
 
-    protected fun registerBrigadierCommands(register: (LiteralArgumentBuilder<McBrigadierSource>) -> Unit) {
+    protected fun registerBrigadierCommands(registerCommand: (LiteralCommandNode<McBrigadierSource>) -> Unit) {
         brigadierCommands.forEach { command ->
-            register(command)
+            registerCommand(command)
             logger.info("Command '${command.literal}' registered")
         }
     }
@@ -82,11 +82,11 @@ abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
 fun <S, T> CommandContext<S>.copyFor(source: T): CommandContext<T> =
     (this as CommandContext<T>).copyFor(source)
 
-fun <S> LiteralArgumentBuilder<McBrigadierSource>.proxied(
+fun <S> LiteralCommandNode<McBrigadierSource>.proxied(
     sourceFactory: (S) -> McBrigadierSource,
     contextFactory: (CommandContext<S>) -> CommandContext<McBrigadierSource>,
 ): LiteralCommandNode<S> =
-    build().toProxyNode<S>(sourceFactory, contextFactory) as LiteralCommandNode<S>
+    toProxyNode(sourceFactory, contextFactory) as LiteralCommandNode<S>
 
 fun <S> CommandNode<McBrigadierSource>.toProxyNode(
     sourceFactory: (S) -> McBrigadierSource,
@@ -96,7 +96,7 @@ fun <S> CommandNode<McBrigadierSource>.toProxyNode(
         when (this) {
             is LiteralCommandNode -> LiteralArgumentBuilder.literal<S>(literal)
             is ArgumentCommandNode<McBrigadierSource, *> ->
-                RequiredArgumentBuilder.argument<S, Any>(name, type as ArgumentType<Any>)
+                RequiredArgumentBuilder.argument(name, type as ArgumentType<Any>)
             else -> throw IllegalArgumentException("Unsupported command node: $this")
         }
 
@@ -106,12 +106,9 @@ fun <S> CommandNode<McBrigadierSource>.toProxyNode(
         if (modifier == null) {
             node.redirect(redirect.toProxyNode(sourceFactory, contextFactory))
         } else {
-            val proxiedModifier = object : RedirectModifier<S> {
-                override fun apply(context: CommandContext<S>): Collection<S> {
-                    val context = contextFactory(context)
-
-                    return modifier.apply(context).map { it.getInstance() }
-                }
+            val proxiedModifier = RedirectModifier { context ->
+                val context = contextFactory(context)
+                modifier.apply(context).map { it.getInstance() }
             }
 
             node.fork(
@@ -122,7 +119,7 @@ fun <S> CommandNode<McBrigadierSource>.toProxyNode(
     }
 
     children
-        .map { it.toProxyNode<S>(sourceFactory, contextFactory) }
+        .map { it.toProxyNode(sourceFactory, contextFactory) }
         .forEach { node.then(it) }
 
     requirement?.let { requirement ->

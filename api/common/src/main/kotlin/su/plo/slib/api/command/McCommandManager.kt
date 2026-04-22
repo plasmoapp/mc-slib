@@ -3,6 +3,7 @@ package su.plo.slib.api.command
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import com.mojang.brigadier.tree.LiteralCommandNode
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 
 /**
@@ -27,7 +28,7 @@ abstract class McCommandManager<T : McCommand> {
      *
      * @return A list containing the registered commands with their names as keys.
      */
-    abstract val registeredBrigadierCommands: List<LiteralArgumentBuilder<*>>
+    abstract val registeredBrigadierCommands: List<LiteralCommandNode<McBrigadierSource>>
 
     /**
      * Registers a brigadier command.
@@ -36,7 +37,18 @@ abstract class McCommandManager<T : McCommand> {
      * @throws IllegalStateException If attempting to register commands after commands have already been registered.
      * @throws IllegalArgumentException If a command with the same name or alias already exists.
      */
-    abstract fun register(command: LiteralArgumentBuilder<McBrigadierSource>)
+    fun register(command: LiteralArgumentBuilder<McBrigadierSource>) {
+        register(command.build())
+    }
+
+    /**
+     * Registers a brigadier command.
+     *
+     * @param command  The instance of the command to register.
+     * @throws IllegalStateException If attempting to register commands after commands have already been registered.
+     * @throws IllegalArgumentException If a command with the same name or alias already exists.
+     */
+    abstract fun register(command: LiteralCommandNode<McBrigadierSource>)
 
     /**
      * Registers a command with its name and optional aliases.
