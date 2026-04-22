@@ -49,6 +49,8 @@ runWaterfallExtension {
     disablePluginJarDetection()
 }
 
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(11))
+
 tasks {
     shadowJar {
         archiveClassifier = "all"
@@ -79,6 +81,10 @@ tasks {
     runWaterfall {
         waterfallVersion("1.21")
         pluginJars.from(testJar)
+
+        javaLauncher = project.javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
     }
 
     build {
