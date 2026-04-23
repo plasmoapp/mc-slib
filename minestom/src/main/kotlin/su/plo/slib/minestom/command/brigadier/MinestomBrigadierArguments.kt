@@ -91,8 +91,8 @@ class MinestomBrigadierArguments : McArgumentTypes.Provider {
                     position.x(),
                     position.y(),
                     position.z(),
-                    entityPosition?.yaw ?: 0f,
-                    entityPosition?.pitch ?: 0f,
+                    entityPosition?.yaw ?: position.x().toFloat(),
+                    entityPosition?.pitch ?: position.y().toFloat(),
                 )
             }
         }

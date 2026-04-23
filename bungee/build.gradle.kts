@@ -33,6 +33,7 @@ dependencies {
     }
 
     compileOnly(libs.adventure.bungee)
+    testCompileOnly(libs.adventure.bungee)
     shadow(libs.adventure.bungee) {
         exclude("org.jetbrains", "annotations")
         exclude("net.kyori", "adventure-api")
@@ -73,6 +74,8 @@ tasks {
             configurations = listOf(testShadowBundle)
 
             archiveClassifier.set("test")
+
+            relocate("net.kyori", "su.plo.slib.libs.adventure")
 
             from(zipTree(finalJar.get().archiveFile))
             from(sourceSets.test.get().output)
