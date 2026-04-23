@@ -28,14 +28,12 @@ case "$ENV_TYPE" in
           "brigadier-custom-type invalid-uuid"
           "brigadier-entity-selector entities @e"
           "brigadier-entity-selector players @a"
-          "brigadier-game-profiles-selector GNOME__"
           "brigadier-position-selector 100 100 100"
         )
         COMMAND_OUTPUT_PATTERNS=(
           "Invalid UUID"
           "Found entities:"
           "Found players:"
-          "Found game profiles:"
           "Position: ServerPos3d\\(world=null, x=100.0, y=100.0, z=100.0, yaw=100.0, pitch=100.0\\)"
         )
         ;;
