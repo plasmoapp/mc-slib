@@ -132,6 +132,15 @@ if [[ $STARTUP_OK -eq 0 ]]; then
 fi
 
 # Phase 2: send each command, wait for its expected output.
+# Paper 1.19.3 through 1.20.5 route stdin through CraftServer.dispatchCommand,
+# which only hits the Bukkit command map (no brigadier fallback until 1.20.6).
+# Set SKIP_COMMAND_IO=1 on affected versions to keep the startup checks while
+# opting out of the stdin round-trip.
+if [[ -n "$SKIP_COMMAND_IO" ]]; then
+    echo "Skipping command I/O phase (SKIP_COMMAND_IO=$SKIP_COMMAND_IO)"
+    COMMAND_INPUTS=()
+fi
+
 for i in "${!COMMAND_INPUTS[@]}"; do
     INPUT="${COMMAND_INPUTS[$i]}"
     PATTERN="${COMMAND_OUTPUT_PATTERNS[$i]}"
