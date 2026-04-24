@@ -61,6 +61,7 @@ abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
     @Synchronized
     override fun clear() {
         commandByName.clear()
+        brigadierCommands.clear()
         registered = false
     }
 
