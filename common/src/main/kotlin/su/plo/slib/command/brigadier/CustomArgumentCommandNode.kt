@@ -38,6 +38,7 @@ class CustomArgumentCommandNode<S, PARSED, NATIVE>(
     override fun parse(reader: StringReader, contextBuilder: CommandContextBuilder<S>) {
         val start = reader.cursor
         val result = customArgumentType.parse(reader)
+            ?: error("CustomArgumentType ${customArgumentType::class.java.name} returned null from parse; throw a CommandSyntaxException to signal a parse failure")
 
         val parsed = ParsedArgument<S, PARSED>(start, reader.cursor, result)
 

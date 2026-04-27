@@ -26,10 +26,8 @@ class UuidArgumentType : CustomArgumentType<UUID, String> {
         )
     )
 
-    override fun parse(reader: StringReader): UUID? {
+    override fun parse(reader: StringReader): UUID {
         val input = reader.readString()
-            ?.takeIf { it.isNotBlank() }
-            ?: return null
 
         try {
             return UUID.fromString(input)
