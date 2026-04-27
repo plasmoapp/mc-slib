@@ -165,8 +165,9 @@ class MinestomCommandManager(
                 argumentType.toMinestomParserType()
 
             override fun nodeProperties(): ByteArray? {
-                if (argumentType is StringArgumentType) {
-                    return NetworkBuffer.makeArray(NetworkBuffer.VAR_INT, argumentType.type.ordinal)
+                val effectiveType = (argumentType as? CustomArgumentType<*, *>)?.nativeType ?: argumentType
+                if (effectiveType is StringArgumentType) {
+                    return NetworkBuffer.makeArray(NetworkBuffer.VAR_INT, effectiveType.type.ordinal)
                 }
 
                 return super.nodeProperties()
