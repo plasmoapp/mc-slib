@@ -23,18 +23,21 @@ case "$ENV_TYPE" in
           "Command 'brigadier-position-selector' registered"
           "Command 'brigadier-game-profiles-selector' registered"
           "Command 'brigadier-custom-type' registered"
+          "Command 'brigadier-multi-arg' registered"
         )
         COMMAND_INPUTS=(
           "brigadier-custom-type invalid-uuid"
           "brigadier-entity-selector entities @e"
           "brigadier-entity-selector players @a"
           "brigadier-position-selector 100 100 100"
+          "brigadier-multi-arg 7 13"
         )
         COMMAND_OUTPUT_PATTERNS=(
           "Invalid UUID"
           "Found entities:"
           "Found players:"
           "Position: ServerPos3d\\(world=null, x=100.0, y=100.0, z=100.0, yaw=100.0, pitch=100.0\\)"
+          "Multi-arg: a=7, b=13"
         )
         ;;
     proxy)

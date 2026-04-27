@@ -1,6 +1,7 @@
 package su.plo.slib.server
 
 import com.mojang.brigadier.Command
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
@@ -178,6 +179,24 @@ class TestServer(
 
                                 Command.SINGLE_SUCCESS
                             }
+                    )
+            )
+
+            commands.register(
+                McCommandManager.literal("brigadier-multi-arg")
+                    .then(
+                        McCommandManager.argument("a", IntegerArgumentType.integer())
+                            .then(
+                                McCommandManager.argument("b", IntegerArgumentType.integer())
+                                    .executes {
+                                        val a = it.getArgument("a", Integer::class.java)
+                                        val b = it.getArgument("b", Integer::class.java)
+
+                                        it.source.source.sendMessage("Multi-arg: a=$a, b=$b")
+
+                                        Command.SINGLE_SUCCESS
+                                    }
+                            )
                     )
             )
         }

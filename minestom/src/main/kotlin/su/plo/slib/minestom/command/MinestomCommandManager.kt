@@ -94,21 +94,39 @@ class MinestomCommandManager(
     private fun LiteralCommandNode<McBrigadierSource>.toMinestom(): Command {
         val minestomCommand = Command(name)
 
-        val commands = children.filterIsInstance<LiteralCommandNode<McBrigadierSource>>()
-            .map { it.toMinestom() }
-        commands.forEach { minestomCommand.addSubcommand(it) }
+        children.filterIsInstance<LiteralCommandNode<McBrigadierSource>>()
+            .forEach { minestomCommand.addSubcommand(it.toMinestom()) }
 
         val literalExecutor = command?.toMinestom()
 
-        val arguments = children.filterIsInstance<ArgumentCommandNode<McBrigadierSource, *>>()
-            .map { it.toMinestom() }
-        arguments.forEach {(argument, argumentExecutor) ->
-            minestomCommand.addSyntax(argumentExecutor ?: literalExecutor ?: noopCommandExecutor(), argument)
-        }
+        children.filterIsInstance<ArgumentCommandNode<McBrigadierSource, *>>()
+            .forEach { registerArgumentSyntaxes(minestomCommand, it, emptyList(), literalExecutor) }
 
         minestomCommand.defaultExecutor = defaultCommandExecutor(literalExecutor)
 
         return minestomCommand
+    }
+
+    private fun registerArgumentSyntaxes(
+        minestomCommand: Command,
+        node: ArgumentCommandNode<McBrigadierSource, *>,
+        prefix: List<Argument<*>>,
+        fallbackExecutor: CommandExecutor?,
+    ) {
+        val (argument, executor) = node.toMinestom()
+        val pathSoFar = prefix + argument
+        val argDescendants = node.children.filterIsInstance<ArgumentCommandNode<McBrigadierSource, *>>()
+
+        if (executor != null || argDescendants.isEmpty()) {
+            minestomCommand.addSyntax(
+                executor ?: fallbackExecutor ?: noopCommandExecutor(),
+                *pathSoFar.toTypedArray(),
+            )
+        }
+
+        argDescendants.forEach { child ->
+            registerArgumentSyntaxes(minestomCommand, child, pathSoFar, fallbackExecutor)
+        }
     }
 
     private fun noopCommandExecutor(): CommandExecutor =
