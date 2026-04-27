@@ -6,7 +6,10 @@ import su.plo.slib.api.chat.converter.McTextConverter
 import su.plo.slib.chat.AdventureComponentTextConverter
 
 //? if >=1.20.5 {
-/*import com.google.gson.*
+/*import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParseException
+import com.google.gson.JsonParser
 import com.mojang.serialization.JsonOps
 import net.minecraft.network.chat.ComponentSerialization
 *///?}
@@ -28,7 +31,7 @@ object ComponentTextConverter : McTextConverter<Component> {
         ?.let {
             ComponentSerialization.CODEC.parse(JsonOps.INSTANCE, it).getOrThrow(::JsonParseException)
         }
-        ?: throw JsonParseException("JsonParser return null smh")
+        ?: throw JsonParseException("JsonParser returned null")
         *///?} else {
         Component.Serializer.fromJson(json)!!
     //?}
