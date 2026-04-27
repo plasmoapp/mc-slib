@@ -24,9 +24,9 @@ abstract class McCommandManager<T : McCommand> {
     abstract val registeredCommands: Map<String, McCommand>
 
     /**
-     * Retrieves a read-only map of registered brigadier commands.
+     * Retrieves a read-only list of registered brigadier command nodes.
      *
-     * @return A list containing the registered commands with their names as keys.
+     * @return A list of registered brigadier command nodes.
      */
     abstract val registeredBrigadierCommands: List<LiteralCommandNode<McBrigadierSource>>
 
@@ -71,7 +71,10 @@ abstract class McCommandManager<T : McCommand> {
      *
      * The [source] parameter represents the server-specific command source instance:
      *  - For Velocity `com.velocitypowered.api.command.CommandSource`
-     *  - For BungeeCord `// todo`
+     *  - For BungeeCord `net.md_5.bungee.api.CommandSender`
+     *  - For Spigot/Paper `org.bukkit.command.CommandSender`
+     *  - For Minestom `net.minestom.server.command.CommandSender`
+     *  - For modded servers (Fabric/Forge/NeoForge) `net.minecraft.commands.CommandSourceStack`
      *
      * @param source The server-specific command source instance.
      * @return A [McCommandSource] instance corresponding to the provided command source instance.
