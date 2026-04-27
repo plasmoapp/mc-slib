@@ -1,16 +1,19 @@
 package su.plo.slib.proxy
 
 import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import net.kyori.adventure.key.Key
+import net.kyori.adventure.translation.GlobalTranslator
+import net.kyori.adventure.translation.TranslationStore
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
-import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.proxy.command.McProxyCommand
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
 import su.plo.slib.proxy.command.UuidArgumentType
+import java.text.MessageFormat
+import java.util.Locale
 import java.util.UUID
 
 class TestProxy {
@@ -59,5 +62,17 @@ class TestProxy {
                     )
             )
         }
+
+        registerVanillaTranslations()
+    }
+
+    // Bungee/Velocity doesn't ship vanilla translations, so translation keys leak to the console as raw ids
+    // Register the minimum set the smoke tests need
+    private fun registerVanillaTranslations() {
+        val store = TranslationStore.messageFormat(Key.key("slib", "test"))
+        store.defaultLocale(Locale.US)
+        store.register("command.context.parse_error", Locale.US, MessageFormat("{0} at position {1}: {2}"))
+        store.register("argument.uuid.invalid", Locale.US, MessageFormat("Invalid UUID"))
+        GlobalTranslator.translator().addSource(store)
     }
 }
