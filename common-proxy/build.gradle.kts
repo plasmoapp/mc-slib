@@ -7,4 +7,6 @@ dependencies {
 
     testFixturesImplementation(project(":api:api-common"))
     testFixturesImplementation(project(":api:api-proxy"))
+
+    testFixturesImplementation(libs.adventure.api)
 }
