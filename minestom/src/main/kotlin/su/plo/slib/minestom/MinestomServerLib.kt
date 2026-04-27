@@ -3,7 +3,6 @@ package su.plo.slib.minestom
 import com.google.common.collect.Maps
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Entity
-import net.minestom.server.entity.LivingEntity
 import net.minestom.server.entity.Player
 import net.minestom.server.event.instance.InstanceUnregisterEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
@@ -139,7 +138,7 @@ class MinestomServerLib(
     }
 
     override fun getEntityByInstance(instance: Any): McServerEntity {
-        require(instance is Entity) { "instance is not ${LivingEntity::class.java}" }
+        require(instance is Entity) { "instance is not ${Entity::class.java}" }
 
         if (instance is Player) {
             return getPlayerByInstance(instance)
