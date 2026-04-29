@@ -44,7 +44,7 @@ class ModCommandManager(
 
     override fun getCommandSource(sourceStack: Any): McCommandSource {
         require(sourceStack is CommandSourceStack) { "source is not " + CommandSourceStack::class.java }
-        require(sourceStack is CommandSourceStackAccessor) { "source is not " + CommandSourceStack::class.java }
+        require(sourceStack is CommandSourceStackAccessor) { "source is not " + CommandSourceStackAccessor::class.java }
 
         val source = sourceStack.slib_getSource()
 
