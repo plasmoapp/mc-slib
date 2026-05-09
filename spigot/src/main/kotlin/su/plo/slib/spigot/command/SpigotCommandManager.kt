@@ -46,8 +46,7 @@ class SpigotCommandManager(
                 )
             }
         } catch (e: Exception) {
-            logger.warn("Failed to get Brigadier dispatcher: {}", e)
-            e.printStackTrace()
+            logger.warn("Failed to get Brigadier dispatcher", e)
         }
 
         registered = true
