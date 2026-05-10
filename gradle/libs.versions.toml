@@ -1,82 +1,87 @@
 [versions]
+# kotlin
 kotlin = "2.3.10"
 kotlinx-coroutines = "1.10.2"
-dokka = "2.1.0"
-run-task = "3.0.2"
 
-architectury = "1.15.48"
+# build tooling
+dokka = "2.1.0"
 shadow = "9.3.2"
 asm = "9.9.1"
+architectury = "1.15.48"
+fletching-table = "0.1.0-alpha.22"
+run-task = "3.0.2"
 
+# common libraries
 annotations = "23.0.0"
 guava = "33.3.1-jre"
 slf4j = "1.7.30"
 semver4j = "6.0.0"
 
+# platforms
 spigot = "1.16.5-R0.1-SNAPSHOT"
 folia = "1.20.1-R0.1-SNAPSHOT"
 velocity = "3.1.1"
 bungee = "1.21-R0.4-SNAPSHOT"
-
 minestom = "2025.10.05-1.21.8"
 
+# minecraft libraries
 adventure = "4.21.0"
-brigadier = "1.0.18"
 adventure-platform = "4.4.1"
+brigadier = "1.0.18"
 fabric-permissions = "0.3.1"
-
 reflection-remapper = "0.1.2"
 
-fletching-table = "0.1.0-alpha.22"
-
+# test runtime
 log4j = "2.25.3"
 slf4j-log4j = "2.0.17"
 jline = "3.21.0"
 terminalconsoleappender = "1.3.0"
 
 [libraries]
-kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+# kotlin
+kotlinx-coroutines      = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlinx-coroutines" }
 
-annotations  = { module = "org.jetbrains:annotations", version.ref = "annotations" }
-guava        = { module = "com.google.guava:guava", version.ref = "guava" }
-slf4j        = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-semver4j     = { module = "org.semver4j:semver4j", version.ref = "semver4j" }
-
-spigot = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
-folia = { module = "dev.folia:folia-api", version.ref = "folia" }
-velocity = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
-bungee-api = { module = "net.md-5:bungeecord-api", version.ref = "bungee" }
-bungee-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungee" }
-
-minestom = { module = "net.minestom:minestom", version.ref = "minestom" }
-
-adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
-adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
-adventure-legacy = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure" }
-adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
-adventure-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform" }
-adventure-bungee = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
-
-brigadier = { module = "com.mojang:brigadier", version.ref = "brigadier" }
-
-fabric-permissions = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
-
-reflectionremapper = { module = "xyz.jpenilla:reflection-remapper", version.ref = "reflection-remapper" }
-
+# builld tooling
 shadow = { module = "com.gradleup.shadow:com.gradleup.shadow.gradle.plugin", version.ref = "shadow" }
-asm = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
+asm    = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 
-log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
-slf4j-log4j12 = { module = "org.slf4j:slf4j-log4j12", version.ref = "slf4j-log4j" }
-jline-reader = { module = "org.jline:jline-reader", version.ref = "jline" }
-jline-terminal = { module = "org.jline:jline-terminal", version.ref = "jline" }
+# common libraries
+annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+guava       = { module = "com.google.guava:guava", version.ref = "guava" }
+slf4j       = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+semver4j    = { module = "org.semver4j:semver4j", version.ref = "semver4j" }
+
+# platforms
+spigot       = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
+folia        = { module = "dev.folia:folia-api", version.ref = "folia" }
+velocity     = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
+bungee-api   = { module = "net.md-5:bungeecord-api", version.ref = "bungee" }
+bungee-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungee" }
+minestom     = { module = "net.minestom:minestom", version.ref = "minestom" }
+
+# minecraft libraries
+adventure-api         = { module = "net.kyori:adventure-api", version.ref = "adventure" }
+adventure-gson        = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
+adventure-legacy      = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure" }
+adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
+adventure-bukkit      = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform" }
+adventure-bungee      = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
+brigadier             = { module = "com.mojang:brigadier", version.ref = "brigadier" }
+fabric-permissions    = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
+reflectionremapper    = { module = "xyz.jpenilla:reflection-remapper", version.ref = "reflection-remapper" }
+
+# test runtime
+log4j-core              = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+slf4j-log4j12           = { module = "org.slf4j:slf4j-log4j12", version.ref = "slf4j-log4j" }
+jline-reader            = { module = "org.jline:jline-reader", version.ref = "jline" }
+jline-terminal          = { module = "org.jline:jline-terminal", version.ref = "jline" }
 terminalconsoleappender = { module = "net.minecrell:terminalconsoleappender", version.ref = "terminalconsoleappender" }
 
 [plugins]
-architectury = { id = "gg.essential.loom", version.ref = "architectury" }
-dokka  = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-task"}
-run-velocity = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task"}
-run-waterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task"}
+dokka          = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+architectury   = { id = "gg.essential.loom", version.ref = "architectury" }
 fletchingtable = { id = "dev.kikugie.fletching-table", version.ref = "fletching-table" }
+run-paper      = { id = "xyz.jpenilla.run-paper", version.ref = "run-task" }
+run-velocity   = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task" }
+run-waterfall  = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task" }
