@@ -21,7 +21,7 @@ subprojects {
         implementation(rootProject.libs.kotlinx.coroutines.jdk8)
 
         implementation(rootProject.libs.guava)
-        api("com.mojang:brigadier:1.0.18")
+        api(rootProject.libs.brigadier)
     }
 
     tasks {

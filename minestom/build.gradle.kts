@@ -20,13 +20,12 @@ dependencies {
     testImplementation(libs.minestom)
     testImplementation(testFixtures(project(":common-server")))
 
-    // todo: catalog
-    testImplementation("org.apache.logging.log4j:log4j-core:2.25.3")
-    testImplementation("org.slf4j:slf4j-log4j12:2.0.17")
+    testImplementation(libs.log4j.core)
+    testImplementation(libs.slf4j.log4j12)
 
-    testImplementation("org.jline:jline-reader:3.21.0")
-    testImplementation("org.jline:jline-terminal:3.21.0")
-    testImplementation("net.minecrell:terminalconsoleappender:1.3.0")
+    testImplementation(libs.jline.reader)
+    testImplementation(libs.jline.terminal)
+    testImplementation(libs.terminalconsoleappender)
 }
 
 tasks {
