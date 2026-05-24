@@ -20,7 +20,7 @@ import su.plo.slib.velocity.extension.textConverter
 
 class VelocityCommandManager(
     private val minecraftProxy: McProxyLib
-) : AbstractCommandManager<McProxyCommand>() {
+) : AbstractCommandManager<McProxyCommand>(minecraftProxy.baseLogger) {
 
     @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {

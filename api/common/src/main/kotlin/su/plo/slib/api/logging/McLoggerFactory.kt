@@ -16,6 +16,10 @@ object McLoggerFactory {
     fun createLogger(name: String): McLazyLogger =
         McLazyLogger(name)
 
+    @JvmStatic
+    fun createLogger(baseLogger: McLogger, name: String): McLazyLogger =
+        McLazyLogger { "${baseLogger.getName()}/$name" }
+
     @Internal
     lateinit var supplier: Supplier
 

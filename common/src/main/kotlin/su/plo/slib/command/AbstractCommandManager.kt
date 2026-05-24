@@ -16,11 +16,14 @@ import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.command.brigadier.McBrigadierSource
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.command.brigadier.buildCustom
 
-abstract class AbstractCommandManager<T : McCommand> : McCommandManager<T>() {
-    private val logger = McLoggerFactory.createLogger("CommandManager")
+abstract class AbstractCommandManager<T : McCommand>(
+    baseLogger: McLogger
+) : McCommandManager<T>() {
+    private val logger = McLoggerFactory.createLogger(baseLogger, "CommandManager")
 
     protected val commandByName: MutableMap<String, T> = Maps.newHashMap()
     protected var brigadierCommands: MutableList<LiteralCommandNode<McBrigadierSource>> = mutableListOf()

@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.proxy.McProxyLib
@@ -27,11 +28,12 @@ import su.plo.slib.velocity.permission.VelocityPermissionSupplier
 import su.plo.slib.velocity.player.VelocityProxyPlayer
 import su.plo.slib.velocity.server.VelocityProxyServerInfo
 import java.io.File
-import java.util.*
+import java.util.UUID
 
-class VelocityProxyLib(
+class VelocityProxyLib @JvmOverloads constructor(
     private val proxyServer: ProxyServer,
-    plugin: Any
+    plugin: Any,
+    override val baseLogger: McLogger = McLoggerFactory.createLogger("slib")
 ) : McProxyLib {
 
     init {

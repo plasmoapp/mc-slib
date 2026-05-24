@@ -12,6 +12,7 @@ import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.event.EventHandler
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.proxy.McProxyLib
@@ -30,11 +31,12 @@ import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.JavaLogger
 import java.io.File
 import java.net.InetSocketAddress
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
-class BungeeProxyLib(
-    private val loader: Plugin
+class BungeeProxyLib @JvmOverloads constructor(
+    private val loader: Plugin,
+    override val baseLogger: McLogger = McLoggerFactory.createLogger("slib")
 ) : McProxyLib, Listener {
 
     init {

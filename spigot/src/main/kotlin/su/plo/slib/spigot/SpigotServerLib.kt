@@ -7,7 +7,6 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
 import org.bukkit.entity.Entity
-import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -16,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.McServerLib
@@ -42,8 +42,9 @@ import java.io.File
 import java.util.Optional
 import java.util.UUID
 
-class SpigotServerLib(
-    private val loader: JavaPlugin
+class SpigotServerLib @JvmOverloads constructor(
+    private val loader: JavaPlugin,
+    override val baseLogger: McLogger = McLoggerFactory.createLogger("slib")
 ) : McServerLib, Listener {
 
     init {

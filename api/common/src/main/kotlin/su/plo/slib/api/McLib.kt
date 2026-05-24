@@ -21,6 +21,12 @@ import java.io.File
 interface McLib {
 
     /**
+     * The base logger used as a prefix for slib's internal loggers.
+     */
+    val baseLogger: McLogger
+        get() = McLoggerFactory.createLogger("slib")
+
+    /**
      * Gets the server translator.
      */
     val serverTranslator: ServerTranslator

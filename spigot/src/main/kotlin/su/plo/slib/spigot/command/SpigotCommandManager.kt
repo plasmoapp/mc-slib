@@ -20,9 +20,9 @@ import su.plo.slib.spigot.nms.getCommandDispatcher
 
 class SpigotCommandManager(
     private val minecraftServer: SpigotServerLib
-) : AbstractCommandManager<McCommand>() {
+) : AbstractCommandManager<McCommand>(minecraftServer.baseLogger) {
 
-    private val logger = McLoggerFactory.createLogger("SpigotCommandManager")
+    private val logger = McLoggerFactory.createLogger(minecraftServer.baseLogger, "SpigotCommandManager")
 
     @Synchronized
     fun registerCommands(loader: JavaPlugin) {

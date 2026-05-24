@@ -1,24 +1,31 @@
 package su.plo.slib.mod
 
 import com.google.common.collect.Maps
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
-import su.plo.slib.api.server.McServerLib
-import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.entity.player.McPlayer
 import su.plo.slib.api.event.player.McPlayerQuitEvent
-import su.plo.slib.api.server.entity.player.McServerPlayer
-import su.plo.slib.api.permission.PermissionManager
-import su.plo.slib.api.server.world.McServerWorld
-import su.plo.slib.language.ServerTranslatorFactory
+import su.plo.slib.api.logging.McLazyLogger
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.api.permission.PermissionManager
+import su.plo.slib.api.server.McServerLib
+import su.plo.slib.api.server.entity.McServerEntity
+import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.api.server.scheduler.McServerScheduler
+import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.integration.IntegrationLoader
+import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.mod.channel.ModChannelManager
 import su.plo.slib.mod.command.ModCommandManager
 import su.plo.slib.mod.entity.ModServerEntity
@@ -30,8 +37,7 @@ import su.plo.slib.mod.permission.ModPermissionSupplier
 import su.plo.slib.mod.scheduler.ModServerScheduler
 import su.plo.slib.mod.world.ModServerWorld
 import java.io.File
-import java.lang.Runnable
-import java.util.*
+import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
 //? if >=1.21.9 {
@@ -39,6 +45,10 @@ import kotlin.time.Duration.Companion.seconds
 *///?}
 
 object ModServerLib : McServerLib {
+
+    var baseLoggerName: String = "slib"
+
+    override val baseLogger: McLogger = McLazyLogger { baseLoggerName }
 
     init {
         McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Log4jLogger(name) }

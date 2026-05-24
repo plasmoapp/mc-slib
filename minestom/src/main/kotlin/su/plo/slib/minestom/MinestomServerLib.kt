@@ -12,6 +12,7 @@ import net.minestom.server.instance.Instance
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.McServerLib
@@ -37,8 +38,9 @@ import java.io.IOException
 import java.util.UUID
 import java.util.function.Consumer
 
-class MinestomServerLib(
-    private val dataDirectory: File
+class MinestomServerLib @JvmOverloads constructor(
+    dataDirectory: File,
+    override val baseLogger: McLogger = McLoggerFactory.createLogger("slib")
 ) : McServerLib {
 
     init {

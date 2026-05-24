@@ -45,7 +45,7 @@ import su.plo.slib.minestom.command.brigadier.MinestomBrigadierSource
 
 class MinestomCommandManager(
     private val minecraftServer: McServerLib
-) : AbstractCommandManager<McCommand>() {
+) : AbstractCommandManager<McCommand>(minecraftServer.baseLogger) {
 
     // Minestom discards the thrown ArgumentSyntaxException's rich info when building its
     // InvalidCommand, and the per-argument ArgumentCallback is orphan API that never fires.

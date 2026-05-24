@@ -17,7 +17,7 @@ import su.plo.slib.command.proxied
 
 class BungeeCommandManager(
     private val minecraftProxy: BungeeProxyLib
-) : AbstractCommandManager<McProxyCommand>(), Listener {
+) : AbstractCommandManager<McProxyCommand>(minecraftProxy.baseLogger), Listener {
 
     @EventHandler
     fun onChat(event: ChatEvent) {

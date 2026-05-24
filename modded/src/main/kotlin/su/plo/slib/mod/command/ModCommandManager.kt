@@ -20,7 +20,7 @@ import su.plo.slib.mod.mixin.accessor.CommandSourceStackAccessor
 
 class ModCommandManager(
     private val minecraftServer: McServerLib
-) : AbstractCommandManager<McCommand>() {
+) : AbstractCommandManager<McCommand>(minecraftServer.baseLogger) {
 
     @Synchronized
     fun registerCommands(dispatcher: CommandDispatcher<CommandSourceStack>) {
