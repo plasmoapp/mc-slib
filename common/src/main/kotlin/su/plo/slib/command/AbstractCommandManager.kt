@@ -26,7 +26,9 @@ abstract class AbstractCommandManager<T : McCommand>(
     private val logger = McLoggerFactory.createLogger(baseLogger, "CommandManager")
 
     protected val commandByName: MutableMap<String, T> = Maps.newHashMap()
+    protected val namespaceByName: MutableMap<String, String> = Maps.newHashMap()
     protected var brigadierCommands: MutableList<LiteralCommandNode<McBrigadierSource>> = mutableListOf()
+    protected val brigadierNamespaceByLiteral: MutableMap<String, String> = Maps.newHashMap()
 
     protected var registered = false
 
@@ -47,7 +49,18 @@ abstract class AbstractCommandManager<T : McCommand>(
     }
 
     @Synchronized
+    override fun register(namespace: String, command: LiteralCommandNode<McBrigadierSource>) {
+        register(command)
+        brigadierNamespaceByLiteral[command.literal] = namespace
+    }
+
+    @Synchronized
     override fun register(name: String, command: T, vararg aliases: String) {
+        register(commandNamespace, name, command, *aliases)
+    }
+
+    @Synchronized
+    override fun register(namespace: String, name: String, command: T, vararg aliases: String) {
         check(!registered) { "register after commands registration is not supported" }
         require(!commandByName.containsKey(name)) { "Command with name '$name' already exist" }
 
@@ -56,28 +69,34 @@ abstract class AbstractCommandManager<T : McCommand>(
         }
 
         commandByName[name] = command
+        namespaceByName[name] = namespace
         for (alias in aliases) {
             commandByName[alias] = command
+            namespaceByName[alias] = namespace
         }
     }
 
     @Synchronized
     override fun clear() {
         commandByName.clear()
+        namespaceByName.clear()
         brigadierCommands.clear()
+        brigadierNamespaceByLiteral.clear()
         registered = false
     }
 
-    protected fun registerCommands(register: (String, T) -> Unit) {
+    protected fun registerCommands(register: (String, T, String) -> Unit) {
         commandByName.forEach { (name, command) ->
-            register(name, command)
+            val namespace = namespaceByName[name] ?: commandNamespace
+            register(name, command, namespace)
             logger.info("Command '$name' registered")
         }
     }
 
-    protected fun registerBrigadierCommands(registerCommand: (LiteralCommandNode<McBrigadierSource>) -> Unit) {
+    protected fun registerBrigadierCommands(registerCommand: (LiteralCommandNode<McBrigadierSource>, String) -> Unit) {
         brigadierCommands.forEach { command ->
-            registerCommand(command)
+            val namespace = brigadierNamespaceByLiteral[command.literal] ?: commandNamespace
+            registerCommand(command, namespace)
             logger.info("Command '${command.literal}' registered")
         }
     }

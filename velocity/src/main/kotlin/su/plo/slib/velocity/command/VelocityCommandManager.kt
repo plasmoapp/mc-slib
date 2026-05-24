@@ -57,12 +57,12 @@ class VelocityCommandManager(
 
     @Synchronized
     fun registerCommands(proxyServer: ProxyServer) {
-        registerCommands { name, command ->
+        registerCommands { name, command, _ ->
             val velocityCommand = VelocityCommand(minecraftProxy, this, command)
             proxyServer.commandManager.register(name, velocityCommand)
         }
 
-        registerBrigadierCommands { command ->
+        registerBrigadierCommands { command, _ ->
             @Suppress("UNCHECKED_CAST")
             val brigadierCommand = BrigadierCommand(
                 command.proxied(

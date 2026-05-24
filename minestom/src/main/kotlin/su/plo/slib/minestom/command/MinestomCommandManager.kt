@@ -57,7 +57,7 @@ class MinestomCommandManager(
     fun registerCommands() {
         McServerCommandsRegisterEvent.invoker.onCommandsRegister(this, minecraftServer)
 
-        registerCommands { name, command ->
+        registerCommands { name, command, _ ->
             val cmd = Command(name)
             cmd.setDefaultExecutor { sender, context ->
                 val source = getCommandSource(sender)
@@ -72,7 +72,7 @@ class MinestomCommandManager(
             MinecraftServer.getCommandManager().register(cmd)
         }
 
-        registerBrigadierCommands { command ->
+        registerBrigadierCommands { command, _ ->
             MinecraftServer.getCommandManager().register(
                 command.proxied(
                     { it },

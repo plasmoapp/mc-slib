@@ -24,13 +24,13 @@ class ModCommandManager(
 
     @Synchronized
     fun registerCommands(dispatcher: CommandDispatcher<CommandSourceStack>) {
-        registerCommands { name, command ->
+        registerCommands { name, command, _ ->
             val modCommand = ModCommand(minecraftServer, this, command)
             modCommand.register(dispatcher, name)
         }
 
         @Suppress("UNCHECKED_CAST")
-        registerBrigadierCommands { command ->
+        registerBrigadierCommands { command, _ ->
             dispatcher.root.addChild(
                 command.proxied(
                     ModBrigadierSource::from,

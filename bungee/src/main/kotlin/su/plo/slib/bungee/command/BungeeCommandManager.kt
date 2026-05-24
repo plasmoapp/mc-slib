@@ -30,11 +30,11 @@ class BungeeCommandManager(
 
     @Synchronized
     fun registerCommands(plugin: Plugin, proxyServer: ProxyServer) {
-        registerCommands { name, command ->
+        registerCommands { name, command, _ ->
             proxyServer.pluginManager.registerCommand(plugin, BungeeCommand(minecraftProxy, this, command, name))
         }
 
-        registerBrigadierCommands { command ->
+        registerBrigadierCommands { command, _ ->
             proxyServer.pluginManager.registerCommand(
                 plugin,
                 BungeeBrigadierCommand(this, command.proxied({ it }, { it })),

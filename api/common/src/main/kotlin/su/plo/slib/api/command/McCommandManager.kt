@@ -17,6 +17,14 @@ import su.plo.slib.api.command.brigadier.McBrigadierSource
 abstract class McCommandManager<T : McCommand> {
 
     /**
+     * The fallback namespace prefix used when registering commands.
+     *
+     * On Spigot/Paper, this is used as the fallback prefix for the command map,
+     * making commands accessible as both `/command` and `/namespace:command`.
+     */
+    var commandNamespace: String = "slib"
+
+    /**
      * Retrieves a read-only map of registered commands.
      *
      * @return A map containing the registered commands with their names as keys.
@@ -51,6 +59,28 @@ abstract class McCommandManager<T : McCommand> {
     abstract fun register(command: LiteralCommandNode<McBrigadierSource>)
 
     /**
+     * Registers a brigadier command with a custom namespace.
+     *
+     * @param namespace The namespace prefix for this command.
+     * @param command   The instance of the command to register.
+     * @throws IllegalStateException If attempting to register commands after commands have already been registered.
+     * @throws IllegalArgumentException If a command with the same name or alias already exists.
+     */
+    fun register(namespace: String, command: LiteralArgumentBuilder<McBrigadierSource>) {
+        register(namespace, command.build())
+    }
+
+    /**
+     * Registers a brigadier command with a custom namespace.
+     *
+     * @param namespace The namespace prefix for this command.
+     * @param command   The instance of the command to register.
+     * @throws IllegalStateException If attempting to register commands after commands have already been registered.
+     * @throws IllegalArgumentException If a command with the same name or alias already exists.
+     */
+    abstract fun register(namespace: String, command: LiteralCommandNode<McBrigadierSource>)
+
+    /**
      * Registers a command with its name and optional aliases.
      *
      * @param name     The primary name of the command.
@@ -60,6 +90,21 @@ abstract class McCommandManager<T : McCommand> {
      * @throws IllegalArgumentException If a command with the same name or alias already exists.
      */
     abstract fun register(name: String, command: T, vararg aliases: String)
+
+    /**
+     * Registers a command with a custom namespace, name, and optional aliases.
+     *
+     * The [namespace] overrides [commandNamespace] for this command,
+     * making it accessible as `/namespace:command` on Spigot/Paper.
+     *
+     * @param namespace The namespace prefix for this command.
+     * @param name      The primary name of the command.
+     * @param command   The instance of the command to register.
+     * @param aliases   Optional alias names for the command.
+     * @throws IllegalStateException If attempting to register commands after commands have already been registered.
+     * @throws IllegalArgumentException If a command with the same name or alias already exists.
+     */
+    abstract fun register(namespace: String, name: String, command: T, vararg aliases: String)
 
     /**
      * Clears all registered commands and resets the registration state.

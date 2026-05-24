@@ -1,6 +1,8 @@
 package su.plo.slib.spigot.command
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.tree.LiteralCommandNode
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.SimpleCommandMap
@@ -28,22 +30,23 @@ class SpigotCommandManager(
     fun registerCommands(loader: JavaPlugin) {
         McServerCommandsRegisterEvent.invoker.onCommandsRegister(this, minecraftServer)
 
-        registerCommands { name, command ->
+        registerCommands { name, command, namespace ->
             val spigotCommand = SpigotCommand(minecraftServer, this, command, name)
             val commandMap = loader.commandMap()
 
-            commandMap.register("plasmovoice", spigotCommand)
+            commandMap.register(namespace, spigotCommand)
         }
 
         try {
             val dispatcher = loader.server.getCommandDispatcher()
-            registerBrigadierCommands { command ->
-                dispatcher.root.addChild(
-                    command.proxied(
-                        SpigotBrigadierSource::from,
-                        { it.toMc() },
-                    )
+            registerBrigadierCommands { command, namespace ->
+                val proxied = command.proxied(
+                    SpigotBrigadierSource::from,
+                    { it.toMc() },
                 )
+
+                dispatcher.root.addChild(proxied)
+                dispatcher.root.addChild(proxied.copy("$namespace:${command.literal}"))
             }
         } catch (e: Exception) {
             logger.warn("Failed to get Brigadier dispatcher", e)
@@ -90,6 +93,17 @@ class SpigotCommandManager(
             .getDeclaredField("commandMap")
             .also { it.isAccessible = true }
             .get(server) as SimpleCommandMap
+}
+
+private fun <S> LiteralCommandNode<S>.copy(newLiteral: String): LiteralCommandNode<S> {
+    val builder = LiteralArgumentBuilder.literal<S>(newLiteral)
+        .requires(requirement)
+        .forward(redirect, redirectModifier, isFork)
+
+    command?.let { builder.executes(it) }
+    children.forEach { builder.then(it) }
+
+    return builder.build()
 }
 
 fun CommandContext<McBrigadierSource>.toSourceStack(): CommandContext<Any> =
