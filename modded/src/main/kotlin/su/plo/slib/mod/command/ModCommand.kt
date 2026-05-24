@@ -12,8 +12,8 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import net.minecraft.commands.CommandSourceStack
-import org.apache.logging.log4j.LogManager
 import su.plo.slib.api.command.McCommand
+import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.McServerLib
 import java.util.concurrent.CompletableFuture
 import java.util.function.Predicate
@@ -92,6 +92,6 @@ class ModCommand(
         command.hasPermission(commandManager.getCommandSource(source), null)
 
     companion object {
-        private val logger = LogManager.getLogger(ModCommand::class.java)
+        private val logger = McLoggerFactory.createLogger("ModCommand")
     }
 }
