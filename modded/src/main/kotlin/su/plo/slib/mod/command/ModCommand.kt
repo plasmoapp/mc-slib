@@ -24,6 +24,8 @@ class ModCommand(
     private val command: McCommand
 ) : Command<CommandSourceStack>, Predicate<CommandSourceStack>, SuggestionProvider<CommandSourceStack> {
 
+    private val logger = McLoggerFactory.createLogger(minecraftServer.baseLogger, "ModCommand")
+
     fun register(
         dispatcher: CommandDispatcher<CommandSourceStack>,
         label: String
@@ -90,8 +92,4 @@ class ModCommand(
 
     override fun test(source: CommandSourceStack) =
         command.hasPermission(commandManager.getCommandSource(source), null)
-
-    companion object {
-        private val logger = McLoggerFactory.createLogger("ModCommand")
-    }
 }

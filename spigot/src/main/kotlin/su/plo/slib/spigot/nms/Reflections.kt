@@ -5,11 +5,12 @@ import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.semver4j.Semver
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.spigot.SpigotServerLib
 import xyz.jpenilla.reflectionremapper.ReflectionRemapper
 import xyz.jpenilla.reflectionremapper.proxy.ReflectionProxyFactory
 
 object ReflectionProxies {
-    private val logger = McLoggerFactory.createLogger("ReflectionProxies")
+    private val logger = McLoggerFactory.createLogger(SpigotServerLib.instance.baseLogger, "ReflectionProxies")
 
     val commandsClass: Class<*>
     val commandSourceStack: CommandSourceStackProxy

@@ -5,6 +5,7 @@ import org.bukkit.World
 import org.bukkit.entity.Entity
 import org.bukkit.util.Vector
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.spigot.SpigotServerLib
 import java.util.concurrent.atomic.AtomicBoolean
 
 object GameEventUtil {
@@ -34,7 +35,7 @@ object GameEventUtil {
         }
     }
 
-    private val logger = McLoggerFactory.createLogger("GameEventUtil")
+    private val logger = McLoggerFactory.createLogger(SpigotServerLib.instance.baseLogger, "GameEventUtil")
     private var sent: AtomicBoolean = AtomicBoolean(false)
 
     private fun sendGameEventNotSupported() {
