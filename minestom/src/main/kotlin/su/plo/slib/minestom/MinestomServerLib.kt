@@ -12,6 +12,7 @@ import net.minestom.server.instance.Instance
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
 import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
@@ -79,6 +80,13 @@ class MinestomServerLib @JvmOverloads constructor(
 
     fun onInitialize() {
         commandManager.registerCommands()
+
+        McPlayerVisibilityCheckEvent.registerListener { viewer, target ->
+            val viewerPlayer = viewer.getInstance<Player>()
+            val targetPlayer = target.getInstance<Player>()
+
+            !targetPlayer.isViewer(viewerPlayer)
+        }
 
         var globalEventHandler = MinecraftServer.getGlobalEventHandler()
         globalEventHandler.addListener(PlayerPluginMessageEvent::class.java, RegisterChannelHandler(this).pluginChannelRegisterFaker)
