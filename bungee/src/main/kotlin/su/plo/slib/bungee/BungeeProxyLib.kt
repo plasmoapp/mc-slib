@@ -20,6 +20,8 @@ import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
 import su.plo.slib.api.proxy.event.player.McProxyServerConnectedEvent
 import su.plo.slib.api.proxy.player.McProxyPlayer
 import su.plo.slib.api.proxy.server.McProxyServerInfo
+import su.plo.slib.bungee.integration.PremiumVanishIntegration
+import su.plo.slib.bungee.integration.SayanVanishIntegration
 import su.plo.slib.bungee.channel.BungeeChannelManager
 import su.plo.slib.bungee.command.BungeeCommandManager
 import su.plo.slib.bungee.permission.BungeePermissionSupplier
@@ -83,6 +85,24 @@ class BungeeProxyLib @JvmOverloads constructor(
         proxyServer.pluginManager.registerListener(loader, channelManager)
         proxyServer.pluginManager.registerListener(loader, commandManager)
         proxyServer.pluginManager.registerListener(loader, this)
+
+        loadVanishIntegrations()
+    }
+
+    private fun loadVanishIntegrations() {
+        try {
+            Class.forName("de.myzelyam.api.vanish.BungeeVanishAPI")
+            proxyServer.pluginManager.registerListener(loader, PremiumVanishIntegration(this))
+            baseLogger.info("PremiumVanish integration attached")
+        } catch (_: ClassNotFoundException) {
+        }
+
+        try {
+            Class.forName("org.sayandev.sayanvanish.api.SayanVanishAPI")
+            proxyServer.pluginManager.registerListener(loader, SayanVanishIntegration(this))
+            baseLogger.info("SayanVanish integration attached")
+        } catch (_: ClassNotFoundException) {
+        }
     }
 
     override fun getPlayerById(playerId: UUID): McProxyPlayer? =

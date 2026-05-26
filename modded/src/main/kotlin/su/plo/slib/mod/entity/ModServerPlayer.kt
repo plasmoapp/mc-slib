@@ -9,6 +9,7 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.mod.chat.ComponentTextConverter
 import su.plo.slib.mod.extension.getObjectiveBelowName
@@ -86,13 +87,8 @@ class ModServerPlayer(
             return field
         }
 
-    override fun canSee(player: McServerPlayer): Boolean {
-        val serverPlayer = player.getInstance<ServerPlayer>()
-
-        return if (serverPlayer.isSpectator) {
-            instance.isSpectator
-        } else true
-    }
+    override fun canSee(player: McServerPlayer): Boolean =
+        !McPlayerVisibilityCheckEvent.invoker.shouldHide(this, player)
 
     override fun getPermission(permission: String) =
         permissions.getPermission(instance, permission)

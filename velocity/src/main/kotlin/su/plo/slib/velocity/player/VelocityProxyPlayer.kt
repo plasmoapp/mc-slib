@@ -5,12 +5,12 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.player.McProxyPlayer
 import su.plo.slib.permission.PermissionSupplier
 import su.plo.slib.velocity.connection.VelocityProxyServerConnection
-import su.plo.slib.velocity.extension.textConverter
-import java.util.*
+import java.util.UUID
 
 class VelocityProxyPlayer(
     private val minecraftProxy: McProxyLib,
@@ -58,6 +58,9 @@ class VelocityProxyPlayer(
             field = VelocityProxyServerConnection(minecraftProxy, currentServer)
             return field
         }
+
+    override fun canSee(player: McProxyPlayer): Boolean =
+        !McPlayerVisibilityCheckEvent.invoker.shouldHide(this, player)
 
     override fun sendMessage(text: McTextComponent) {
         val json = minecraftProxy.textConverter.convertToJson(this, text)

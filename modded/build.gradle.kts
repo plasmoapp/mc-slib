@@ -143,10 +143,21 @@ dependencies {
                 "modImplementation"(it) { isTransitive = false }
             }
         }
+        (findProperty("deps.melius_vanish") as? String)?.let { meliusVanishVersion ->
+            "modCompileOnly"("maven.modrinth:vanish:$meliusVanishVersion")
+        }
     } else if (isNeoForge) {
         "neoForge"("net.neoforged:neoforge:${property("deps.neoforge")}")
+
+        (findProperty("deps.vanishmod_file_id") as? String)?.let { fileId ->
+            "modCompileOnly"("curse.maven:vanishmod-423535:$fileId")
+        }
     } else if (isForge) {
         "forge"("net.minecraftforge:forge:${property("deps.forge")}")
+
+        (findProperty("deps.vanishmod_file_id") as? String)?.let { fileId ->
+            "modCompileOnly"("curse.maven:vanishmod-423535:$fileId")
+        }
     }
 }
 

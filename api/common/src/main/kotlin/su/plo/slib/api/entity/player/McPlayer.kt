@@ -59,6 +59,14 @@ interface McPlayer : McCommandSource {
     fun kick(reason: McTextComponent)
 
     /**
+     * Determines if this player can see another [player].
+     *
+     * @param player The player to check visibility for.
+     * @return true if this player can see the specified player; otherwise, false.
+     */
+    fun canSee(player: McPlayer): Boolean
+
+    /**
      * Gets the server's implementation instance for this player.
      *
      * @return The server's implementation object associated with this entity.

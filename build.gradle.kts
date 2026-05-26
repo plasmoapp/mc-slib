@@ -112,6 +112,10 @@ allprojects {
         maven("https://repo.plo.su")
 
         maven("https://jitpack.io/")
+
+        maven("https://repo.sayandev.org/releases")
+        maven("https://api.modrinth.com/maven")
+        maven("https://cursemaven.com")
     }
 }
 

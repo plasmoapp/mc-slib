@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
+import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
 import su.plo.slib.api.logging.McLogger
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
@@ -29,6 +30,8 @@ import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.JavaLogger
 import su.plo.slib.logging.Slf4jLogger
 import su.plo.slib.spigot.channel.RegisterChannelHandler
+import su.plo.slib.spigot.integration.SpigotVanishIntegration
+import su.plo.slib.spigot.integration.PremiumVanishIntegration
 import su.plo.slib.spigot.channel.SpigotChannelManager
 import su.plo.slib.spigot.command.SpigotCommandManager
 import su.plo.slib.spigot.entity.SpigotServerEntity
@@ -97,6 +100,36 @@ class SpigotServerLib @JvmOverloads constructor(
         commandManager.registerCommands(loader)
         loader.server.pluginManager.registerEvents(RegisterChannelHandler(this), loader)
         loader.server.pluginManager.registerEvents(this, loader)
+
+        loadVanishIntegrations()
+    }
+
+    private fun loadVanishIntegrations() {
+        McPlayerVisibilityCheckEvent.registerListener { viewer, target ->
+            val viewerPlayer = viewer.getInstance<Player>()
+            val targetPlayer = target.getInstance<Player>()
+
+            !viewerPlayer.canSee(targetPlayer)
+        }
+
+        val visibilityEventsSupported = try {
+            Class.forName("org.bukkit.event.player.PlayerHideEntityEvent")
+            Class.forName("org.bukkit.event.player.PlayerShowEntityEvent")
+            true
+        } catch (_: ClassNotFoundException) {
+            false
+        }
+
+        val hasPremiumVanish = loader.server.pluginManager.getPlugin("SuperVanish") != null ||
+            loader.server.pluginManager.getPlugin("PremiumVanish") != null
+
+        if (hasPremiumVanish) {
+            loader.server.pluginManager.registerEvents(PremiumVanishIntegration(this), loader)
+            baseLogger.info("PremiumVanish/SuperVanish event listener attached")
+        } else if (visibilityEventsSupported) {
+            loader.server.pluginManager.registerEvents(SpigotVanishIntegration(this, loader), loader)
+            baseLogger.info("Spigot vanish integration attached")
+        }
     }
 
     fun onShutdown() {

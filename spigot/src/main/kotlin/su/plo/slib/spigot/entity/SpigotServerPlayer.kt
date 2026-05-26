@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scoreboard.DisplaySlot
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.permission.PermissionSupplier
@@ -87,13 +88,6 @@ class SpigotServerPlayer(
         instance.kickPlayer(textReason)
     }
 
-    override fun canSee(player: McServerPlayer): Boolean {
-        val serverPlayer = (player as SpigotServerPlayer).instance
-
-        if (serverPlayer.gameMode == GameMode.SPECTATOR) {
-            return instance.gameMode == GameMode.SPECTATOR && instance.canSee(serverPlayer)
-        }
-
-        return instance.canSee(serverPlayer)
-    }
+    override fun canSee(player: McServerPlayer): Boolean =
+        !McPlayerVisibilityCheckEvent.invoker.shouldHide(this, player)
 }

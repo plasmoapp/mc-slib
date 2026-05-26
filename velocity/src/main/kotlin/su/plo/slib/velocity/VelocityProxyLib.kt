@@ -22,6 +22,8 @@ import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.Slf4jLogger
+import su.plo.slib.velocity.integration.PremiumVanishIntegration
+import su.plo.slib.velocity.integration.SayanVanishIntegration
 import su.plo.slib.velocity.channel.VelocityChannelManager
 import su.plo.slib.velocity.command.VelocityCommandManager
 import su.plo.slib.velocity.permission.VelocityPermissionSupplier
@@ -75,6 +77,24 @@ class VelocityProxyLib @JvmOverloads constructor(
         proxyServer.eventManager.register(plugin, channelManager)
         proxyServer.eventManager.register(plugin, commandManager)
         proxyServer.eventManager.register(plugin, this)
+
+        loadVanishIntegrations(plugin)
+    }
+
+    private fun loadVanishIntegrations(plugin: Any) {
+        try {
+            Class.forName("de.myzelyam.api.vanish.VelocityVanishAPI")
+            proxyServer.eventManager.register(plugin, PremiumVanishIntegration(this))
+            baseLogger.info("PremiumVanish integration attached")
+        } catch (_: ClassNotFoundException) {
+        }
+
+        try {
+            Class.forName("org.sayandev.sayanvanish.api.SayanVanishAPI")
+            proxyServer.eventManager.register(plugin, SayanVanishIntegration(this))
+            baseLogger.info("SayanVanish integration attached")
+        } catch (_: ClassNotFoundException) {
+        }
     }
 
     override fun getPlayerById(playerId: UUID): McProxyPlayer? =

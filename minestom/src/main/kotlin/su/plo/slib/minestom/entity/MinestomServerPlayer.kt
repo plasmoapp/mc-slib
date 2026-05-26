@@ -3,10 +3,11 @@ package su.plo.slib.minestom.entity
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
-import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.chat.component.McTextComponent
-import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
+import su.plo.slib.api.server.McServerLib
+import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.permission.PermissionSupplier
 
@@ -78,14 +79,6 @@ class MinestomServerPlayer(
         instance.kick(component)
     }
 
-    override fun canSee(player: McServerPlayer): Boolean {
-        val serverPlayer = (player as MinestomServerPlayer).instance
-
-        if (serverPlayer.gameMode == GameMode.SPECTATOR) {
-            return instance.gameMode == GameMode.SPECTATOR
-        }
-
-        // Minestom does not have invisibility settings like Paper
-        return true
-    }
+    override fun canSee(player: McServerPlayer): Boolean =
+        !McPlayerVisibilityCheckEvent.invoker.shouldHide(this, player)
 }

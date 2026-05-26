@@ -12,6 +12,10 @@ dependencies {
     compileOnly(libs.velocity)
     testCompileOnly(libs.velocity)
 
+    compileOnly(libs.premiumvanish.api)
+    compileOnly(libs.sayanvanish.api)
+    compileOnly(libs.sayanvanish.velocity)
+
     testCompileOnly(testFixtures(project(":common-proxy")))
     testShadowBundle(testFixtures(project(":common-proxy")))
 

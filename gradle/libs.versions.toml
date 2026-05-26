@@ -18,11 +18,16 @@ slf4j = "1.7.30"
 semver4j = "6.0.0"
 
 # platforms
+paper = "1.18.2-R0.1-SNAPSHOT"
 spigot = "1.16.5-R0.1-SNAPSHOT"
 folia = "1.20.1-R0.1-SNAPSHOT"
 velocity = "3.1.1"
 bungee = "1.21-R0.4-SNAPSHOT"
 minestom = "2025.10.05-1.21.8"
+
+# vanish integrations
+premiumvanish-api = "2.9.18-2"
+sayanvanish = "1.7.3"
 
 # minecraft libraries
 adventure = "4.21.0"
@@ -53,6 +58,7 @@ slf4j       = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 semver4j    = { module = "org.semver4j:semver4j", version.ref = "semver4j" }
 
 # platforms
+paper        = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
 spigot       = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
 folia        = { module = "dev.folia:folia-api", version.ref = "folia" }
 velocity     = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
@@ -70,6 +76,12 @@ adventure-bungee      = { module = "net.kyori:adventure-platform-bungeecord", ve
 brigadier             = { module = "com.mojang:brigadier", version.ref = "brigadier" }
 fabric-permissions    = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 reflectionremapper    = { module = "xyz.jpenilla:reflection-remapper", version.ref = "reflection-remapper" }
+
+# vanish integrations
+premiumvanish-api    = { module = "com.github.LeonMangler:PremiumVanishAPI", version.ref = "premiumvanish-api" }
+sayanvanish-api      = { module = "org.sayandev:sayanvanish-api", version.ref = "sayanvanish" }
+sayanvanish-velocity = { module = "org.sayandev:sayanvanish-proxy-velocity", version.ref = "sayanvanish" }
+sayanvanish-bungee   = { module = "org.sayandev:sayanvanish-proxy-bungeecord", version.ref = "sayanvanish" }
 
 # test runtime
 log4j-core              = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }

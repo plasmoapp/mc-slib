@@ -15,6 +15,22 @@ interface McProxyPlayer : McPlayer, McProxyConnection {
     val server: McProxyServerConnection?
 
     /**
+     * Determines if this player can see another [player].
+     *
+     * @param player The player to check visibility for.
+     * @return true if this player can see the specified player; otherwise, false.
+     */
+    fun canSee(player: McProxyPlayer): Boolean
+
+    /**
+     * Determines if this player can see another [player].
+     *
+     * @param player The player to check visibility for.
+     * @return true if this player can see the specified player; otherwise, false.
+     */
+    override fun canSee(player: McPlayer): Boolean = canSee(player as McProxyPlayer)
+
+    /**
      * Gets the server's implementation instance for this player.
      *
      * The return type may vary depending on the server platform:

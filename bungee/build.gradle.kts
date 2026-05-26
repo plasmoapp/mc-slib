@@ -18,6 +18,10 @@ dependencies {
     testCompileOnly(libs.bungee.api)
     compileOnly(libs.bungee.proxy)
 
+    compileOnly(libs.premiumvanish.api)
+    compileOnly(libs.sayanvanish.api)
+    compileOnly(libs.sayanvanish.bungee)
+
     testCompileOnly(testFixtures(project(":common-proxy")))
     testShadowBundle(testFixtures(project(":common-proxy")))
 

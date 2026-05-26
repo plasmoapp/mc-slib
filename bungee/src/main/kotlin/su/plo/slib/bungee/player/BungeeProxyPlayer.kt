@@ -7,6 +7,7 @@ import net.md_5.bungee.chat.ComponentSerializer
 import net.md_5.bungee.connection.InitialHandler
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
 import su.plo.slib.api.proxy.player.McProxyPlayer
 import su.plo.slib.bungee.BungeeProxyLib
 import su.plo.slib.bungee.connection.BungeeProxyServerConnection
@@ -64,6 +65,9 @@ class BungeeProxyPlayer(
             field = BungeeProxyServerConnection(minecraftProxy, currentServer)
             return field
         }
+
+    override fun canSee(player: McProxyPlayer): Boolean =
+        !McPlayerVisibilityCheckEvent.invoker.shouldHide(this, player)
 
     private val audience: Audience
         get() = minecraftProxy.adventure.player(instance)

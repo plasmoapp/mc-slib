@@ -12,6 +12,9 @@ dependencies {
     compileOnly(libs.spigot)
     testCompileOnly(libs.spigot)
 
+    compileOnly(libs.premiumvanish.api)
+    compileOnly(libs.paper)
+
     compileOnly(libs.semver4j)
     shadow(libs.semver4j)
 

@@ -193,6 +193,26 @@ object ModServerLib : McServerLib {
 
         McPlayerQuitEvent.registerListener(::onPlayerQuit)
         ServerStoppingEvent.registerListener(::onServerStopping)
+
+        loadVanishIntegrations()
+    }
+
+    private fun loadVanishIntegrations() {
+        //? if fabric && >=1.18.2 {
+        try {
+            Class.forName("me.drex.vanish.api.VanishAPI")
+            su.plo.slib.mod.integration.MeliusVanishIntegration.register()
+            baseLogger.info("Melius Vanish integration attached")
+        } catch (_: ClassNotFoundException) {
+        }
+        //?} elif (forge || neoforge) && >=1.18.2 {
+        /*try {
+            Class.forName("redstonedubstep.mods.vanishmod.VanishUtil")
+            su.plo.slib.mod.integration.VanishModIntegration.register()
+            baseLogger.info("VanishMod integration attached")
+        } catch (_: ClassNotFoundException) {
+        }
+        *///?}
     }
 
     private fun onShutdown() {
