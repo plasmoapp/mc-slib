@@ -178,12 +178,6 @@ tasks {
             listOf("fabric.mod.json"),
             "version" to rootProject.version,
         )
-
-        expandMatching(
-            listOf("*.mixins.json"),
-            "mcVersion" to minecraftVersion,
-            "loader" to platform
-        )
     }
 
     named<JavaExec>("runServer") {
