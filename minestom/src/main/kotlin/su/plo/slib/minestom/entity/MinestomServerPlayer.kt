@@ -23,10 +23,7 @@ class MinestomServerPlayer(
     // While Minestom does allow us to set the below name tag, we can't actually check if its set.
     // This hack works around this issue using reflection.
     override val hasLabelScoreboard: Boolean
-        get() = Player::class.java.getDeclaredField("belowNameTag").let {
-            it.isAccessible = true
-            it.get(instance) != null
-        }
+        get() = belowNameTagField.get(instance) != null
 
     override val isOnline: Boolean
         get() = instance.isOnline
@@ -81,4 +78,11 @@ class MinestomServerPlayer(
 
     override fun canSee(player: McServerPlayer): Boolean =
         !McPlayerVisibilityCheckEvent.invoker.shouldHide(this, player)
+
+    companion object {
+        private val belowNameTagField by lazy {
+            Player::class.java.getDeclaredField("belowNameTag")
+                .also { it.isAccessible = true }
+        }
+    }
 }
