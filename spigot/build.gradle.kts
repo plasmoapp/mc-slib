@@ -99,7 +99,8 @@ tasks {
         }
 
         val mcVersion = project.property("spigot.run_minecraft_version") as String
-        val mcSemVersion = Semver(mcVersion)
+        val mcSemVersion = Semver.coerce(mcVersion)
+            ?: throw RuntimeException("Failed to parse minecraft version: $mcVersion")
 
         val javaVersion = when {
             mcSemVersion.satisfies(">=26.1") -> 25

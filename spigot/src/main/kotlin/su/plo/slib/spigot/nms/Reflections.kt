@@ -26,7 +26,8 @@ object ReflectionProxies {
     init {
         val bukkitVersion = Bukkit.getVersion()
         val minecraftVersionString = bukkitVersion.substring(bukkitVersion.lastIndexOf(" ") + 1, bukkitVersion.length - 1)
-        val minecraftVersion = Semver(minecraftVersionString)
+        val minecraftVersion = Semver.coerce(minecraftVersionString)
+            ?: throw RuntimeException("Failed to parse minecraft version: $minecraftVersionString")
 
         val remapper =
             try {
