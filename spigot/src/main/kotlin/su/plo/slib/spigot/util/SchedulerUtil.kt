@@ -4,9 +4,9 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.plugin.Plugin
-import java.util.function.Consumer
 
 object SchedulerUtil {
+    @Volatile private var regionSchedulerSupported: Boolean? = null
 
     /**
      * Schedules a task to run on the main thread.
@@ -15,22 +15,19 @@ object SchedulerUtil {
      * For Folia servers, runs on the global region's scheduler.
      */
     fun runTask(plugin: Plugin, task: Runnable) {
-        try {
-            val globalRegionScheduler = Bukkit::class.java.getMethod("getGlobalRegionScheduler").invoke(null)
-            val runMethod = globalRegionScheduler.javaClass.getMethod(
-                "run",
-                Plugin::class.java,
-                Consumer::class.java
-            )
-
-            runMethod.invoke(globalRegionScheduler, plugin, Consumer<Any> { task.run() })
-
-            // Bukkit.getGlobalRegionScheduler().run(plugin) { task.run() }
-        } catch (e: ReflectiveOperationException) {
+        if (regionSchedulerSupported == false) {
             Bukkit.getScheduler().runTask(plugin, task)
+            return
+        }
+
+        try {
+            Bukkit.getGlobalRegionScheduler().run(plugin) { task.run() }
+            regionSchedulerSupported = true
+        } catch (_: LinkageError) {
+            Bukkit.getScheduler().runTask(plugin, task)
+            regionSchedulerSupported = false
         }
     }
-
 
     /**
      * Schedules a task to run for a given [entity].
@@ -39,20 +36,21 @@ object SchedulerUtil {
      * For Folia servers, runs on the entity's scheduler.
      */
     fun runTaskFor(entity: Entity, plugin: Plugin, task: Runnable) {
-        try {
-            val entityScheduler = entity.javaClass.getMethod("getScheduler").invoke(entity)
-            val runMethod = entityScheduler.javaClass.getMethod(
-                "run",
-                Plugin::class.java,
-                Consumer::class.java,
-                Runnable::class.java
-            )
-
-            runMethod.invoke(entityScheduler, plugin, Consumer<Any> { task.run() }, null)
-
-            // entity.scheduler.run(plugin, { task.run() }, null)
-        } catch (e: ReflectiveOperationException) {
+        if (regionSchedulerSupported == false) {
             Bukkit.getScheduler().runTask(plugin, task)
+            return
+        }
+
+        try {
+            entity.scheduler.run(
+                plugin,
+                { task.run() },
+                null,
+            )
+            regionSchedulerSupported = true
+        } catch (_: LinkageError) {
+            Bukkit.getScheduler().runTask(plugin, task)
+            regionSchedulerSupported = false
         }
     }
 
@@ -63,20 +61,17 @@ object SchedulerUtil {
      * For Folia servers, runs on the region's scheduler.
      */
     fun runTaskAt(location: Location, plugin: Plugin, task: Runnable) {
-        try {
-            val regionScheduler = Bukkit::class.java.getMethod("getRegionScheduler").invoke(null)
-            val runMethod = regionScheduler.javaClass.getMethod(
-                "run",
-                Plugin::class.java,
-                Location::class.java,
-                Consumer::class.java
-            )
-
-            runMethod.invoke(regionScheduler, plugin, location, Consumer<Any> { task.run() })
-
-            // Bukkit.getRegionScheduler().run(plugin, location) { task.run() }
-        } catch (e: ReflectiveOperationException) {
+        if (regionSchedulerSupported == false) {
             Bukkit.getScheduler().runTask(plugin, task)
+            return
+        }
+
+        try {
+            Bukkit.getRegionScheduler().run(plugin, location) { task.run() }
+            regionSchedulerSupported = true
+        } catch (_: LinkageError) {
+            Bukkit.getScheduler().runTask(plugin, task)
+            regionSchedulerSupported = false
         }
     }
 }

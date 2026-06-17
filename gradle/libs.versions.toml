@@ -18,9 +18,8 @@ slf4j = "1.7.30"
 semver4j = "6.0.0"
 
 # platforms
-paper = "1.18.2-R0.1-SNAPSHOT"
+paper = "1.20.1-R0.1-SNAPSHOT"
 spigot = "1.16.5-R0.1-SNAPSHOT"
-folia = "1.20.1-R0.1-SNAPSHOT"
 velocity = "3.1.1"
 bungee = "1.21-R0.4-SNAPSHOT"
 minestom = "2025.10.05-1.21.8"
@@ -59,8 +58,6 @@ semver4j    = { module = "org.semver4j:semver4j", version.ref = "semver4j" }
 
 # platforms
 paper        = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
-spigot       = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
-folia        = { module = "dev.folia:folia-api", version.ref = "folia" }
 velocity     = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
 bungee-api   = { module = "net.md-5:bungeecord-api", version.ref = "bungee" }
 bungee-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungee" }

@@ -9,11 +9,10 @@ plugins {
 val testShadowBundle: Configuration by configurations.creating
 
 dependencies {
-    compileOnly(libs.spigot)
-    testCompileOnly(libs.spigot)
+    compileOnly(libs.paper)
+    testCompileOnly(libs.paper)
 
     compileOnly(libs.premiumvanish.api)
-    compileOnly(libs.paper)
 
     compileOnly(libs.semver4j)
     shadow(libs.semver4j)
