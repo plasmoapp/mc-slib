@@ -10,7 +10,7 @@ class SpigotPlugin : JavaPlugin() {
 
     override fun onEnable() {
         minecraftServer.onInitialize()
-        testServer.registerChannels()
+        testServer.onEnable()
     }
 
     override fun onDisable() {

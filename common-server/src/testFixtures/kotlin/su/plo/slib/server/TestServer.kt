@@ -202,7 +202,11 @@ class TestServer(
         }
     }
 
-    fun registerChannels() {
+    fun onEnable() {
+        minecraftServer.scheduler.runTask {
+            logger.info("Message from main thread")
+        }
+
         minecraftServer.channelManager.registerChannelHandler(channelKey.toString()) { player, data ->
             logger.info("Received channel #$channelKey message from ${player.name}: ${data.toString(Charsets.UTF_8)}")
         }

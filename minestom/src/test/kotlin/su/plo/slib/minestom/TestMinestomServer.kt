@@ -35,7 +35,7 @@ fun startServer() {
     val testServer = TestServer(minecraftServerLib)
 
     minecraftServerLib.onInitialize()
-    testServer.registerChannels()
+    testServer.onEnable()
 
     val instanceManager = MinecraftServer.getInstanceManager()
     val instanceContainer = instanceManager.createInstanceContainer()

@@ -24,6 +24,7 @@ case "$ENV_TYPE" in
           "Command 'brigadier-game-profiles-selector' registered"
           "Command 'brigadier-custom-type' registered"
           "Command 'brigadier-multi-arg' registered"
+          "Message from main thread"
         )
         COMMAND_INPUTS=(
           "brigadier-custom-type invalid-uuid"

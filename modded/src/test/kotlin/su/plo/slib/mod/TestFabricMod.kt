@@ -10,7 +10,7 @@ class TestFabricMod : ModInitializer {
 
     override fun onInitialize() {
         ModServerEvents.initialize()
-        testServer.registerChannels()
+        testServer.onEnable()
     }
 }
 //?}
