@@ -8,6 +8,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 import su.plo.slib.mod.channel.ModChannelManager
 import su.plo.slib.mod.event.ModServerEvents
+import su.plo.slib.mod.event.server.ServerStartedEvent
 import su.plo.slib.server.TestServer
 
 //? if >=1.20.2 {
@@ -44,7 +45,9 @@ class TestForgeMod {
         ModChannelManager.addForgeChannel(channelKey, channel)
 
         ModServerEvents.initialize()
-        testServer.onEnable()
+        ServerStartedEvent.registerListener {
+            testServer.onEnable()
+        }
     }
 }
 *///?}

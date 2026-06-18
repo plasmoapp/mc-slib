@@ -8,6 +8,7 @@ import net.neoforged.fml.common.Mod
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
 import su.plo.slib.mod.channel.ModChannelManager
 import su.plo.slib.mod.event.ModServerEvents
+import su.plo.slib.mod.event.server.ServerStartedEvent
 import su.plo.slib.server.TestServer
 
 @Mod("slib_test_mod")
@@ -25,7 +26,9 @@ class TestNeoForgeMod(
     @SubscribeEvent
     fun FMLCommonSetupEvent.onCommonSetup() {
         ModServerEvents.initialize()
-        testServer.onEnable()
+        ServerStartedEvent.registerListener {
+            testServer.onEnable()
+        }
     }
 }
 *///?}
