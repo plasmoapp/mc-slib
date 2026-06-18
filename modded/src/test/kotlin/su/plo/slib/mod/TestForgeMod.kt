@@ -44,7 +44,7 @@ class TestForgeMod {
         ModChannelManager.addForgeChannel(channelKey, channel)
 
         ModServerEvents.initialize()
-        testServer.registerChannels()
+        testServer.onEnable()
     }
 }
 *///?}

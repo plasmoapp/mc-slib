@@ -25,7 +25,7 @@ class TestNeoForgeMod(
     @SubscribeEvent
     fun FMLCommonSetupEvent.onCommonSetup() {
         ModServerEvents.initialize()
-        testServer.registerChannels()
+        testServer.onEnable()
     }
 }
 *///?}
