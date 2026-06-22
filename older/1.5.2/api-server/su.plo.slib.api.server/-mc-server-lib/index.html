@@ -1,0 +1,438 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>McServerLib</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    slib
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;su.plo.slib.api.server/-mc-server-lib/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="1.5.2"><span class="versions-dropdown-button-text">1.5.2</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="../../../../../api-server/su.plo.slib.api.server/-mc-server-lib/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="1.5.3"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">1.5.3</span></a><a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="1.5.2"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">1.5.2</span></a><a href="../../../../1.5.1/api-server/su.plo.slib.api.server/-mc-server-lib/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="1.5.1"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">1.5.1</span></a><a href="../../../../1.5.0/api-server/su.plo.slib.api.server/-mc-server-lib/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="1.5.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">1.5.0</span></a><a href="../../../../1.4.1/api-server/su.plo.slib.api.server/-mc-server-lib/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="1.4.1"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">1.4.1</span></a><a href="../../../../1.4.0/api-server/su.plo.slib.api.server/-mc-server-lib/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="1.4.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">1.4.0</span></a><a href="../../../../1.3.0/api-server/su.plo.slib.api.server/-mc-server-lib/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="1.3.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">1.3.0</span></a><a href="../../../../1.2.1/api-server/su.plo.slib.api.server/-mc-server-lib/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="1.2.1"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">1.2.1</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":api:api-server/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":api:api-server/main" data-filter=":api:api-server/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    slib
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="api-server::su.plo.slib.api.server/McServerLib///PointingToDeclaration//108679798">
+  <div class="breadcrumbs"><a href="../../index.html">api-server</a><span class="delimiter">/</span><a href="../index.html">su.plo.slib.api.server</a><span class="delimiter">/</span><span class="current">McServerLib</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Mc</span><wbr><span>Server</span><wbr><span><span>Lib</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">McServerLib</a> : <a href="../../../api-common/su.plo.slib.api/-mc-lib/index.html">McLib</a></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-1843442318%2FProperties%2F108679798" anchor-label="baseLogger" id="-1843442318%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1843442318%2FProperties%2F108679798"><span>base</span><wbr><span><span>Logger</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1843442318%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#-1843442318%2FProperties%2F108679798">baseLogger</a><span class="token operator">: </span><a href="../../../api-common/su.plo.slib.api.logging/-mc-logger/index.html">McLogger</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="154801069%2FProperties%2F108679798" anchor-label="channelManager" id="154801069%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channel-manager.html"><span>channel</span><wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="154801069%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="channel-manager.html">channelManager</a><span class="token operator">: </span><a href="../../su.plo.slib.api.server.channel/-mc-server-channel-manager/index.html">McServerChannelManager</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="679040501%2FProperties%2F108679798" anchor-label="commandManager" id="679040501%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="command-manager.html"><span>command</span><wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="679040501%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="command-manager.html">commandManager</a><span class="token operator">: </span><a href="../../../api-common/su.plo.slib.api.command/-mc-command-manager/index.html">McCommandManager</a><span class="token operator">&lt;</span><a href="../../../api-common/su.plo.slib.api.command/-mc-command/index.html">McCommand</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1713908408%2FProperties%2F108679798" anchor-label="configsFolder" id="-1713908408%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1713908408%2FProperties%2F108679798"><span>configs</span><wbr><span><span>Folder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1713908408%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1713908408%2FProperties%2F108679798">configsFolder</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1896143753%2FProperties%2F108679798" anchor-label="permissionManager" id="1896143753%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1896143753%2FProperties%2F108679798"><span>permission</span><wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1896143753%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#1896143753%2FProperties%2F108679798">permissionManager</a><span class="token operator">: </span><a href="../../../api-common/su.plo.slib.api.permission/-permission-manager/index.html">PermissionManager</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-942173775%2FProperties%2F108679798" anchor-label="players" id="-942173775%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="players.html"><span><span>players</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-942173775%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="players.html">players</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../su.plo.slib.api.server.entity.player/-mc-server-player/index.html">McServerPlayer</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gets a collection of all players.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-560311114%2FProperties%2F108679798" anchor-label="port" id="-560311114%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="port.html"><span><span>port</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-560311114%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="port.html">port</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Gets the bound port of the server.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-20046520%2FProperties%2F108679798" anchor-label="scheduler" id="-20046520%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scheduler.html"><span><span>scheduler</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-20046520%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="scheduler.html">scheduler</a><span class="token operator">: </span><a href="../../su.plo.slib.api.server.scheduler/-mc-server-scheduler/index.html">McServerScheduler</a></div><div class="brief "><p class="paragraph">Scheduler for executing tasks on the main thread.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="334996086%2FProperties%2F108679798" anchor-label="serverTranslator" id="334996086%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#334996086%2FProperties%2F108679798"><span>server</span><wbr><span><span>Translator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="334996086%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#334996086%2FProperties%2F108679798">serverTranslator</a><span class="token operator">: </span><a href="../../../api-common/su.plo.slib.api.language/-server-translator/index.html">ServerTranslator</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1828399596%2FProperties%2F108679798" anchor-label="textConverter" id="-1828399596%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1828399596%2FProperties%2F108679798"><span>text</span><wbr><span><span>Converter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1828399596%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1828399596%2FProperties%2F108679798">textConverter</a><span class="token operator">: </span><a href="../../../api-common/su.plo.slib.api.chat.converter/-server-text-converter/index.html">ServerTextConverter</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2008683189%2FProperties%2F108679798" anchor-label="version" id="-2008683189%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="version.html"><span><span>version</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2008683189%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="version.html">version</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Gets the Minecraft version.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-53339242%2FProperties%2F108679798" anchor-label="worlds" id="-53339242%2FProperties%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="worlds.html"><span><span>worlds</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-53339242%2FProperties%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="worlds.html">worlds</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../su.plo.slib.api.server.world/-mc-server-world/index.html">McServerWorld</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gets a collection of all worlds.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-1632681987%2FFunctions%2F108679798" anchor-label="createLogger" id="-1632681987%2FFunctions%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1632681987%2FFunctions%2F108679798"><span>create</span><wbr><span><span>Logger</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1632681987%2FFunctions%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1632681987%2FFunctions%2F108679798"><span class="token function">createLogger</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../api-common/su.plo.slib.api.logging/-mc-logger/index.html">McLogger</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-692235851%2FFunctions%2F108679798" anchor-label="executeInMainThread" id="-692235851%2FFunctions%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="execute-in-main-thread.html"><span>execute</span><wbr><span>In</span><wbr><span>Main</span><wbr><span><span>Thread</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-692235851%2FFunctions%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="execute-in-main-thread.html"><span class="token function">executeInMainThread</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">runnable<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runnable.html">Runnable</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Executes the task on the main thread.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="47330687%2FFunctions%2F108679798" anchor-label="getEntityByInstance" id="47330687%2FFunctions%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-entity-by-instance.html"><span>get</span><wbr><span>Entity</span><wbr><span>By</span><wbr><span><span>Instance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="47330687%2FFunctions%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-entity-by-instance.html"><span class="token function">getEntityByInstance</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">instance<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../su.plo.slib.api.server.entity/-mc-server-entity/index.html">McServerEntity</a></div><div class="brief "><p class="paragraph">Creates a new <a href="../../su.plo.slib.api.server.entity/-mc-server-entity/index.html">McServerEntity</a> instance of wrapped <a href="get-entity-by-instance.html">instance</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-858329985%2FFunctions%2F108679798" anchor-label="getGameProfile" id="-858329985%2FFunctions%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-game-profile.html"><span>get</span><wbr><span>Game</span><wbr><span><span>Profile</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-858329985%2FFunctions%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-game-profile.html"><span class="token function">getGameProfile</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">playerId<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/UUID.html">UUID</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../api-common/su.plo.slib.api.entity.player/-mc-game-profile/index.html">McGameProfile</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets a cached game profile by player unique identifier.</p></div><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-game-profile.html"><span class="token function">getGameProfile</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../api-common/su.plo.slib.api.entity.player/-mc-game-profile/index.html">McGameProfile</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets a cached game profile by player name.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2029652223%2FFunctions%2F108679798" anchor-label="getPlayerById" id="2029652223%2FFunctions%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-player-by-id.html"><span>get</span><wbr><span>Player</span><wbr><span>By</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2029652223%2FFunctions%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-player-by-id.html"><span class="token function">getPlayerById</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">playerId<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/UUID.html">UUID</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../su.plo.slib.api.server.entity.player/-mc-server-player/index.html">McServerPlayer</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets a player by their unique identifier.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1216363711%2FFunctions%2F108679798" anchor-label="getPlayerByInstance" id="-1216363711%2FFunctions%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-player-by-instance.html"><span>get</span><wbr><span>Player</span><wbr><span>By</span><wbr><span><span>Instance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1216363711%2FFunctions%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-player-by-instance.html"><span class="token function">getPlayerByInstance</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">instance<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../su.plo.slib.api.server.entity.player/-mc-server-player/index.html">McServerPlayer</a></div><div class="brief "><p class="paragraph">Gets a player by their server-specific instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1493127738%2FFunctions%2F108679798" anchor-label="getPlayerByName" id="1493127738%2FFunctions%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-player-by-name.html"><span>get</span><wbr><span>Player</span><wbr><span>By</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1493127738%2FFunctions%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-player-by-name.html"><span class="token function">getPlayerByName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">playerName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../su.plo.slib.api.server.entity.player/-mc-server-player/index.html">McServerPlayer</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets a player by their name.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-56271431%2FFunctions%2F108679798" anchor-label="getWorld" id="-56271431%2FFunctions%2F108679798" data-filterable-set=":api:api-server/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":api:api-server/main" data-filterable-set=":api:api-server/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-world.html"><span>get</span><wbr><span><span>World</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-56271431%2FFunctions%2F108679798"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":api:api-server/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-world.html"><span class="token function">getWorld</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">instance<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../su.plo.slib.api.server.world/-mc-server-world/index.html">McServerWorld</a></div><div class="brief "><p class="paragraph">Gets a world by server-specific instance.</p></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-world.html"><span class="token function">getWorld</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../su.plo.slib.api.server.world/-mc-server-world/index.html">McServerWorld</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets a world by name.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
