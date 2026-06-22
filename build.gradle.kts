@@ -20,8 +20,8 @@ subprojects {
         implementation(rootProject.libs.kotlinx.coroutines)
         implementation(rootProject.libs.kotlinx.coroutines.jdk8)
 
-        implementation(rootProject.libs.guava)
-        api(rootProject.libs.brigadier)
+        implementation("com.google.guava:guava") { version { prefer(rootProject.libs.versions.guava.get()) } }
+        api("com.mojang:brigadier") { version { prefer(rootProject.libs.versions.brigadier.get()) } }
     }
 
     tasks {
