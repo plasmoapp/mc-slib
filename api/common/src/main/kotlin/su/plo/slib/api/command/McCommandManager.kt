@@ -25,6 +25,14 @@ abstract class McCommandManager<T : McCommand> {
     var commandNamespace: String = "slib"
 
     /**
+     * Whether to log an info message for each command as it is registered.
+     *
+     * Disabled by default to keep startup logs quiet. Enable it when you need
+     * visibility into command registration (e.g. for smoke tests).
+     */
+    var logRegisteredCommands: Boolean = false
+
+    /**
      * Retrieves a read-only map of registered commands.
      *
      * @return A map containing the registered commands with their names as keys.

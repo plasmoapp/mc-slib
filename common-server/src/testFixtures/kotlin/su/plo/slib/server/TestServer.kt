@@ -42,6 +42,8 @@ class TestServer(
         }
 
         McServerCommandsRegisterEvent.registerListener { commands, _ ->
+            commands.logRegisteredCommands = true
+
             commands.register(
                 "ping",
                 object : McCommand {

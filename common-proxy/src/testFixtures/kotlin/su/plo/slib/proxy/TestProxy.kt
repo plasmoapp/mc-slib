@@ -29,6 +29,8 @@ class TestProxy {
         }
 
         McProxyCommandsRegisterEvent.registerListener { commands, minecraftProxy ->
+            commands.logRegisteredCommands = true
+
             commands.register("ping", object : McProxyCommand {
                 override fun execute(
                     source: McCommandSource,

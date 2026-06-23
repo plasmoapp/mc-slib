@@ -89,7 +89,7 @@ abstract class AbstractCommandManager<T : McCommand>(
         commandByName.forEach { (name, command) ->
             val namespace = namespaceByName[name] ?: commandNamespace
             register(name, command, namespace)
-            logger.info("Command '$name' registered")
+            if (logRegisteredCommands) logger.info("Command '$name' registered")
         }
     }
 
@@ -97,7 +97,7 @@ abstract class AbstractCommandManager<T : McCommand>(
         brigadierCommands.forEach { command ->
             val namespace = brigadierNamespaceByLiteral[command.literal] ?: commandNamespace
             registerCommand(command, namespace)
-            logger.info("Command '${command.literal}' registered")
+            if (logRegisteredCommands) logger.info("Command '${command.literal}' registered")
         }
     }
 }
