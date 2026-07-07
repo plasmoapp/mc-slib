@@ -19,7 +19,7 @@ import java.util.function.Predicate
 class CustomArgumentCommandNode<S, PARSED, NATIVE>(
     name: String,
     val customArgumentType: CustomArgumentType<PARSED, NATIVE>,
-    command: Command<S>,
+    command: Command<S>?,
     requirement: Predicate<S>,
     redirect: CommandNode<S>?,
     modifier: RedirectModifier<S>?,

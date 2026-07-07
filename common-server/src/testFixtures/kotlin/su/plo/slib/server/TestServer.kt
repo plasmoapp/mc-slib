@@ -2,6 +2,7 @@ package su.plo.slib.server
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.IntegerArgumentType
+import com.mojang.brigadier.arguments.StringArgumentType
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
@@ -195,6 +196,28 @@ class TestServer(
                                         val b = it.getArgument("b", Integer::class.java)
 
                                         it.source.source.sendMessage("Multi-arg: a=$a, b=$b")
+
+                                        Command.SINGLE_SUCCESS
+                                    }
+                            )
+                    )
+            )
+
+            commands.register(
+                McCommandManager.literal("brigadier-intermediate-custom-arg")
+                    .then(
+                        McCommandManager.argument("position", McArgumentTypes.position())
+                            .then(
+                                McCommandManager.argument("message", StringArgumentType.string())
+                                    .executes {
+                                        val resolver = it.getArgument(
+                                            "position",
+                                            ServerPos3dResolver::class.java,
+                                        )
+                                        val position = resolver.resolve(it.source)
+                                        val message = it.getArgument("message", String::class.java)
+
+                                        it.source.source.sendMessage("Position: $position; Message: $message")
 
                                         Command.SINGLE_SUCCESS
                                     }
