@@ -16,6 +16,13 @@ COMMAND="$*"
 
 case "$ENV_TYPE" in
     server)
+        # console's stack is always the overworld on spigot/modded, so there is a world even without /execute in.
+        # minestom still takes it from the executor, which is null for the console.
+        case "$COMMAND" in
+            *minestom*) POSITION_WORLD="null" ;;
+            *)          POSITION_WORLD="[a-zA-Z0-9_.]+World@[0-9a-f]+" ;;
+        esac
+
         PATTERNS=(
           "Done \\(.*\\)!"
           "Command 'ping' registered"
@@ -37,7 +44,7 @@ case "$ENV_TYPE" in
           "Invalid UUID"
           "Found entities:"
           "Found players:"
-          "Position: ServerPos3d\\(world=null, x=100.0, y=100.0, z=100.0, yaw=100.0, pitch=100.0\\)"
+          "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0, yaw=100.0, pitch=100.0\\)"
           "Multi-arg: a=7, b=13"
         )
         ;;
