@@ -37,6 +37,14 @@ class SpigotCommandManager(
             commandMap.register(namespace, spigotCommand)
         }
 
+        applyBrigadierCommands(loader)
+        registerPaperCommandLifecycleEvent(loader, logger) { applyBrigadierCommands(loader) }
+
+        registered = true
+    }
+
+    @Synchronized
+    private fun applyBrigadierCommands(loader: JavaPlugin) {
         try {
             val dispatcher = loader.server.getCommandDispatcher()
             registerBrigadierCommands { command, namespace ->
@@ -51,8 +59,6 @@ class SpigotCommandManager(
         } catch (e: Exception) {
             logger.warn("Failed to get Brigadier dispatcher", e)
         }
-
-        registered = true
     }
 
     @Synchronized
