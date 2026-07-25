@@ -15,6 +15,7 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.spigot.SpigotServerLib
 import su.plo.slib.spigot.nms.ReflectionProxies
+import su.plo.slib.spigot.nms.getWorld
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.UndeclaredThrowableException
 import java.util.UUID
@@ -106,7 +107,9 @@ class SpigotBrigadierArguments: McArgumentTypes.Provider {
                 val position = ReflectionProxies.coordinates.getPosition(coordinates, source.getInstance())
                 val rotation = ReflectionProxies.coordinates.getRotation(coordinates, source.getInstance())
 
-                val world = (source.executor as? McServerEntity)?.world
+                val world = ReflectionProxies.commandSourceStack.getWorld(source.getInstance())
+                    ?.let { serverLib.getWorld(it) }
+                    ?: (source.executor as? McServerEntity)?.world
 
                 ServerPos3d(
                     world,

@@ -1,5 +1,6 @@
 package su.plo.slib.spigot.nms
 
+import org.bukkit.World
 import org.bukkit.command.CommandSender
 import xyz.jpenilla.reflectionremapper.proxy.annotation.FieldGetter
 import xyz.jpenilla.reflectionremapper.proxy.annotation.Proxies
@@ -17,4 +18,20 @@ interface CommandSourceStackProxy {
     fun getEntity(
         @Type(className = "net.minecraft.commands.CommandSourceStack") instance: Any,
     ): Any?
+
+    @FieldGetter("level")
+    fun getLevel(
+        @Type(className = "net.minecraft.commands.CommandSourceStack") instance: Any,
+    ): Any?
+}
+
+fun CommandSourceStackProxy.getWorld(instance: Any): World? {
+    val level = getLevel(instance) ?: return null
+
+    val getWorldMethod = runCatching { level.javaClass.getMethod("getWorld") }
+        .getOrNull()
+        ?.takeIf { World::class.java.isAssignableFrom(it.returnType) }
+        ?: return null
+
+    return getWorldMethod.invoke(level) as? World
 }
