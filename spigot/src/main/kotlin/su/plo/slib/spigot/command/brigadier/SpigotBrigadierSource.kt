@@ -9,6 +9,7 @@ import su.plo.slib.spigot.nms.ReflectionProxies
 data class SpigotBrigadierSource(
     override val source: McCommandSource,
     override val executor: McEntity?,
+    override val isSilent: Boolean,
     private val instance: Any,
 ): McBrigadierSource {
 
@@ -25,8 +26,9 @@ data class SpigotBrigadierSource(
             val entity = ReflectionProxies.commandSourceStack.getEntity(sourceStack)
                 ?.let { ReflectionProxies.entity.getBukkitEntity(it) }
                 ?.let { minecraftServer.getEntityByInstance(it) }
+            val silent = ReflectionProxies.commandSourceStack.isSilent(sourceStack)
 
-            return SpigotBrigadierSource(source, entity, sourceStack)
+            return SpigotBrigadierSource(source, entity, silent, sourceStack)
         }
     }
 }

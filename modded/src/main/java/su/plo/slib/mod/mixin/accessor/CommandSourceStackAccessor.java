@@ -10,4 +10,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface CommandSourceStackAccessor {
     @Accessor("source")
     @NotNull CommandSource slib_getSource();
+
+    @Accessor("silent")
+    boolean slib_isSilent();
 }

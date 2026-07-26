@@ -23,6 +23,11 @@ interface CommandSourceStackProxy {
     fun getLevel(
         @Type(className = "net.minecraft.commands.CommandSourceStack") instance: Any,
     ): Any?
+
+    @FieldGetter("silent")
+    fun isSilent(
+        @Type(className = "net.minecraft.commands.CommandSourceStack") instance: Any,
+    ): Boolean
 }
 
 fun CommandSourceStackProxy.getWorld(instance: Any): World? {

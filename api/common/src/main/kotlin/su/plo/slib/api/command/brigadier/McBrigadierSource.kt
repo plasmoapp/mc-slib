@@ -1,5 +1,6 @@
 package su.plo.slib.api.command.brigadier
 
+import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.entity.McEntity
 
@@ -13,6 +14,37 @@ interface McBrigadierSource {
      * Gets the entity executing this command.
      */
     val executor: McEntity?
+
+    /**
+     * Checks if the source suppresses command feedback.
+     *
+     * Vanilla sets this for commands running with suppressed output, e.g. inside a datapack function.
+     *
+     * Always `false` on platforms without a command source stack (Minestom, proxies).
+     */
+    val isSilent: Boolean
+        get() = false
+
+    /**
+     * Sends command feedback to the [source], unless the source [isSilent].
+     *
+     * This is the counterpart of vanilla's `CommandSourceStack#sendSuccess`.
+     * Send through [source] directly to reach the sender regardless of the flag.
+     *
+     * @param text The chat component to send.
+     */
+    fun sendFeedback(text: McTextComponent) {
+        if (!isSilent) source.sendMessage(text)
+    }
+
+    /**
+     * Sends command feedback to the [source], unless the source [isSilent].
+     *
+     * @param text The string message to send.
+     */
+    fun sendFeedback(text: String) {
+        sendFeedback(McTextComponent.literal(text))
+    }
 
     /**
      * Gets the server's implementation instance for this source.

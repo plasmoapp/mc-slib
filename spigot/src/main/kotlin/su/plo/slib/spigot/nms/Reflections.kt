@@ -37,7 +37,6 @@ object ReflectionProxies {
                 val mappingsVersion = listOf(
                     "1.21.5",
                     "1.21.4",
-                    "1.19.2",
                     "1.18.2",
                     "1.17.1",
                     "1.16.5",
