@@ -27,6 +27,8 @@ class ModServerWorld(
 
     override val name: String = level.dimension().location().toString()
 
+    override val key: String = name
+
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
         //? if >=1.19 {
         val serverEntity = entity.getInstance<Entity>()

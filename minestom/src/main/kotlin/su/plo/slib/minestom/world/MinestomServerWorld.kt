@@ -11,6 +11,8 @@ class MinestomServerWorld(
 
     override val name: String = level.uuid.toString()
 
+    override val key: String = "minestom:$name"
+
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
         // Minestom doesn't support this (yet)
         return

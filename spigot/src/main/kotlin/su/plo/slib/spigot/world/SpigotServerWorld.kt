@@ -7,6 +7,7 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.spigot.extension.runSync
 import su.plo.slib.spigot.util.GameEventUtil.sendEntityGameEvent
+import su.plo.slib.spigot.util.extension.getWorldKey
 import java.util.Objects
 
 class SpigotServerWorld(
@@ -15,6 +16,8 @@ class SpigotServerWorld(
 ) : McServerWorld {
 
     override val name: String = level.name
+
+    override val key: String = level.getWorldKey()
 
     override fun sendGameEvent(entity: McServerEntity, gameEvent: String) {
         val paperEntity = entity.getInstance<Entity>()

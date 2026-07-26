@@ -232,6 +232,10 @@ class TestServer(
             logger.info("Message from main thread")
         }
 
+        minecraftServer.worlds.forEach { world ->
+            logger.info("World: name=${world.name}, key=${world.key}")
+        }
+
         minecraftServer.channelManager.registerChannelHandler(channelKey.toString()) { player, data ->
             logger.info("Received channel #$channelKey message from ${player.name}: ${data.toString(Charsets.UTF_8)}")
         }

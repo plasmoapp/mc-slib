@@ -40,6 +40,15 @@ interface McServerLib : McLib {
         worlds.firstOrNull { it.name == name }
 
     /**
+     * Gets a world by [McServerWorld.key].
+     *
+     * @param key The world key, e.g. "minecraft:the_nether"
+     * @return The world or null.
+     */
+    fun getWorldByKey(key: String): McServerWorld? =
+        worlds.firstOrNull { it.key == key }
+
+    /**
      * Gets a world by server-specific instance.
      *
      * The [instance] parameter represents the server-specific server instance:
