@@ -14,6 +14,8 @@ ENV_TYPE="$1"
 shift
 COMMAND="$*"
 
+FORBIDDEN_PATTERNS=()
+
 case "$ENV_TYPE" in
     server)
         # console's stack is always the overworld on spigot/modded, so there is a world even without /execute in.
@@ -32,6 +34,10 @@ case "$ENV_TYPE" in
           "Command 'brigadier-custom-type' registered"
           "Command 'brigadier-multi-arg' registered"
           "Message from main thread"
+          "Channel handler registered: slib:channels/test"
+        )
+        FORBIDDEN_PATTERNS+=(
+          "not registered in the mod loader networking"
         )
         COMMAND_INPUTS=(
           "brigadier-custom-type invalid-uuid"
@@ -106,6 +112,17 @@ dump_and_fail() {
     exit 1
 }
 
+check_forbidden() {
+    local pattern match
+    for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
+        if grep -Eq "$pattern" "$LOGFILE"; then
+            match=$(grep -E "$pattern" "$LOGFILE" | head -1)
+            [[ -z "$CI" ]] && printf "\r\033[K"
+            dump_and_fail "Forbidden pattern '$pattern' found -> $match"
+        fi
+    done
+}
+
 # Phase 1: wait for startup patterns.
 STARTUP_OK=0
 while kill -0 $PID 2>/dev/null; do
@@ -117,6 +134,8 @@ while kill -0 $PID 2>/dev/null; do
             echo "Found '${PATTERNS[$i]}' -> $MATCH"
         fi
     done
+
+    check_forbidden
 
     FOUND_COUNT=$(ls "$FOUND_DIR" 2>/dev/null | wc -l)
     ELAPSED=$(($(date +%s) - START_TIME))
@@ -188,10 +207,13 @@ for i in "${!COMMAND_INPUTS[@]}"; do
     fi
 done
 
+check_forbidden
+
 echo "=== $ENV_TYPE output ==="
 cat "$LOGFILE"
 echo "=== Test result ==="
 TOTAL_ELAPSED=$(($(date +%s) - START_TIME))
 echo "All ${#PATTERNS[@]} startup patterns and ${#COMMAND_INPUTS[@]} command patterns matched in ${TOTAL_ELAPSED}s"
+echo "None of the ${#FORBIDDEN_PATTERNS[@]} forbidden patterns matched"
 kill $PID 2>/dev/null || true
 exit 0

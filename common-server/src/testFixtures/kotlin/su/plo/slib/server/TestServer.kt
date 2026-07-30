@@ -239,5 +239,6 @@ class TestServer(
         minecraftServer.channelManager.registerChannelHandler(channelKey.toString()) { player, data ->
             logger.info("Received channel #$channelKey message from ${player.name}: ${data.toString(Charsets.UTF_8)}")
         }
+        logger.info("Channel handler registered: $channelKey")
     }
 }
