@@ -1,5 +1,6 @@
 playC2S serverboundPlay
 playS2C clientboundPlay
+createC2SPacket createServerboundPacket
 
 S2CPlayChannelEvents ClientboundPlayChannelEvents
 S2CConfigurationChannelEvents ClientboundConfigurationChannelEvents

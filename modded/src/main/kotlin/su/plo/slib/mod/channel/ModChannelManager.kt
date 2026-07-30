@@ -160,7 +160,12 @@ class ModChannelManager : McServerChannelManager {
 
         private val registeredPayloads: MutableSet<ResourceLocation> = HashSet()
 
+        @Deprecated("Use ModClientChannelManager.registerHandler, it works on any loader and version")
         fun registerClientHandler(channel: ResourceLocation, handler: IPayloadHandler<ByteArrayPayload>) {
+            setClientHandler(channel, handler)
+        }
+
+        internal fun setClientHandler(channel: ResourceLocation, handler: IPayloadHandler<ByteArrayPayload>) {
             clientHandlers[channel] = handler
             warnIfChannelNotRegistered(channel)
         }
@@ -243,7 +248,7 @@ class ModChannelManager : McServerChannelManager {
         }
 
         @Synchronized
-        private fun getOrCreateForgeChannel(channelKey: ResourceLocation): EventNetworkChannel? {
+        internal fun getOrCreateForgeChannel(channelKey: ResourceLocation): EventNetworkChannel? {
             channels[channelKey]?.let { return it }
 
             val channel = try {
@@ -274,19 +279,27 @@ class ModChannelManager : McServerChannelManager {
             channel.addListener<NetworkEvent> { event ->
             //? if >=1.20.2 {
                 /^val context = event.source
+                val connection = context.connection
             ^///?} else {
                 val context = event.source.get()
+                val connection = context.networkManager
             //?}
-                if (
-                //? if >=1.20.5 {
-                    /^context.isClientSide ||
-                ^///?} else {
-                    context.direction != NetworkDirection.PLAY_TO_SERVER ||
-                //?}
-                    event.payload == null
-                ) return@addListener
+            //? if >=1.20.5 {
+                /^val clientbound = context.isClientSide
+                val serverbound = !clientbound
+            ^///?} else {
+                val clientbound = context.direction == NetworkDirection.PLAY_TO_CLIENT
+                val serverbound = context.direction == NetworkDirection.PLAY_TO_SERVER
+            //?}
+
+                if (event.payload == null || !(clientbound || serverbound)) return@addListener
 
                 val messageBytes = ByteBufUtil.getBytes(event.payload)
+
+                if (clientbound) {
+                    ModClientChannelManager.receive(channelKey, messageBytes, connection)
+                    return@addListener
+                }
 
                 instance?.internalHandlers?.get(channelKey)
                     ?.forEach { channelHandler ->
