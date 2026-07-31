@@ -135,12 +135,14 @@ dependencies {
         }
 
         if (stonecutter.eval(minecraftVersion, ">=26.1")) {
+            fabricApiModules("permission-api-v1")
+
             "modImplementation"("me.lucko:fabric-permissions-api:0.6.3+26.1-SNAPSHOT") {
                 isTransitive = false
             }
         } else {
             libs.fabric.permissions.also {
-                "modImplementation"(it) { isTransitive = false }
+                "modCompileOnly"(it) { isTransitive = false }
             }
         }
         (findProperty("deps.melius_vanish") as? String)?.let { meliusVanishVersion ->

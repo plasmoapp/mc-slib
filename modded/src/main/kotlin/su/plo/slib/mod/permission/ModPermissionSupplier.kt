@@ -5,11 +5,6 @@ import su.plo.slib.api.permission.PermissionTristate
 import su.plo.slib.permission.PermissionSupplier
 import su.plo.slib.mod.ModServerLib
 
-//? if fabric {
-import me.lucko.fabric.api.permissions.v0.Permissions
-import net.fabricmc.fabric.api.util.TriState
-//?}
-
 //? if forge {
 /*import net.minecraftforge.server.permission.PermissionAPI
 *///?} elif neoforge {
@@ -19,7 +14,6 @@ import net.fabricmc.fabric.api.util.TriState
 class ModPermissionSupplier(
     private val minecraftServerLib: ModServerLib
 ) : PermissionSupplier {
-
     override fun hasPermission(player: Any, permission: String): Boolean {
         require(player is ServerPlayer) { "player is not " + ServerPlayer::class.java }
 
@@ -37,7 +31,7 @@ class ModPermissionSupplier(
         require(player is ServerPlayer) { "player is not " + ServerPlayer::class.java }
 
         //? if fabric {
-        return toPermissionTristate(Permissions.getPermissionValue(player, permission))
+        return FabricPermissionsProvider.getPermission(player, permission)
         //?} else {
 
         /*//? if >=1.18.2 {
@@ -53,14 +47,4 @@ class ModPermissionSupplier(
         ^///?}
         *///?}
     }
-
-    //? if fabric {
-    private fun toPermissionTristate(triState: TriState): PermissionTristate {
-        return when (triState) {
-            TriState.TRUE -> PermissionTristate.TRUE
-            TriState.FALSE -> PermissionTristate.FALSE
-            else -> PermissionTristate.UNDEFINED
-        }
-    }
-    //?}
 }

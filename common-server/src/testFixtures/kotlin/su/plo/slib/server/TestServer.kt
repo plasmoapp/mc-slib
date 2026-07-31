@@ -39,6 +39,12 @@ class TestServer(
         }
 
         McPlayerRegisterChannelsEvent.registerListener { player, channels ->
+            logger.info(
+                "(${player.name}'s permissions) slib: {}; slib.test: {}",
+                player.getPermission("slib"),
+                player.getPermission("slib.test"),
+            )
+
             logger.info("Player ${player.name} registered channels: $channels")
         }
 
