@@ -44,6 +44,7 @@ import su.plo.slib.spigot.world.SpigotServerWorld
 import java.io.File
 import java.util.Optional
 import java.util.UUID
+import java.util.function.Function
 
 class SpigotServerLib @JvmOverloads constructor(
     private val loader: JavaPlugin,
@@ -65,6 +66,8 @@ class SpigotServerLib @JvmOverloads constructor(
 
     private val worldByInstance: MutableMap<World, McServerWorld> = Maps.newConcurrentMap()
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
+
+    private val worldFactory = Function<World, McServerWorld> { SpigotServerWorld(loader, it) }
 
     private val permissionSupplier = SpigotPermissionSupplier(this)
 
@@ -145,9 +148,7 @@ class SpigotServerLib @JvmOverloads constructor(
     override fun getWorld(instance: Any): McServerWorld {
         require(instance is World) { "instance is not ${World::class.java}" }
 
-        return worldByInstance.computeIfAbsent(
-            instance
-        ) { SpigotServerWorld(loader, instance) }
+        return worldByInstance.computeIfAbsent(instance, worldFactory)
     }
 
     override fun getPlayerByInstance(instance: Any): McServerPlayer {

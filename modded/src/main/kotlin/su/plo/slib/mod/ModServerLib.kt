@@ -38,6 +38,7 @@ import su.plo.slib.mod.scheduler.ModServerScheduler
 import su.plo.slib.mod.world.ModServerWorld
 import java.io.File
 import java.util.UUID
+import java.util.function.Function
 import kotlin.time.Duration.Companion.seconds
 
 //? if >=1.21.9 {
@@ -60,6 +61,8 @@ object ModServerLib : McServerLib {
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
 
     private var worldCleanupJob: Job? = null
+
+    private val worldFactory = Function<ServerLevel, ModServerWorld> { ModServerWorld(it) }
 
     private val permissionSupplier = ModPermissionSupplier(this)
 
@@ -94,7 +97,7 @@ object ModServerLib : McServerLib {
     override fun getWorld(instance: Any): McServerWorld {
         require(instance is ServerLevel) { "instance is not " + ServerLevel::class.java }
 
-        return worldByInstance.computeIfAbsent(instance) { ModServerWorld(instance) }
+        return worldByInstance.computeIfAbsent(instance, worldFactory)
     }
 
     override fun getPlayerByInstance(instance: Any): McServerPlayer {

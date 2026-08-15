@@ -38,6 +38,7 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 import java.util.function.Consumer
+import java.util.function.Function
 
 class MinestomServerLib @JvmOverloads constructor(
     dataDirectory: File,
@@ -51,6 +52,8 @@ class MinestomServerLib @JvmOverloads constructor(
 
     private val worldByInstance: MutableMap<Instance, McServerWorld> = Maps.newConcurrentMap()
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
+
+    private val worldFactory = Function<Instance, MinestomServerWorld> { MinestomServerWorld(it) }
 
     private val permissionSupplier = MinestomPermissionSupplier(this)
 
@@ -107,9 +110,7 @@ class MinestomServerLib @JvmOverloads constructor(
     override fun getWorld(instance: Any): McServerWorld {
         require(instance is Instance) { "instance is not ${Instance::class.java}" }
 
-        return worldByInstance.computeIfAbsent(
-            instance
-        ) { MinestomServerWorld(instance) }
+        return worldByInstance.computeIfAbsent(instance, worldFactory)
     }
 
     override fun getPlayerByInstance(instance: Any): McServerPlayer {
