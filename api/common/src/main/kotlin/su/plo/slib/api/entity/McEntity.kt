@@ -1,7 +1,8 @@
 package su.plo.slib.api.entity
 
+import org.jetbrains.annotations.Contract
 import su.plo.slib.api.position.Pos3d
-import java.util.*
+import java.util.UUID
 
 /**
  * Represents a Minecraft entity.
@@ -36,8 +37,9 @@ interface McEntity {
     /**
      * Retrieves the position of the entity.
      *
-     * @return A [Pos3d] instance representing the entity's position.
+     * @return New [Pos3d] instance representing the entity's position.
      */
+    @Contract(value = "-> new", pure = true)
     fun getPosition(): Pos3d
 
     /**
@@ -51,8 +53,9 @@ interface McEntity {
     /**
      * Retrieves the entity's look angle.
      *
-     * @return A [Pos3d] instance representing the entity's look angle.
+     * @return New [Pos3d] instance representing the entity's look angle.
      */
+    @Contract(value = "-> new", pure = true)
     fun getLookAngle(): Pos3d
 
     /**

@@ -1,22 +1,18 @@
 package su.plo.slib.mod.entity
 
 import net.minecraft.world.entity.Entity
+import su.plo.slib.api.position.Pos3d
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
-import su.plo.slib.api.position.Pos3d
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.mod.extension.level
-import java.util.*
+import java.util.UUID
 
 open class ModServerEntity<E : Entity>(
     private val minecraftServer: McServerLib,
     var instance: E
 ) : McServerEntity {
-
-    private val position = Pos3d()
-    private val lookAngle = Pos3d()
-
     override val eyeHeight: Double
         get() = instance.eyeHeight.toDouble()
 
@@ -55,10 +51,10 @@ open class ModServerEntity<E : Entity>(
     }
 
     override fun getPosition() =
-        getPosition(position)
+        getPosition(Pos3d())
 
     override fun getLookAngle() =
-        getLookAngle(lookAngle)
+        getLookAngle(Pos3d())
 
     override fun getServerPosition(position: ServerPos3d): ServerPos3d {
         position.world = minecraftServer.getWorld(instance.level())

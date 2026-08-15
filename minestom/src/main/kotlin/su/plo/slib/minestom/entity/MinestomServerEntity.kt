@@ -12,10 +12,6 @@ open class MinestomServerEntity<E : Entity>(
     protected val minecraftServer: McServerLib,
     protected val instance: E
 ) : McServerEntity {
-
-    private val position = Pos3d()
-    private val lookAngle = Pos3d()
-
     override val id: Int
         get() = instance.entityId
 
@@ -37,7 +33,7 @@ open class MinestomServerEntity<E : Entity>(
     override fun isValid(): Boolean =
         !instance.isRemoved
 
-    override fun getPosition() = getPosition(position)
+    override fun getPosition() = getPosition(Pos3d())
 
     override fun getPosition(position: Pos3d): Pos3d {
         val location = instance.position
@@ -49,7 +45,7 @@ open class MinestomServerEntity<E : Entity>(
         return position
     }
 
-    override fun getLookAngle() = getLookAngle(lookAngle)
+    override fun getLookAngle() = getLookAngle(Pos3d())
 
     override fun getLookAngle(lookAngle: Pos3d): Pos3d {
         val vector = instance.position.direction()
