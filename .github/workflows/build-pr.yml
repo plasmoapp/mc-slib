@@ -114,7 +114,7 @@ jobs:
       - name: Run smoke test
         env:
           SKIP_COMMAND_IO: ${{ matrix.skip_command_io && '1' || '' }}
-        run: ./scripts/smoke-test-server.sh spigot:runServer -Pspigot.run_minecraft_version=${{ matrix.version }}
+        run: ./scripts/smoke-test-server.sh paper:runServer -Ppaper.run_minecraft_version=${{ matrix.version }}
 
   smoke-tests-minestom:
     runs-on: ubuntu-latest

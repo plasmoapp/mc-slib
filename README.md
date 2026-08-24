@@ -17,7 +17,7 @@ implementation("su.plo.slib:api-common:$libVersion")
 ```
 
 ### Server
-API for server platforms: Spigot/Fabric/Forge
+API for server platforms: Paper/Fabric/Forge
 ```kotlin
 implementation("su.plo.slib:api-server:$libVersion")
 ```
@@ -47,12 +47,12 @@ implementation("su.plo.slib:forge-$mcVersion:$libVersion")
 
 Initialization: [ForgeMod.kt](https://github.com/plasmoapp/mc-slib/blob/main/versions/1.19.3-forge/src/test/kotlin/ForgeMod.kt)
 
-### Spigot
+### Paper
 ```kotlin
-implementation("su.plo.slib:spigot:$libVersion")
+implementation("su.plo.slib:paper:$libVersion")
 ```
 
-Initialization: [SpigotPlugin.kt](https://github.com/plasmoapp/mc-slib/blob/main/spigot/src/test/kotlin/SpigotPlugin.kt)
+Initialization: [PaperPlugin.kt](https://github.com/plasmoapp/mc-slib/blob/main/paper/src/test/kotlin/PaperPlugin.kt)
 
 ### Minestom
 ```kotlin

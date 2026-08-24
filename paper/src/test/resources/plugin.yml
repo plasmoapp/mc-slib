@@ -1,0 +1,4 @@
+name: slib-spigot-test
+version: dev
+main: su.plo.slib.paper.PaperPlugin
+api-version: 1.21
