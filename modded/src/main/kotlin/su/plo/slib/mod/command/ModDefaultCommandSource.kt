@@ -19,11 +19,7 @@ class ModDefaultCommandSource(
         val json = minecraftServer.textConverter.convertToJson(this, text)
         val component = ComponentTextConverter.convertFromJson(json)
 
-        //? if >=1.20 {
-        /*source.sendSuccess({ component }, true)
-        *///?} else {
-        source.sendSuccess(component, true)
-        //?}
+        source.sendSuccess({ component }, true)
     }
 
     override fun sendActionBar(text: McTextComponent) =

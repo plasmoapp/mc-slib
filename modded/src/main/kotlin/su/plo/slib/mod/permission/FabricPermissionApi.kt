@@ -3,7 +3,7 @@ package su.plo.slib.mod.permission
 //? if fabric && >=26.1 {
 /*import net.fabricmc.fabric.api.permission.v1.PermissionContextOwner
 import net.fabricmc.fabric.api.permission.v1.PermissionNode
-import net.minecraft.resources.Identifier
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import su.plo.slib.api.permission.PermissionTristate
 import java.util.Optional
@@ -28,7 +28,7 @@ internal object FabricPermissionApi : FabricPermissions {
         val path = permission.substringAfter('.', "")
         if (namespace.isEmpty() || path.isEmpty()) return null
 
-        val identifier = Identifier.tryBuild(namespace, path) ?: return null
+        val identifier = ResourceLocation.tryBuild(namespace, path) ?: return null
 
         return PermissionNode.of(identifier)
     }

@@ -14,7 +14,6 @@ import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.mod.chat.ComponentTextConverter
 import su.plo.slib.mod.extension.getObjectiveBelowName
 import su.plo.slib.mod.extension.toMcGameProfile
-import su.plo.slib.mod.extension.serverLevel
 import su.plo.slib.permission.PermissionSupplier
 
 //? if fabric {
