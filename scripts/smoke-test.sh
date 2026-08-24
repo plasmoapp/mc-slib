@@ -4,7 +4,7 @@ set -e
 if [[ -z "$2" ]]; then
     echo "Usage: $0 <server|proxy> <gradle command>"
     echo "Example: $0 server modded:1.21-neoforge:runServer -Pmodded.versions_dev=1.21-neoforge"
-    echo "Example: $0 server spigot:runServer -Pspigot.run_minecraft_version=1.16.5"
+    echo "Example: $0 server paper:runServer -Ppaper.run_minecraft_version=1.16.5"
     echo "Example: $0 proxy velocity:runVelocity"
     echo "Example: $0 proxy bungee:runWaterfall"
     exit 1
@@ -18,7 +18,7 @@ FORBIDDEN_PATTERNS=()
 
 case "$ENV_TYPE" in
     server)
-        # console's stack is always the overworld on spigot/modded, so there is a world even without /execute in.
+        # console's stack is always the overworld on paper/modded, so there is a world even without /execute in.
         # minestom still takes it from the executor, which is null for the console.
         case "$COMMAND" in
             *minestom*) POSITION_WORLD="null" ;;

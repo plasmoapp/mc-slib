@@ -19,7 +19,7 @@ abstract class McCommandManager<T : McCommand> {
     /**
      * The fallback namespace prefix used when registering commands.
      *
-     * On Spigot/Paper, this is used as the fallback prefix for the command map,
+     * On Paper, this is used as the fallback prefix for the command map,
      * making commands accessible as both `/command` and `/namespace:command`.
      */
     var commandNamespace: String = "slib"
@@ -103,7 +103,7 @@ abstract class McCommandManager<T : McCommand> {
      * Registers a command with a custom namespace, name, and optional aliases.
      *
      * The [namespace] overrides [commandNamespace] for this command,
-     * making it accessible as `/namespace:command` on Spigot/Paper.
+     * making it accessible as `/namespace:command` on Paper.
      *
      * @param namespace The namespace prefix for this command.
      * @param name      The primary name of the command.
@@ -125,7 +125,7 @@ abstract class McCommandManager<T : McCommand> {
      * The [source] parameter represents the server-specific command source instance:
      *  - For Velocity `com.velocitypowered.api.command.CommandSource`
      *  - For BungeeCord `net.md_5.bungee.api.CommandSender`
-     *  - For Spigot/Paper `org.bukkit.command.CommandSender`
+     *  - For Paper `org.bukkit.command.CommandSender`
      *  - For Minestom `net.minestom.server.command.CommandSender`
      *  - For modded servers (Fabric/Forge/NeoForge) `net.minecraft.commands.CommandSourceStack`
      *
