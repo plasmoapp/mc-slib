@@ -7,6 +7,7 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.spigot.SpigotServerLib
+import su.plo.slib.spigot.util.extension.readPosition
 import java.util.UUID
 
 open class SpigotServerEntity<E : Entity>(
@@ -41,13 +42,8 @@ open class SpigotServerEntity<E : Entity>(
 
     override fun getPosition() = getPosition(Pos3d())
 
-    override fun getPosition(position: Pos3d): Pos3d {
-        position.x = instance.x
-        position.y = instance.y
-        position.z = instance.z
-
-        return position
-    }
+    override fun getPosition(position: Pos3d): Pos3d =
+        instance.readPosition(position)
 
     override fun getLookAngle() = getLookAngle(Pos3d())
 
@@ -64,25 +60,12 @@ open class SpigotServerEntity<E : Entity>(
     @Suppress("UNCHECKED_CAST")
     override fun <T> getInstance() = instance as T
 
-    override fun getServerPosition(): ServerPos3d {
-        return ServerPos3d(
-            minecraftServer.getWorld(instance.world),
-            instance.x,
-            instance.y,
-            instance.z,
-            instance.yaw,
-            instance.pitch,
-        )
-    }
+    override fun getServerPosition(): ServerPos3d =
+        getServerPosition(ServerPos3d())
 
     override fun getServerPosition(position: ServerPos3d): ServerPos3d {
         position.world = minecraftServer.getWorld(instance.world)
-        position.x = instance.x
-        position.y = instance.y
-        position.z = instance.z
-        position.yaw = instance.yaw
-        position.pitch = instance.pitch
 
-        return position
+        return instance.readPosition(position)
     }
 }
