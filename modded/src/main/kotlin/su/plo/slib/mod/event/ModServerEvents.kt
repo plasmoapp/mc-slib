@@ -14,24 +14,12 @@ import su.plo.slib.mod.event.server.ServerStoppingEvent
 import su.plo.slib.mod.extension.toMcServerPlayer
 
 //? if fabric {
-//? if >=1.19 {
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
-//?} else {
-/*import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
-*///?}
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
+import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents
 import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
-//? if >=1.20.2 {
-/*import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents
-*///?}
-//?} elif forge {
-/*import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.RegisterCommandsEvent
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-*///?} elif neoforge {
+//?} else {
 /*import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.RegisterCommandsEvent
@@ -58,47 +46,23 @@ class ModServerEvents private constructor() {
 
         S2CPlayChannelEvents.REGISTER.register(RegisterChannelHandler)
 
-        //? if >=1.20.2 {
-        /*S2CConfigurationChannelEvents.REGISTER.register(RegisterChannelHandler.ConfigHandler)
-        *///?}
+        S2CConfigurationChannelEvents.REGISTER.register(RegisterChannelHandler.ConfigHandler)
 
-        //? if >=1.19 {
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ -> fireRegisterCommands(dispatcher) }
-        //?} else {
-        /*CommandRegistrationCallback.EVENT.register { dispatcher, _ -> fireRegisterCommands(dispatcher) }
-        *///?}
     }
     //?} else {
-    
-    /*//? if neoforge {
-    /^init {
+    /*init {
         NeoForge.EVENT_BUS.register(this)
-    //? if >=1.20.2 {
         NeoForge.EVENT_BUS.register(RegisterChannelHandler)
-    //?}
-    }^///?} else {
-    init {
-        MinecraftForge.EVENT_BUS.register(this)
-    //? if >=1.20.2 {
-       /^MinecraftForge.EVENT_BUS.register(RegisterChannelHandler)
-    ^///?}
-    }//?}
+    }
 
     @SubscribeEvent
-    //? if neoforge {
-    /^fun onServerStart(event: net.neoforged.neoforge.event.server.ServerStartedEvent) {
-    ^///?} else {
-    fun onServerStart(event: net.minecraftforge.event.server.ServerStartedEvent) {
-    //?}
+    fun onServerStart(event: net.neoforged.neoforge.event.server.ServerStartedEvent) {
         fireServerStarted(event.server)
     }
 
     @SubscribeEvent
-    //? if neoforge {
-    /^fun onServerStart(event: net.neoforged.neoforge.event.server.ServerStoppingEvent) {
-    ^///?} else {
-    fun onServerStart(event: net.minecraftforge.event.server.ServerStoppingEvent) {
-    //?}
+    fun onServerStart(event: net.neoforged.neoforge.event.server.ServerStoppingEvent) {
         fireServerStopping(event.server)
     }
 

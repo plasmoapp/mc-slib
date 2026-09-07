@@ -72,14 +72,10 @@ if (configureVersions != ConfigureVersions.NONE) {
             fun mc(mcVersion: String, vararg loaders: String) =
                 loaders.forEach { version("$mcVersion-$it", mcVersion) }
 
-            vcsVersion = "1.20.1-fabric"
-            mc("1.20.1", "fabric", "forge")
+            vcsVersion = "1.21-fabric"
+            mc("1.21", "fabric", "neoforge")
 
             if (configureVersions == ConfigureVersions.ALL) {
-                mc("1.20.2", "fabric", "forge")
-                mc("1.20.4", "fabric", "forge")
-                mc("1.20.6", "fabric")
-                mc("1.21", "fabric", "forge", "neoforge")
                 mc("1.21.2", "fabric", "neoforge")
                 mc("1.21.5", "fabric", "neoforge")
                 mc("1.21.6", "fabric", "neoforge")

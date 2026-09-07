@@ -4,7 +4,7 @@ set -e
 if [[ -z "$2" ]]; then
     echo "Usage: $0 <server|proxy> <gradle command>"
     echo "Example: $0 server modded:1.21-neoforge:runServer -Pmodded.versions_dev=1.21-neoforge"
-    echo "Example: $0 server paper:runServer -Ppaper.run_minecraft_version=1.16.5"
+    echo "Example: $0 server paper:runServer -Ppaper.run_minecraft_version=1.21.11"
     echo "Example: $0 proxy velocity:runVelocity"
     echo "Example: $0 proxy bungee:runWaterfall"
     exit 1
@@ -162,15 +162,6 @@ if [[ $STARTUP_OK -eq 0 ]]; then
 fi
 
 # Phase 2: send each command, wait for its expected output.
-# Paper 1.19.3 through 1.20.5 route stdin through CraftServer.dispatchCommand,
-# which only hits the Bukkit command map (no brigadier fallback until 1.20.6).
-# Set SKIP_COMMAND_IO=1 on affected versions to keep the startup checks while
-# opting out of the stdin round-trip.
-if [[ -n "$SKIP_COMMAND_IO" ]]; then
-    echo "Skipping command I/O phase (SKIP_COMMAND_IO=$SKIP_COMMAND_IO)"
-    COMMAND_INPUTS=()
-fi
-
 for i in "${!COMMAND_INPUTS[@]}"; do
     INPUT="${COMMAND_INPUTS[$i]}"
     PATTERN="${COMMAND_OUTPUT_PATTERNS[$i]}"

@@ -1,6 +1,6 @@
 package su.plo.slib.mod.integration
 
-//? if fabric && >=1.18.2 {
+//? if fabric {
 import me.drex.vanish.api.VanishAPI
 import me.drex.vanish.api.VanishEvents
 import net.minecraft.server.level.ServerPlayer

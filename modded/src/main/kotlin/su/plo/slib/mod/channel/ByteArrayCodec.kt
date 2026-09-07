@@ -1,5 +1,4 @@
-//? if >=1.20.5 {
-/*package su.plo.slib.mod.channel
+package su.plo.slib.mod.channel
 
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
@@ -7,9 +6,8 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 
 class ByteArrayCodec(
-    channelKey: ResourceLocation
+    channelKey: ResourceLocation,
 ) : StreamCodec<RegistryFriendlyByteBuf, ByteArrayPayload> {
-
     val type = CustomPacketPayload.Type<ByteArrayPayload>(channelKey)
 
     override fun decode(buf: RegistryFriendlyByteBuf): ByteArrayPayload {
@@ -25,4 +23,3 @@ class ByteArrayCodec(
         buf.writeBytes(payload.data)
     }
 }
-*///?}

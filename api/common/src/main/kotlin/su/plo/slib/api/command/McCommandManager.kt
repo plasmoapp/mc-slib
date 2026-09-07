@@ -9,7 +9,7 @@ import su.plo.slib.api.command.brigadier.McBrigadierSource
 /**
  * Manages universal commands for multiple server implementations.
  *
- * This class managing commands that are independent of the server implementation (e.g., Paper, Forge, Fabric).
+ * This class managing commands that are independent of the server implementation (e.g., Paper, Fabric, NeoForge).
  * These universal commands work across different server types.
  *
  * @param T The type of commands managed by this manager.

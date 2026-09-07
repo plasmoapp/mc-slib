@@ -146,11 +146,9 @@ object ModServerLib : McServerLib {
             }
             .map { it.toMcGameProfile() }
             .orElse(null)
-        *///?} elif >=1.17.1 {
+        *///?} else {
         return minecraftServer.profileCache?.get(playerId)?.orElse(null)?.toMcGameProfile()
-        //?} else {
-        /*return minecraftServer.profileCache.get(playerId)?.toMcGameProfile()
-        *///?}
+        //?}
     }
 
     override fun getGameProfile(name: String): McGameProfile? {
@@ -162,11 +160,9 @@ object ModServerLib : McServerLib {
             }
             .map { it.toMcGameProfile() }
             .orElse(null)
-        *///?} elif >=1.17.1 {
+        *///?} else {
         return minecraftServer.profileCache?.get(name)?.orElse(null)?.toMcGameProfile()
-        //?} else {
-        /*return minecraftServer.profileCache.get(name)?.toMcGameProfile()
-        *///?}
+        //?}
     }
 
     private fun worldsCleanupTick() {
@@ -201,14 +197,14 @@ object ModServerLib : McServerLib {
     }
 
     private fun loadVanishIntegrations() {
-        //? if fabric && >=1.18.2 {
+        //? if fabric {
         try {
             Class.forName("me.drex.vanish.api.VanishAPI")
             su.plo.slib.mod.integration.MeliusVanishIntegration.register()
             baseLogger.info("Melius Vanish integration attached")
         } catch (_: ClassNotFoundException) {
         }
-        //?} elif (forge || neoforge) && >=1.18.2 {
+        //?} else {
         /*try {
             Class.forName("redstonedubstep.mods.vanishmod.VanishUtil")
             su.plo.slib.mod.integration.VanishModIntegration.register()
