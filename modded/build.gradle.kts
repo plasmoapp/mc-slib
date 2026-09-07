@@ -31,16 +31,9 @@ group = rootProject.group
 base.archivesName.set("slib-$platform-$minecraftVersion")
 
 val isFabric = stonecutter.constants.getOrDefault("fabric", false)
-val isForge = stonecutter.constants.getOrDefault("forge", false)
 val isNeoForge = stonecutter.constants.getOrDefault("neoforge", false)
 
-val javaVersion = when {
-    stonecutter.eval(minecraftVersion, ">=26.1") -> 25
-    stonecutter.eval(minecraftVersion, ">=1.20.5") -> 21
-    stonecutter.eval(minecraftVersion, ">=1.18") -> 17
-    stonecutter.eval(minecraftVersion, ">=1.17") -> 16
-    else -> 8
-}
+val javaVersion = if (stonecutter.eval(minecraftVersion, ">=26.1")) 25 else 21
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
 kotlin.jvmToolchain(javaVersion)
@@ -71,12 +64,6 @@ if (isFabric) {
 loom.mods.findByName("main")?.apply {
     sourceSet(sourceSets.test.get())
     mainResourceDirectory.set(sourceSets.test.get().output.resourcesDir)
-}
-
-if (isForge) {
-    loom.forge {
-        mixinConfig("slib.mixins.json")
-    }
 }
 
 configurations {
@@ -127,12 +114,7 @@ dependencies {
             }
         }
 
-        fabricApiModules("networking-api-v1", "lifecycle-events-v1")
-        if (stonecutter.eval(minecraftVersion, ">=1.19")) {
-            fabricApiModules("command-api-v2")
-        } else {
-            fabricApiModules("command-api-v1")
-        }
+        fabricApiModules("networking-api-v1", "lifecycle-events-v1", "command-api-v2")
 
         if (stonecutter.eval(minecraftVersion, ">=26.1")) {
             fabricApiModules("permission-api-v1")
@@ -150,12 +132,6 @@ dependencies {
         }
     } else if (isNeoForge) {
         "neoForge"("net.neoforged:neoforge:${property("deps.neoforge")}")
-
-        (findProperty("deps.vanishmod_file_id") as? String)?.let { fileId ->
-            "modCompileOnly"("curse.maven:vanishmod-423535:$fileId")
-        }
-    } else if (isForge) {
-        "forge"("net.minecraftforge:forge:${property("deps.forge")}")
 
         (findProperty("deps.vanishmod_file_id") as? String)?.let { fileId ->
             "modCompileOnly"("curse.maven:vanishmod-423535:$fileId")
@@ -195,24 +171,6 @@ tasks {
     }
 }
 
-if (isForge && stonecutter.eval(minecraftVersion, ">1.20.3")) {
-    // https://github.com/architectury/architectury-loom/issues/191#issuecomment-2030567486
-    afterEvaluate {
-        tasks.named<JavaExec>("runServer") {
-            classpath = classpath.filter {
-                !it.toString().contains("org.lwjgl") && !it.toString().contains("fabric-log4j-util")
-            }
-        }
-    }
-
-    // https://github.com/architectury/architectury-loom/issues/191#issuecomment-2613841899
-    configurations.configureEach {
-        resolutionStrategy {
-            force("net.sf.jopt-simple:jopt-simple:5.0.4")
-        }
-    }
-}
-
 stonecutter {
     fun fromFile(direction: Boolean, path: String) {
         file(project(":modded").layout.projectDirectory.file(path))
@@ -230,9 +188,6 @@ stonecutter {
             }
     }
 
-    fromFile(eval(current.version, "<1.18"), "1.18.2-1.17.1.txt")
-    fromFile(eval(current.version, "<1.17"), "1.17.1-1.16.5.txt")
-    fromFile(eval(current.version, ">1.20.1"), "1.20.1-1.20.2.txt")
     fromFile(eval(current.version, ">1.21.9"), "1.21.9-1.21.10.txt")
     fromFile(eval(current.version, ">1.21.11"), "1.21.11-26.1.txt")
 }
@@ -244,9 +199,7 @@ tasks {
         mergeServiceFiles()
         exclude("META-INF/*.kotlin_module")
 
-        if (isForge) {
-            exclude("fabric.mod.json")
-        } else if (isNeoForge) {
+        if (isNeoForge) {
             exclude("fabric.mod.json")
         }
     }

@@ -1,50 +1,28 @@
 package su.plo.slib.mod.entity
 
 import com.google.common.collect.Sets
-import io.netty.buffer.Unpooled
-import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
 import su.plo.slib.api.server.entity.player.McServerPlayer
+import su.plo.slib.mod.channel.ByteArrayPayload
+import su.plo.slib.mod.channel.ModChannelManager
 import su.plo.slib.mod.chat.ComponentTextConverter
 import su.plo.slib.mod.extension.getObjectiveBelowName
 import su.plo.slib.mod.extension.toMcGameProfile
+import su.plo.slib.mod.extension.serverLevel
 import su.plo.slib.permission.PermissionSupplier
 
 //? if fabric {
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-//?} elif forge {
-/*import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket
-//? if >=1.20.2 {
-/^import net.minecraftforge.network.NetworkDirection
-^///?}
-*///?} elif neoforge {
+//?} else {
 /*import net.neoforged.neoforge.common.extensions.ICommonPacketListener
 import net.neoforged.neoforge.network.registration.NetworkRegistry
-*///?}
-
-//? if >=1.17.1 {
-import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket
-//?} else {
-/*import net.minecraft.network.protocol.game.ClientboundSetTitlesPacket
-*///?}
-
-//? if <1.19 {
-/*import net.minecraft.Util
-*///?}
-
-//? if >=1.20.5 {
-/*import su.plo.slib.mod.channel.ModChannelManager
-//? if forge {
-/^import net.minecraft.network.protocol.common.ClientCommonPacketListener
-^///?} else {
-import su.plo.slib.mod.channel.ByteArrayPayload
-//?}
 *///?}
 
 class ModServerPlayer(
@@ -106,62 +84,24 @@ class ModServerPlayer(
         val json = minecraftServer.textConverter.convertToJson(this, text)
         val component = ComponentTextConverter.convertFromJson(json)
 
-        //? if >=1.17.1 {
         instance.connection.send(
             ClientboundSetActionBarTextPacket(component)
         )
-        //?} else {
-        /*instance.connection.send(
-            ClientboundSetTitlesPacket(
-                ClientboundSetTitlesPacket.Type.ACTIONBAR,
-                component
-            )
-        )
-        *///?}
     }
 
     override fun sendMessage(text: McTextComponent) {
         val json = minecraftServer.textConverter.convertToJson(this, text)
         val component = ComponentTextConverter.convertFromJson(json)
 
-        //? if >=1.19 {
         instance.sendSystemMessage(component)
-        //?} else {
-        /*instance.sendMessage(component, Util.NIL_UUID);
-        *///?}
     }
 
     override fun sendPacket(channel: String, data: ByteArray) {
         val channelKey = ResourceLocation.tryParse(channel) ?: throw IllegalArgumentException("Invalid channel key")
-        //? if <1.20.5 {
-        val buf = FriendlyByteBuf(Unpooled.wrappedBuffer(data))
-        //?}
-
         //? if fabric {
-        //? if >=1.20.5 {
-        /*val codec = ModChannelManager.getOrRegisterCodec(channelKey)
+        val codec = ModChannelManager.getOrRegisterCodec(channelKey)
         ServerPlayNetworking.send(instance, ByteArrayPayload(codec.type, data))
-        *///?} else {
-        ServerPlayNetworking.send(instance, channelKey, buf)
-        //?}
-
-        //?} elif forge {
-        
-        /*//? if >=1.20.6 {
-        /^val forgeChannel = ModChannelManager.getForgeChannel(channelKey)
-        val buf = FriendlyByteBuf(Unpooled.wrappedBuffer(data))
-
-        val packet = NetworkDirection.PLAY_TO_CLIENT
-            .buildPacket<ClientCommonPacketListener, FriendlyByteBuf>(forgeChannel, buf)
-        ^///?} elif >=1.20.2 {
-        /^val packet = NetworkDirection.PLAY_TO_CLIENT
-            .buildPacket<ClientboundCustomPayloadPacket>(buf, channelKey)
-            .getThis()
-        ^///?} else {
-        val packet = ClientboundCustomPayloadPacket(channelKey, buf)
-        //?}
-        instance.connection.send(packet)
-        *///?} elif neoforge {
+        //?} else {
         /*// hack to avoid neoforge channels check
         if (!NetworkRegistry.hasChannel(instance.connection as ICommonPacketListener, channelKey)) {
             NetworkRegistry.onMinecraftRegister(

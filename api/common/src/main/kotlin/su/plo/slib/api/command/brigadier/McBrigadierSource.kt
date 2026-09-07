@@ -50,7 +50,7 @@ interface McBrigadierSource {
      * Gets the server's implementation instance for this source.
      *
      * The return type may vary depending on the server platform:
-     *   - For servers (Paper/Fabric/Forge/NeoForge): [net.minecraft.commands.CommandSourceStack]
+     *   - For servers (Paper/Fabric/NeoForge): [net.minecraft.commands.CommandSourceStack]
      *   - For Minestom: [net.minestom.server.command.CommandSender]
      *   - For BungeeCord: [net.md_5.bungee.api.CommandSender]
      *   - For Velocity: [com.velocitypowered.api.command.CommandSource]

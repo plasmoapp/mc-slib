@@ -7,28 +7,19 @@ import su.plo.slib.mod.entity.ModServerPlayer
 import su.plo.slib.mod.ModServerLib
 
 //? if fabric {
+import com.google.common.cache.CacheBuilder
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerGamePacketListenerImpl
-//? if >=1.20.2 {
-/*import com.google.common.cache.CacheBuilder
-import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl
-import su.plo.slib.api.event.player.McPlayerJoinEvent
-import java.util.*
-import java.util.concurrent.TimeUnit
-*///?}
-//?} elif forge {
-/*//? if >=1.20.2 {
-/^import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
-import net.minecraftforge.event.network.ChannelRegistrationChangeEvent
-import net.minecraftforge.network.NetworkContext
-import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraft.server.network.ServerGamePacketListenerImpl
-^///?}
-*///?} elif neoforge {
+import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents
+import su.plo.slib.api.event.player.McPlayerJoinEvent
+
+import java.util.UUID
+import java.util.concurrent.TimeUnit
+//?} else {
 /*import io.netty.util.AttributeKey
 import net.minecraft.network.ConnectionProtocol
 import net.neoforged.bus.api.SubscribeEvent
@@ -43,10 +34,10 @@ object RegisterChannelHandler
     //?}
 {
     //? if fabric {
-    //? if >=1.20.2 {
-    /*val channelsCache = CacheBuilder.newBuilder()
+    val channelsCache = CacheBuilder.newBuilder()
         .expireAfterWrite(1L, TimeUnit.MINUTES)
         .build<UUID, List<String>>()
+
     init {
         McPlayerJoinEvent.registerListener {
             val channels = channelsCache.getIfPresent(it.uuid) ?: return@registerListener
@@ -55,7 +46,6 @@ object RegisterChannelHandler
             firePlayerRegisterChannels(it.getInstance(), channels)
         }
     }
-    *///?}
 
     override fun onChannelRegister(
         handler: ServerGamePacketListenerImpl,
@@ -63,8 +53,7 @@ object RegisterChannelHandler
         server: MinecraftServer,
         newChannels: MutableList<ResourceLocation>
     ) {
-        //? if >=1.20.2 {
-        /*// 1.20.2 forge sends channels only on configuration state,
+        // neoforge sends channels only on configuration state,
         // so we need to save these channels and check them on player join
         val newChannels = newChannels.map { channel -> channel.toString() }
 
@@ -77,39 +66,12 @@ object RegisterChannelHandler
         channelsCache.invalidate(player.uuid)
 
         firePlayerRegisterChannels(player, channels)
-        *///?} else {
-        firePlayerRegisterChannels(handler.player, newChannels.map { it.toString() })
-        //?}
     }
-    //?} elif forge {
-
-    /*//? if >=1.20.2 {
-    /^@SubscribeEvent
-    fun onPlayerJoin(event: PlayerLoggedInEvent) { // forge clients handler
-        val player = event.entity as? ServerPlayer ?: return
-        val context = NetworkContext.get(player.connection.connection)
-
-        val channels = context.remoteChannels
-            .takeIf { it.isNotEmpty() }
-            ?.map { it.toString() }
-            ?: return
-
-        firePlayerRegisterChannels(player, channels)
-    }
-    @SubscribeEvent
-    fun onRegister(event: ChannelRegistrationChangeEvent) { // fabric clients handler
-        val gameListener = event.source.packetListener as? ServerGamePacketListenerImpl ?: return
-        val player = gameListener.player ?: return
-        val channels = event.channels.map { it.toString() }
-
-        firePlayerRegisterChannels(player, channels)
-    }
-    ^///?}
-    *///?} elif neoforge {
+    //?} else {
     /*private val ATTRIBUTE_PAYLOAD_SETUP = AttributeKey.valueOf<NetworkPayloadSetup>("neoforge:payload_setup")
 
     @SubscribeEvent
-    fun onPlayerJoin(event: PlayerLoggedInEvent) { // forge clients handler
+    fun onPlayerJoin(event: PlayerLoggedInEvent) {
         val player = event.entity as? ServerPlayer ?: return
 
         val payloadSetup = player.connection.connection.channel()
@@ -129,7 +91,7 @@ object RegisterChannelHandler
 
     fun firePlayerRegisterChannels(player: ServerPlayer, channels: List<String>) {
         // skip player if he's not placed in the playerlist yet
-        if (ModServerLib.minecraftServer.playerList.getPlayer(player.uuid) == null && !hasForgeChannel(channels)) return
+        if (ModServerLib.minecraftServer.playerList.getPlayer(player.uuid) == null) return
 
         val mcServerPlayer = player.toMcServerPlayer() as ModServerPlayer
 
@@ -146,11 +108,8 @@ object RegisterChannelHandler
         McPlayerRegisterChannelsEvent.invoker.onPlayerRegisterChannels(mcServerPlayer, addedChannels)
     }
 
-    private fun hasForgeChannel(channels: List<String>): Boolean =
-        "fml:handshake" in channels || "forge:handshake" in channels
-
-    //? if fabric && >=1.20.2 {
-    /*object ConfigHandler : S2CConfigurationChannelEvents.Register {
+    //? if fabric {
+    object ConfigHandler : S2CConfigurationChannelEvents.Register {
         override fun onChannelRegister(
             handler: ServerConfigurationPacketListenerImpl,
             sender: PacketSender,
@@ -160,5 +119,5 @@ object RegisterChannelHandler
             channelsCache.put(handler.owner.id, channels.map { it.toString() })
         }
     }
-    *///?}
+    //?}
 }
