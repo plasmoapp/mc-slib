@@ -6,6 +6,7 @@ import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.permission.PermissionTristate
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.mod.chat.ComponentTextConverter
+import su.plo.slib.mod.mixin.accessor.CommandSourceStackAccessor
 
 class ModDefaultCommandSource(
     private val minecraftServer: McServerLib,
@@ -19,7 +20,7 @@ class ModDefaultCommandSource(
         val json = minecraftServer.textConverter.convertToJson(this, text)
         val component = ComponentTextConverter.convertFromJson(json)
 
-        source.sendSuccess({ component }, true)
+        (source as CommandSourceStackAccessor).slib_getSource().sendSystemMessage(component)
     }
 
     override fun sendActionBar(text: McTextComponent) =

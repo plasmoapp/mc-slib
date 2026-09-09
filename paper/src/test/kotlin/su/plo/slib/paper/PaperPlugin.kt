@@ -4,8 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.server.TestServer
 
 class PaperPlugin : JavaPlugin() {
-
-    private val minecraftServer = PaperServerLib(this)
+    private val minecraftServer = PaperServerLib(this, LOGGER)
     private val testServer = TestServer(minecraftServer)
 
     override fun onEnable() {

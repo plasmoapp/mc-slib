@@ -32,13 +32,16 @@ import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.command.brigadier.CustomArgumentType
+import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.entity.McEntity
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.command.AbstractCommandManager
 import su.plo.slib.command.brigadier.CustomArgumentCommandNode
-import su.plo.slib.command.proxied
+import su.plo.slib.command.brigadier.applyEach
+import su.plo.slib.command.brigadier.collectBrigadierCommands
+import su.plo.slib.command.brigadier.proxied
 import su.plo.slib.minestom.chat.McTextMessage
 import su.plo.slib.minestom.command.brigadier.MinestomArgumentType
 import su.plo.slib.minestom.command.brigadier.MinestomBrigadierSource
@@ -72,14 +75,16 @@ class MinestomCommandManager(
             MinecraftServer.getCommandManager().register(cmd)
         }
 
-        registerBrigadierCommands { command, _ ->
-            MinecraftServer.getCommandManager().register(
-                command.proxied(
-                    { it },
-                    { it },
-                ).toMinestom()
-            )
-        }
+        collectBrigadierCommands(McBrigadierRegistry.Phase.RUNTIME)
+            .applyEach(logger, logRegisteredCommands) { (node, _, aliases) ->
+                MinecraftServer.getCommandManager().register(
+                    node.proxied(
+                        logger,
+                        { it },
+                        { it },
+                    ).toMinestom(aliases)
+                )
+            }
 
         registered = true
     }
@@ -91,8 +96,8 @@ class MinestomCommandManager(
         else MinestomDefaultCommandSource(minecraftServer.textConverter, source)
     }
 
-    private fun LiteralCommandNode<McBrigadierSource>.toMinestom(): Command {
-        val minestomCommand = Command(name)
+    private fun LiteralCommandNode<McBrigadierSource>.toMinestom(aliases: Collection<String> = emptyList()): Command {
+        val minestomCommand = Command(name, *aliases.toTypedArray())
 
         children.filterIsInstance<LiteralCommandNode<McBrigadierSource>>()
             .forEach { minestomCommand.addSubcommand(it.toMinestom()) }

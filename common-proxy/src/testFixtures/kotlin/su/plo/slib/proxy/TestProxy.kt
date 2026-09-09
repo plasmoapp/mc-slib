@@ -1,11 +1,12 @@
 package su.plo.slib.proxy
 
-import com.mojang.brigadier.Command
+import dev.apehum.mcdsl.command.literalCommand
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.translation.GlobalTranslator
 import net.kyori.adventure.translation.TranslationStore
-import su.plo.slib.api.command.McCommandManager
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierSource
+import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
@@ -14,7 +15,6 @@ import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
 import su.plo.slib.proxy.command.UuidArgumentType
 import java.text.MessageFormat
 import java.util.Locale
-import java.util.UUID
 
 class TestProxy {
     private var logger = McLoggerFactory.createLogger("TestProxy")
@@ -28,7 +28,7 @@ class TestProxy {
             logger.info("Player ${player.name} quit the server")
         }
 
-        McProxyCommandsRegisterEvent.registerListener { commands, minecraftProxy ->
+        McProxyCommandsRegisterEvent.registerListener { commands, _ ->
             commands.logRegisteredCommands = true
 
             commands.register("ping", object : McProxyCommand {
@@ -39,29 +39,25 @@ class TestProxy {
                     source.sendMessage("Pong")
                 }
             })
+        }
 
-            commands.register(
-                McCommandManager.literal("brigadier-ping")
-                    .executes {
-                        val source = it.source.source
-                        source.sendMessage("Pong")
-
-                        Command.SINGLE_SUCCESS
+        McBrigadierCommandsRegisterEvent.registerListener { registry ->
+            registry.register(
+                literalCommand<McBrigadierSource>("brigadier-ping") {
+                    executes {
+                        source.source.sendMessage("Pong")
                     }
+                }
             )
 
-            commands.register(
-                McCommandManager.literal("brigadier-custom-type")
-                    .then(
-                        McCommandManager.argument("uuid", UuidArgumentType())
-                            .executes {
-                                val uuid = it.getArgument<UUID>("uuid", UUID::class.java)
+            registry.register(
+                literalCommand<McBrigadierSource>("brigadier-custom-type") {
+                    val uuid by argument("uuid", UuidArgumentType())
 
-                                it.source.source.sendMessage(uuid.toString())
-
-                                Command.SINGLE_SUCCESS
-                            }
-                    )
+                    executes {
+                        source.source.sendMessage(uuid.toString())
+                    }
+                }
             )
         }
 

@@ -2,7 +2,6 @@ package su.plo.slib.paper
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Maps
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
@@ -87,11 +86,7 @@ class PaperServerLib @JvmOverloads constructor(
 
     override val configsFolder: File = loader.dataFolder.parentFile
 
-    lateinit var adventure: BukkitAudiences
-
     fun onInitialize() {
-        adventure = BukkitAudiences.create(loader)
-
         commandManager.registerCommands(loader)
         loader.server.pluginManager.registerEvents(RegisterChannelHandler(this), loader)
         loader.server.pluginManager.registerEvents(this, loader)
@@ -128,9 +123,8 @@ class PaperServerLib @JvmOverloads constructor(
     }
 
     fun onShutdown() {
-        commandManager.clear(loader)
+        commandManager.clear()
         permissionManager.clear()
-        adventure.close()
     }
 
     override fun executeInMainThread(runnable: Runnable) {
@@ -226,5 +220,8 @@ class PaperServerLib @JvmOverloads constructor(
 
     companion object {
         lateinit var instance: PaperServerLib
+
+        val instanceOrNull: PaperServerLib?
+            get() = if (::instance.isInitialized) instance else null
     }
 }

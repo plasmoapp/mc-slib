@@ -49,7 +49,16 @@ object ModServerLib : McServerLib {
 
     override val baseLogger: McLogger = McLazyLogger { baseLoggerName }
 
-    lateinit var minecraftServer: MinecraftServer
+    private var boundServer: MinecraftServer? = null
+
+    var minecraftServer: MinecraftServer
+        get() = checkNotNull(boundServer) { "MinecraftServer is not initialized yet" }
+        set(value) {
+            boundServer = value
+        }
+
+    val isBound: Boolean
+        get() = boundServer != null
 
     private val worldByInstance: MutableMap<ServerLevel, McServerWorld> = Maps.newConcurrentMap()
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
@@ -206,6 +215,12 @@ object ModServerLib : McServerLib {
         } catch (_: ClassNotFoundException) {
         }
         *///?}
+    }
+
+    fun onServerStopped() {
+        boundServer = null
+        worldByInstance.clear()
+        playerById.clear()
     }
 
     private fun onShutdown() {

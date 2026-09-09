@@ -18,13 +18,15 @@ class UuidArgumentType : CustomArgumentType<UUID, String> {
 
     override fun useNativeSuggestions(): Boolean = false
 
-    private val invalidUuid = SimpleCommandExceptionType(
-        MessageTextConverter.converter().convert(
-            McTextComponent.translatable(
-                "argument.uuid.invalid",
+    private val invalidUuid by lazy {
+        SimpleCommandExceptionType(
+            MessageTextConverter.converter().convert(
+                McTextComponent.translatable(
+                    "argument.uuid.invalid",
+                )
             )
         )
-    )
+    }
 
     override fun parse(reader: StringReader): UUID {
         val input = reader.readString()

@@ -15,6 +15,9 @@ import org.jetbrains.annotations.ApiStatus
 interface CustomArgumentType<PARSED, NATIVE> : ArgumentType<PARSED> {
     /**
      * The native argument type sent to the client.
+     *
+     * Must be a plain brigadier primitive (`bool`, `double`, `float`, `integer`, `long`, `string`)
+     * or a type from [su.plo.slib.api.server.command.brigadier.McArgumentTypes].
      */
     val nativeType: ArgumentType<NATIVE>
 
