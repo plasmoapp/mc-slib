@@ -15,7 +15,7 @@ import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.logging.McLogger
 import java.util.concurrent.atomic.AtomicBoolean
 
-private val NotBoundCommandException = SimpleCommandExceptionType(
+private val notBoundCommandException = SimpleCommandExceptionType(
     LiteralMessage("This command is not available yet, the server is still starting")
 )
 
@@ -110,7 +110,7 @@ private fun <S> CommandNode<McBrigadierSource>.toProxyNode(
     command?.let { command ->
         node.executes { context ->
             val context = contextFactory(context)
-            if (!context.source.isBound) throw NotBoundCommandException.create()
+            if (!context.source.isBound) throw notBoundCommandException.create()
 
             command.run(context)
         }
