@@ -45,14 +45,31 @@ case "$ENV_TYPE" in
           "brigadier-entity-selector players @a"
           "brigadier-position-selector 100 100 100"
           "brigadier-multi-arg 7 13"
+          "brigadier-unbound-requires"
+          "brigadier-silent-feedback"
         )
         COMMAND_OUTPUT_PATTERNS=(
           "Invalid UUID"
           "Found entities:"
           "Found players:"
-          "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0, yaw=100.0, pitch=100.0\\)"
+          "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0, yaw=0.0, pitch=0.0\\)"
           "Multi-arg: a=7, b=13"
+          "Unbound requires guard survived parsing"
+          "Silent check feedback"
         )
+
+        # minestom has no datapacks, so it never hits bootstrap phase.
+        if [[ "$COMMAND" != *minestom* ]]; then
+            PATTERNS+=(
+              "Requirement of the command node 'brigadier-unbound-requires' threw before the server was initialized"
+              "Silent check: silent=true"
+              "Multi-arg: a=21, b=34"
+            )
+            FORBIDDEN_PATTERNS+=(
+              "Failed to load function"
+              "Whilst parsing command"
+            )
+        fi
         ;;
     proxy)
         PATTERNS=(

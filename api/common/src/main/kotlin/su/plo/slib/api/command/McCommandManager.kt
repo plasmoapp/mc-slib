@@ -3,7 +3,6 @@ package su.plo.slib.api.command
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
-import com.mojang.brigadier.tree.LiteralCommandNode
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 
 /**
@@ -19,8 +18,9 @@ abstract class McCommandManager<T : McCommand> {
     /**
      * The fallback namespace prefix used when registering commands.
      *
-     * On Paper, this is used as the fallback prefix for the command map,
-     * making commands accessible as both `/command` and `/namespace:command`.
+     * Making commands accessible as both `/command` and `/namespace:command`.
+     *
+     * Ignored on Paper, where the owning plugin's name is always the namespace.
      */
     var commandNamespace: String = "slib"
 
@@ -40,55 +40,6 @@ abstract class McCommandManager<T : McCommand> {
     abstract val registeredCommands: Map<String, McCommand>
 
     /**
-     * Retrieves a read-only list of registered brigadier command nodes.
-     *
-     * @return A list of registered brigadier command nodes.
-     */
-    abstract val registeredBrigadierCommands: List<LiteralCommandNode<McBrigadierSource>>
-
-    /**
-     * Registers a brigadier command.
-     *
-     * @param command  The instance of the command to register.
-     * @throws IllegalStateException If attempting to register commands after commands have already been registered.
-     * @throws IllegalArgumentException If a command with the same name or alias already exists.
-     */
-    fun register(command: LiteralArgumentBuilder<McBrigadierSource>) {
-        register(command.build())
-    }
-
-    /**
-     * Registers a brigadier command.
-     *
-     * @param command  The instance of the command to register.
-     * @throws IllegalStateException If attempting to register commands after commands have already been registered.
-     * @throws IllegalArgumentException If a command with the same name or alias already exists.
-     */
-    abstract fun register(command: LiteralCommandNode<McBrigadierSource>)
-
-    /**
-     * Registers a brigadier command with a custom namespace.
-     *
-     * @param namespace The namespace prefix for this command.
-     * @param command   The instance of the command to register.
-     * @throws IllegalStateException If attempting to register commands after commands have already been registered.
-     * @throws IllegalArgumentException If a command with the same name or alias already exists.
-     */
-    fun register(namespace: String, command: LiteralArgumentBuilder<McBrigadierSource>) {
-        register(namespace, command.build())
-    }
-
-    /**
-     * Registers a brigadier command with a custom namespace.
-     *
-     * @param namespace The namespace prefix for this command.
-     * @param command   The instance of the command to register.
-     * @throws IllegalStateException If attempting to register commands after commands have already been registered.
-     * @throws IllegalArgumentException If a command with the same name or alias already exists.
-     */
-    abstract fun register(namespace: String, command: LiteralCommandNode<McBrigadierSource>)
-
-    /**
      * Registers a command with its name and optional aliases.
      *
      * @param name     The primary name of the command.
@@ -103,7 +54,9 @@ abstract class McCommandManager<T : McCommand> {
      * Registers a command with a custom namespace, name, and optional aliases.
      *
      * The [namespace] overrides [commandNamespace] for this command,
-     * making it accessible as `/namespace:command` on Paper.
+     * making it accessible as `/namespace:command`.
+     *
+     * Ignored on Paper, where the owning plugin's name is always the namespace.
      *
      * @param namespace The namespace prefix for this command.
      * @param name      The primary name of the command.

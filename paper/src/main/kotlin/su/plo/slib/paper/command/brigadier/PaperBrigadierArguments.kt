@@ -1,7 +1,13 @@
+@file:Suppress("UnstableApiUsage")
+
 package su.plo.slib.paper.command.brigadier
 
+import com.mojang.brigadier.LiteralMessage
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
+import io.papermc.paper.command.brigadier.CommandSourceStack
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
@@ -14,131 +20,84 @@ import su.plo.slib.api.server.command.brigadier.ServerPos3dResolver
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.paper.PaperServerLib
-import su.plo.slib.paper.nms.ReflectionProxies
-import su.plo.slib.paper.nms.getWorld
-import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.UndeclaredThrowableException
-import java.util.UUID
 
-class PaperBrigadierArguments: McArgumentTypes.Provider {
-    private val serverLib by lazy { PaperServerLib.instance }
+private val UnknownPlayerException = SimpleCommandExceptionType(
+    LiteralMessage("That player does not exist")
+)
+
+class PaperBrigadierArguments : McArgumentTypes.Provider {
+    private val serverLib
+        get() = PaperServerLib.instance
 
     override fun entity(): ArgumentType<McEntityArgumentResolver> =
-        argumentResolver(ReflectionProxies.entityArgument.entity()) { selector ->
+        argumentResolver(ArgumentTypes.entity()) { selector ->
             McEntityArgumentResolver { source ->
-                val entity = rethrowProxyException {
-                    ReflectionProxies.entitySelector.findSingleEntity(selector, source.getInstance())
-                }
-                val bukkitEntity = ReflectionProxies.entity.getBukkitEntity(entity)
-
-                serverLib.getEntityByInstance(bukkitEntity)
+                serverLib.getEntityByInstance(selector.resolve(source.getInstance()).first())
             }
         }
 
     override fun entities(): ArgumentType<McEntitiesArgumentResolver> =
-        argumentResolver(ReflectionProxies.entityArgument.entities()) { selector ->
+        argumentResolver(ArgumentTypes.entities()) { selector ->
             McEntitiesArgumentResolver { source ->
-                val entities = rethrowProxyException {
-                    ReflectionProxies.entitySelector.findEntities(selector, source.getInstance())
-                }
-                entities.map {
-                    val bukkitEntity = ReflectionProxies.entity.getBukkitEntity(it)
-                    serverLib.getEntityByInstance(bukkitEntity)
-                }
+                selector.resolve(source.getInstance()).map { serverLib.getEntityByInstance(it) }
             }
         }
 
     override fun player(): ArgumentType<McPlayerArgumentResolver> =
-        argumentResolver(ReflectionProxies.entityArgument.player()) { selector ->
+        argumentResolver(ArgumentTypes.player()) { selector ->
             McPlayerArgumentResolver { source ->
-                val player = rethrowProxyException {
-                    ReflectionProxies.entitySelector.findSinglePlayer(selector, source.getInstance())
-                }
-                val bukkitPlayer = ReflectionProxies.entity.getBukkitEntity(player)
-                serverLib.getPlayerByInstance(bukkitPlayer)
+                serverLib.getPlayerByInstance(selector.resolve(source.getInstance()).first())
             }
         }
 
     override fun players(): ArgumentType<McPlayersArgumentResolver> =
-        argumentResolver(ReflectionProxies.entityArgument.players()) { selector ->
+        argumentResolver(ArgumentTypes.players()) { selector ->
             McPlayersArgumentResolver { source ->
-                val players = rethrowProxyException {
-                    ReflectionProxies.entitySelector.findPlayers(selector, source.getInstance())
-                }
-                players.map {
-                    val bukkitPlayer = ReflectionProxies.entity.getBukkitEntity(it)
-                    serverLib.getPlayerByInstance(bukkitPlayer)
-                }
+                selector.resolve(source.getInstance()).map { serverLib.getPlayerByInstance(it) }
             }
         }
 
     override fun gameProfiles(): ArgumentType<McGameProfilesArgumentResolver> =
-        argumentResolver(ReflectionProxies.gameProfileArgument.gameProfile()) { selector ->
+        argumentResolver(ArgumentTypes.playerProfiles()) { selector ->
             McGameProfilesArgumentResolver { source ->
-                val getNamesMethod = selector.javaClass.declaredMethods
-                    .first()
-                    .also { it.isAccessible = true }
-
-                @Suppress("UNCHECKED_CAST")
-                val names = rethrowProxyException {
-                    getNamesMethod.invoke(selector, source.getInstance()) as Collection<Any>
-                }
-
-                names.map {
-                    // 1.21.9+ uses NameAndId, so we can't just use GameProfile here
-                    val uuidMethod = it.javaClass.declaredMethods
-                        .first { it.returnType == UUID::class.java }
-                        .also { it.isAccessible = true }
-                    val nameMethod = it.javaClass.declaredMethods
-                        .first { it.returnType == String::class.java }
-                        .also { it.isAccessible = true }
-
-                    val uuid = uuidMethod.invoke(it) as UUID
-                    val name = nameMethod.invoke(it) as String
-
-                    McGameProfile(uuid, name, emptyList())
+                selector.resolve(source.getInstance()).map { profile ->
+                    McGameProfile(
+                        profile.id ?: throw UnknownPlayerException.create(),
+                        profile.name ?: throw UnknownPlayerException.create(),
+                        emptyList(),
+                    )
                 }
             }
         }
 
     override fun position(): ArgumentType<ServerPos3dResolver> =
-        argumentResolver(ReflectionProxies.blockPosArgument.blockPos()) { coordinates ->
+        argumentResolver(ArgumentTypes.blockPosition()) { coordinates ->
             ServerPos3dResolver { source ->
-                val position = ReflectionProxies.coordinates.getPosition(coordinates, source.getInstance())
-                val rotation = ReflectionProxies.coordinates.getRotation(coordinates, source.getInstance())
+                val sourceStack = source.getInstance<CommandSourceStack>()
+                val position = coordinates.resolve(sourceStack)
+                val location = sourceStack.location
 
-                val world = ReflectionProxies.commandSourceStack.getWorld(source.getInstance())
-                    ?.let { serverLib.getWorld(it) }
+                val world = location.world?.let { serverLib.getWorld(it) }
                     ?: (source.executor as? McServerEntity)?.world
 
                 ServerPos3d(
                     world,
-                    ReflectionProxies.vec3Proxy.x(position),
-                    ReflectionProxies.vec3Proxy.y(position),
-                    ReflectionProxies.vec3Proxy.z(position),
-                    ReflectionProxies.vec2Proxy.y(rotation),
-                    ReflectionProxies.vec2Proxy.x(rotation),
+                    position.x(),
+                    position.y(),
+                    position.z(),
+                    location.yaw,
+                    location.pitch,
                 )
             }
         }
 
-    private fun <T> argumentResolver(
-        nativeType: ArgumentType<Any>,
-        resolverFactory: (Any) -> T,
-    ): CustomArgumentType<T, Any> =
-        object : CustomArgumentType<T, Any> {
+    private fun <T, N> argumentResolver(
+        nativeType: ArgumentType<N>,
+        resolverFactory: (N) -> T,
+    ): CustomArgumentType<T, N> =
+        object : CustomArgumentType<T, N> {
             override val nativeType = nativeType
 
             override fun parse(reader: StringReader) = resolverFactory(nativeType.parse(reader))
         }
-
-    private fun <T> rethrowProxyException(block: () -> T): T {
-        try {
-            return block()
-        } catch (e: InvocationTargetException) {
-            throw e.targetException
-        } catch (e: UndeclaredThrowableException) {
-            throw e.undeclaredThrowable
-        }
-    }
 }

@@ -51,6 +51,9 @@ object ModServerLib : McServerLib {
 
     lateinit var minecraftServer: MinecraftServer
 
+    val isBound: Boolean
+        get() = ::minecraftServer.isInitialized
+
     private val worldByInstance: MutableMap<ServerLevel, McServerWorld> = Maps.newConcurrentMap()
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
 

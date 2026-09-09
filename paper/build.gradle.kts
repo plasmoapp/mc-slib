@@ -17,13 +17,10 @@ dependencies {
     compileOnly(libs.semver4j)
     shadow(libs.semver4j)
 
-    compileOnly(libs.reflectionremapper)
-    shadow(libs.reflectionremapper)
-
     testCompileOnly(testFixtures(project(":common-server")))
     testShadowBundle(testFixtures(project(":common-server")))
 
-    compileOnly(project(":common"))
+    compileOnly(project(":common", "shadow"))
     compileOnly(project(":common-integration"))
     listOf(
         project(":api:api-common"),
@@ -32,18 +29,6 @@ dependencies {
     ).forEach {
         api(it)
         shadow(it) { isTransitive = false }
-    }
-
-    compileOnly(libs.adventure.bukkit)
-    shadow(libs.adventure.bukkit) {
-        exclude("org.jetbrains", "annotations")
-        exclude("net.kyori", "adventure-api")
-        exclude("net.kyori", "adventure-text-serializer-gson")
-        exclude("net.kyori", "adventure-text-serializer-legacy")
-        exclude("net.kyori", "adventure-text-minimessage")
-        exclude("net.kyori", "examination-api")
-        exclude("net.kyori", "examination-string")
-        exclude("org.jspecify", "jspecify")
     }
 }
 
@@ -59,9 +44,6 @@ tasks {
     shadowJar {
         archiveClassifier = "all"
 
-        relocate("net.kyori", "su.plo.slib.libs.adventure")
-        relocate("xyz.jpenilla.reflectionremapper", "su.plo.slib.libs.reflectionremapper")
-        relocate("net.fabricmc.mappingio", "su.plo.slib.libs.mappingio")
         relocate("org.jspecify", "su.plo.slib.libs.jspecify")
         relocate("org.semver4j", "su.plo.slib.libs.semver4j")
     }
@@ -86,6 +68,9 @@ tasks {
             from(sourceSets.test.get().output)
         }
 
+    val datapackSource = project(":common-server")
+        .layout.projectDirectory.dir("src/testFixtures/datapack").asFile
+
     runServer {
         doFirst {
             val runDirectory = runDirectory.get().asFile
@@ -95,6 +80,10 @@ tasks {
             if (!eulaFile.exists() || eulaFile.readText().contains("eula=false")) {
                 eulaFile.writeText("eula=true")
             }
+
+            val datapack = runDirectory.resolve("world/datapacks/slib-test")
+            datapack.deleteRecursively()
+            datapackSource.copyRecursively(datapack)
         }
 
         val mcVersion = project.property("paper.run_minecraft_version") as String

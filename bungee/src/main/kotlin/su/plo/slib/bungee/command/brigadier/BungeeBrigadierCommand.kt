@@ -15,7 +15,8 @@ import su.plo.slib.bungee.command.BungeeCommandManager
 class BungeeBrigadierCommand(
     private val commandManager: BungeeCommandManager,
     private val command: LiteralCommandNode<McBrigadierSource>,
-) : Command(command.literal), TabExecutor {
+    aliases: Collection<String> = emptyList(),
+) : Command(command.literal, null, *aliases.toTypedArray()), TabExecutor {
     private val dispatcher = CommandDispatcher<McBrigadierSource>()
 
     init {

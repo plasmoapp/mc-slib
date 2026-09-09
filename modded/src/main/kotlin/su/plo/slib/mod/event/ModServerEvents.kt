@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
+import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
@@ -25,6 +26,7 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent
 *///?}
 
 /**
@@ -54,6 +56,11 @@ class ModServerEvents private constructor() {
     /*init {
         NeoForge.EVENT_BUS.register(this)
         NeoForge.EVENT_BUS.register(RegisterChannelHandler)
+    }
+
+    @SubscribeEvent
+    fun onServerAboutToStart(event: ServerAboutToStartEvent) {
+        ModServerLib.minecraftServer = event.server
     }
 
     @SubscribeEvent
@@ -97,9 +104,13 @@ class ModServerEvents private constructor() {
         val minecraftServer = ModServerLib
         val commandManager = minecraftServer.commandManager
 
+        val phase =
+            if (minecraftServer.isBound) McBrigadierRegistry.Phase.RUNTIME
+            else McBrigadierRegistry.Phase.BOOTSTRAP
+
         commandManager.clear()
         McServerCommandsRegisterEvent.invoker.onCommandsRegister(commandManager, minecraftServer)
-        commandManager.registerCommands(dispatcher)
+        commandManager.registerCommands(dispatcher, phase)
     }
 
     private fun firePlayerJoin(player: ServerPlayer) {

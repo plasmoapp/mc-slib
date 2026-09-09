@@ -158,6 +158,9 @@ tasks {
         )
     }
 
+    val datapackSource = project(":common-server")
+        .layout.projectDirectory.dir("src/testFixtures/datapack").asFile
+
     named<JavaExec>("runServer") {
         doFirst {
             val runDirectory = workingDir.resolve("run")
@@ -167,6 +170,10 @@ tasks {
             if (!eulaFile.exists() || eulaFile.readText().contains("eula=false")) {
                 eulaFile.writeText("eula=true")
             }
+
+            val datapack = runDirectory.resolve("world/datapacks/slib-test")
+            datapack.deleteRecursively()
+            datapackSource.copyRecursively(datapack)
         }
     }
 }

@@ -1,0 +1,6 @@
+name: slib-paper-test
+version: dev
+main: su.plo.slib.paper.PaperPlugin
+bootstrapper: su.plo.slib.paper.PaperBootstrap
+authors: [ Apehum ]
+api-version: 1.21
