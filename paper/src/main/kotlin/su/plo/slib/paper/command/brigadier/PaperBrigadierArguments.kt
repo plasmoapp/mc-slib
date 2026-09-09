@@ -2,12 +2,13 @@
 
 package su.plo.slib.paper.command.brigadier
 
-import com.mojang.brigadier.LiteralMessage
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
+import su.plo.slib.api.chat.component.McTextComponent
+import su.plo.slib.api.chat.converter.MessageTextConverter
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
@@ -21,8 +22,10 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.paper.PaperServerLib
 
-private val UnknownPlayerException = SimpleCommandExceptionType(
-    LiteralMessage("That player does not exist")
+private val errorUnknownPlayer = SimpleCommandExceptionType(
+    MessageTextConverter.converter().convert(
+        McTextComponent.translatable("argument.player.unknown")
+    )
 )
 
 class PaperBrigadierArguments : McArgumentTypes.Provider {
@@ -62,8 +65,8 @@ class PaperBrigadierArguments : McArgumentTypes.Provider {
             McGameProfilesArgumentResolver { source ->
                 selector.resolve(source.getInstance()).map { profile ->
                     McGameProfile(
-                        profile.id ?: throw UnknownPlayerException.create(),
-                        profile.name ?: throw UnknownPlayerException.create(),
+                        profile.id ?: throw errorUnknownPlayer.create(),
+                        profile.name ?: throw errorUnknownPlayer.create(),
                         emptyList(),
                     )
                 }
