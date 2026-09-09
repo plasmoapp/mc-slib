@@ -30,8 +30,6 @@ import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.language.ServerTranslatorFactory
-import su.plo.slib.logging.JavaLogger
-import su.plo.slib.logging.Slf4jLogger
 import su.plo.slib.paper.channel.PaperChannelManager
 import su.plo.slib.paper.channel.RegisterChannelHandler
 import su.plo.slib.paper.command.PaperCommandManager
@@ -55,15 +53,6 @@ class PaperServerLib @JvmOverloads constructor(
 ) : McServerLib, Listener {
 
     init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier { name ->
-            try {
-                Class.forName("org.slf4j.LoggerFactory")
-                Slf4jLogger(name)
-            } catch (e: ClassNotFoundException) {
-                JavaLogger(name)
-                    .apply { parent = loader.logger.parent }
-            }
-        }
         instance = this
     }
 

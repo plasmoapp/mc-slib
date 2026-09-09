@@ -24,7 +24,6 @@ import su.plo.slib.api.server.world.McServerWorld
 import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.language.ServerTranslatorFactory
-import su.plo.slib.logging.Slf4jLogger
 import su.plo.slib.minestom.channel.MinestomChannelManager
 import su.plo.slib.minestom.channel.RegisterChannelHandler
 import su.plo.slib.minestom.command.MinestomCommandManager
@@ -46,7 +45,6 @@ class MinestomServerLib @JvmOverloads constructor(
 ) : McServerLib {
 
     init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
         instance = this
     }
 

@@ -21,7 +21,6 @@ import su.plo.slib.api.proxy.server.McProxyServerInfo
 import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.language.ServerTranslatorFactory
-import su.plo.slib.logging.Slf4jLogger
 import su.plo.slib.velocity.integration.PremiumVanishIntegration
 import su.plo.slib.velocity.integration.SayanVanishIntegration
 import su.plo.slib.velocity.channel.VelocityChannelManager
@@ -39,7 +38,6 @@ class VelocityProxyLib @JvmOverloads constructor(
 ) : McProxyLib {
 
     init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Slf4jLogger(name) }
         instance = this
     }
 
