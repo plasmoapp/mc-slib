@@ -30,7 +30,6 @@ import su.plo.slib.bungee.server.BungeeProxyServerInfo
 import su.plo.slib.chat.AdventureComponentTextConverter
 import su.plo.slib.integration.IntegrationLoader
 import su.plo.slib.language.ServerTranslatorFactory
-import su.plo.slib.logging.JavaLogger
 import java.io.File
 import java.net.InetSocketAddress
 import java.util.UUID
@@ -40,12 +39,6 @@ class BungeeProxyLib @JvmOverloads constructor(
     private val loader: Plugin,
     override val baseLogger: McLogger = McLoggerFactory.createLogger("slib")
 ) : McProxyLib, Listener {
-
-    init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier {name ->
-            JavaLogger(name).apply { parent = loader.logger.parent }
-        }
-    }
 
     private val proxyServer = ProxyServer.getInstance()
 

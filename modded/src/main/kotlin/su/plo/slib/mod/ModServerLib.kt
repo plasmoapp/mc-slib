@@ -16,7 +16,6 @@ import su.plo.slib.api.entity.player.McPlayer
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLazyLogger
 import su.plo.slib.api.logging.McLogger
-import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
@@ -32,7 +31,6 @@ import su.plo.slib.mod.entity.ModServerEntity
 import su.plo.slib.mod.entity.ModServerPlayer
 import su.plo.slib.mod.event.server.ServerStoppingEvent
 import su.plo.slib.mod.extension.toMcGameProfile
-import su.plo.slib.mod.logging.Log4jLogger
 import su.plo.slib.mod.permission.ModPermissionSupplier
 import su.plo.slib.mod.scheduler.ModServerScheduler
 import su.plo.slib.mod.world.ModServerWorld
@@ -50,10 +48,6 @@ object ModServerLib : McServerLib {
     var baseLoggerName: String = "slib"
 
     override val baseLogger: McLogger = McLazyLogger { baseLoggerName }
-
-    init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Log4jLogger(name) }
-    }
 
     lateinit var minecraftServer: MinecraftServer
 
