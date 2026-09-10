@@ -70,6 +70,7 @@ adventure-legacy      = { module = "net.kyori:adventure-text-serializer-legacy",
 adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
 adventure-bungee      = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
 brigadier             = { module = "com.mojang:brigadier", version.ref = "brigadier" }
+brigadier-paper       = { module = "com.mojang:brigadier", version = "1.3.10" }
 mcdsl-brigadier       = { module = "dev.apehum.mcdsl:brigadier", version.ref = "mcdsl" }
 fabric-permissions    = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 reflectionremapper    = { module = "xyz.jpenilla:reflection-remapper", version.ref = "reflection-remapper" }

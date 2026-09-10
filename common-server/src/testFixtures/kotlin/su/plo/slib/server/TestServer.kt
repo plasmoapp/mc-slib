@@ -17,6 +17,8 @@ class TestServer(
     val channelKey = "slib:channels/test"
 
     init {
+        minecraftServer.serverTranslator.register(TEST_LANGUAGE, testTranslations)
+
         registerCommands()
 
         McPlayerJoinEvent.registerListener { player ->

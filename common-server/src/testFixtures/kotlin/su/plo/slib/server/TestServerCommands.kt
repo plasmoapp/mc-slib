@@ -2,16 +2,25 @@ package su.plo.slib.server
 
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import dev.apehum.mcdsl.command.literalCommand
-import su.plo.slib.api.command.brigadier.McBrigadierSource
+import su.plo.slib.api.chat.component.McTextComponent
+import su.plo.slib.api.command.brigadier.McTextMessage
 import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
+import su.plo.slib.server.command.TranslatedArgumentType
 import su.plo.slib.server.command.UuidArgumentType
 import java.util.concurrent.atomic.AtomicBoolean
 
 private val registered = AtomicBoolean()
 private val logger = McLoggerFactory.createLogger("TestServerCommands")
+
+private val commandFailed = DynamicCommandExceptionType { value ->
+    McTextMessage.of(
+        McTextComponent.translatable(FAILED_COMMAND_KEY, McTextComponent.literal(value.toString()))
+    )
+}
 
 fun registerCommands() {
     if (!registered.compareAndSet(false, true)) return
@@ -23,6 +32,16 @@ fun registerCommands() {
 
                 executes {
                     source.source.sendMessage(uuid.toString())
+                }
+            }
+        )
+
+        registry.register(
+            literalCommand("brigadier-server-translation") {
+                val value by argument("value", TranslatedArgumentType())
+
+                executes {
+                    throw commandFailed.create(value)
                 }
             }
         )
