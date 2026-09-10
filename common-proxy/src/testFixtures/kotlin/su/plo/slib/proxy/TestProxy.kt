@@ -39,6 +39,7 @@ class TestProxy {
         }
 
         McProxyCommandsRegisterEvent.registerListener { commands, proxy ->
+            proxy.serverTranslator.defaultLanguage = UNTRANSLATED_LANGUAGE
             proxy.serverTranslator.register(TEST_LANGUAGE, testTranslations)
 
             commands.logRegisteredCommands = true
