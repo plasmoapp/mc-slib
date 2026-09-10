@@ -8,8 +8,8 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import su.plo.slib.api.chat.component.McTextComponent
-import su.plo.slib.api.chat.converter.MessageTextConverter
 import su.plo.slib.api.command.brigadier.CustomArgumentType
+import su.plo.slib.api.command.brigadier.McTextMessage
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
@@ -23,7 +23,7 @@ import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.paper.PaperServerLib
 
 private val errorUnknownPlayer = SimpleCommandExceptionType(
-    MessageTextConverter.converter().convert(
+    McTextMessage.of(
         McTextComponent.translatable("argument.player.unknown")
     )
 )

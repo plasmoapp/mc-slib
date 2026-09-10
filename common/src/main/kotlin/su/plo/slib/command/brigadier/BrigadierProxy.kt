@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import com.mojang.brigadier.tree.ArgumentCommandNode
 import com.mojang.brigadier.tree.CommandNode
@@ -112,7 +113,11 @@ private fun <S> CommandNode<McBrigadierSource>.toProxyNode(
             val context = contextFactory(context)
             if (!context.source.isBound) throw notBoundCommandException.create()
 
-            command.run(context)
+            try {
+                command.run(context)
+            } catch (e: CommandSyntaxException) {
+                throw e.localizedFor(context.source)
+            }
         }
     }
 
@@ -128,7 +133,7 @@ private fun <S> CommandNode<McBrigadierSource>.toProxyNode(
 
     if (mappedArgumentType == null && node is RequiredArgumentBuilder<S, *> && node.type is CustomArgumentType<*, *>) {
         @Suppress("UNCHECKED_CAST")
-        return (node as RequiredArgumentBuilder<S, Any>).buildCustom<S, Any, Any>()
+        return (node as RequiredArgumentBuilder<S, Any>).buildCustom<S, Any, Any>(sourceFactory)
     }
 
     return node.build()

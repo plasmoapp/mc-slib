@@ -32,15 +32,19 @@ case "$ENV_TYPE" in
           "Command 'brigadier-position-selector' registered"
           "Command 'brigadier-game-profiles-selector' registered"
           "Command 'brigadier-custom-type' registered"
+          "Command 'brigadier-server-translation' registered"
           "Command 'brigadier-multi-arg' registered"
           "Message from main thread"
           "Channel handler registered: slib:channels/test"
         )
         FORBIDDEN_PATTERNS+=(
           "not registered in the mod loader networking"
+          "slibtest\\.(argument|command)\\."
         )
         COMMAND_INPUTS=(
           "brigadier-custom-type invalid-uuid"
+          "brigadier-server-translation bad"
+          "brigadier-server-translation ok"
           "brigadier-entity-selector entities @e"
           "brigadier-entity-selector players @a"
           "brigadier-position-selector 100 100 100"
@@ -50,6 +54,8 @@ case "$ENV_TYPE" in
         )
         COMMAND_OUTPUT_PATTERNS=(
           "Invalid UUID"
+          "slib argument error: bad"
+          "slib execute error: ok"
           "Found entities:"
           "Found players:"
           "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0, yaw=0.0, pitch=0.0\\)"
@@ -77,12 +83,20 @@ case "$ENV_TYPE" in
           "Command 'ping' registered"
           "Command 'brigadier-ping' registered"
           "Command 'brigadier-custom-type' registered"
+          "Command 'brigadier-server-translation' registered"
         )
         COMMAND_INPUTS=(
           "brigadier-custom-type invalid-uuid"
+          "brigadier-server-translation bad"
+          "brigadier-server-translation ok"
         )
         COMMAND_OUTPUT_PATTERNS=(
           "Invalid UUID"
+          "slib argument error: bad"
+          "slib execute error: ok"
+        )
+        FORBIDDEN_PATTERNS+=(
+          "slibtest\\.(argument|command)\\."
         )
         ;;
     *)

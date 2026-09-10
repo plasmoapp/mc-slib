@@ -5,6 +5,7 @@ package su.plo.slib.paper.command.brigadier
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -17,6 +18,7 @@ import su.plo.slib.api.logging.McLogger
 import su.plo.slib.command.brigadier.applyEach
 import su.plo.slib.command.brigadier.collectBrigadierCommands
 import su.plo.slib.command.brigadier.copyFor
+import su.plo.slib.command.brigadier.localizedFor
 import su.plo.slib.command.brigadier.proxied
 import su.plo.slib.paper.PaperServerLib
 import java.util.concurrent.CompletableFuture
@@ -63,6 +65,14 @@ internal class PaperArgumentTypeAdapter<PARSED : Any, NATIVE : Any>(
 
     override fun parse(reader: StringReader): PARSED =
         delegate.parse(reader)
+
+    override fun <S : Any> parse(reader: StringReader, source: S): PARSED =
+        try {
+            delegate.parse(reader)
+        } catch (e: CommandSyntaxException) {
+            val sourceStack = source as? CommandSourceStack ?: throw e
+            throw e.localizedFor(PaperBrigadierSource.from(sourceStack))
+        }
 
     override fun <S : Any> listSuggestions(
         context: CommandContext<S>,

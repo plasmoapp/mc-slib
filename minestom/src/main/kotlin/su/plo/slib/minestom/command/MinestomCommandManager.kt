@@ -42,7 +42,7 @@ import su.plo.slib.command.brigadier.CustomArgumentCommandNode
 import su.plo.slib.command.brigadier.applyEach
 import su.plo.slib.command.brigadier.collectBrigadierCommands
 import su.plo.slib.command.brigadier.proxied
-import su.plo.slib.minestom.chat.McTextMessage
+import su.plo.slib.command.brigadier.toMcTextComponent
 import su.plo.slib.minestom.command.brigadier.MinestomArgumentType
 import su.plo.slib.minestom.command.brigadier.MinestomBrigadierSource
 
@@ -249,18 +249,6 @@ class MinestomCommandManager(
     }
 
     private fun McCommandSource.sendParseError(e: CommandSyntaxException) {
-        val rawMessage = e.rawMessage
-        val messageArg =
-            if (rawMessage is McTextMessage) rawMessage.component
-            else McTextComponent.literal(rawMessage.string)
-
-        sendMessage(
-            McTextComponent.translatable(
-                "command.context.parse_error",
-                messageArg,
-                McTextComponent.literal(e.cursor.toString()),
-                McTextComponent.literal(e.context),
-            ).withStyle(McTextStyle.RED)
-        )
+        sendMessage(e.toMcTextComponent())
     }
 }

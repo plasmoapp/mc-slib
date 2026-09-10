@@ -12,6 +12,10 @@ dependencies {
     compileOnly(libs.paper)
     testCompileOnly(libs.paper)
 
+    // pin 1.3.10 with ArgumentType#parse(reader, source)
+    // 1.21.1 actually runs on 1.3.10, so it's compile-only quirk
+    compileOnly(libs.brigadier.paper)
+
     compileOnly(libs.premiumvanish.api)
 
     compileOnly(libs.semver4j)

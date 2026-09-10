@@ -9,8 +9,8 @@ import net.md_5.bungee.api.plugin.TabExecutor
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.command.brigadier.McBrigadierSource
-import su.plo.slib.bungee.chat.McTextMessage
 import su.plo.slib.bungee.command.BungeeCommandManager
+import su.plo.slib.command.brigadier.toMcTextComponent
 
 class BungeeBrigadierCommand(
     private val commandManager: BungeeCommandManager,
@@ -30,19 +30,7 @@ class BungeeBrigadierCommand(
         try {
             dispatcher.execute(input, context)
         } catch (e: CommandSyntaxException) {
-            val rawMessage = e.rawMessage
-            val messageArg =
-                if (rawMessage is McTextMessage) rawMessage.component
-                else McTextComponent.literal(rawMessage.string)
-
-            context.source.sendMessage(
-                McTextComponent.translatable(
-                    "command.context.parse_error",
-                    messageArg,
-                    McTextComponent.literal(e.cursor.toString()),
-                    McTextComponent.literal(e.context),
-                ).withStyle(McTextStyle.RED)
-            )
+            context.source.sendMessage(e.toMcTextComponent())
         } catch (e: Exception) {
             context.source.sendMessage(
                 McTextComponent.literal(e.message ?: "Unknown error").withStyle(McTextStyle.RED)
