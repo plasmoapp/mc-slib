@@ -17,6 +17,7 @@ class TestServer(
     val channelKey = "slib:channels/test"
 
     init {
+        minecraftServer.serverTranslator.defaultLanguage = UNTRANSLATED_LANGUAGE
         minecraftServer.serverTranslator.register(TEST_LANGUAGE, testTranslations)
 
         registerCommands()

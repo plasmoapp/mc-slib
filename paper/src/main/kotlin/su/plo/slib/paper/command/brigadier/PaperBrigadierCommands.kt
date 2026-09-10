@@ -21,7 +21,15 @@ import su.plo.slib.command.brigadier.copyFor
 import su.plo.slib.command.brigadier.localizedFor
 import su.plo.slib.command.brigadier.proxied
 import su.plo.slib.paper.PaperServerLib
+import su.plo.slib.paper.command.PaperUnboundCommandSource
+import java.lang.ref.WeakReference
 import java.util.concurrent.CompletableFuture
+
+// Paper only uses ArgumentType#parse(reader, source) since 1.21.8, so older versions can't get the source
+// so we're storing it in thread local at source factory (it'll always happen before possible throw)
+// and reusing it at try/catch place
+// if source still can't be resolved, so default language is used instead
+private val parsingSourceStack = ThreadLocal<WeakReference<CommandSourceStack>>()
 
 internal fun Commands.collectAndApply(
     logger: McLogger,
@@ -36,7 +44,10 @@ internal fun Commands.collectAndApply(
             register(
                 node.proxied(
                     logger,
-                    PaperBrigadierSource::from,
+                    { sourceStack ->
+                        parsingSourceStack.set(WeakReference(sourceStack))
+                        PaperBrigadierSource.from(sourceStack)
+                    },
                     { it.toMc() },
                     { it.toPaperArgumentType() },
                 ),
@@ -44,6 +55,14 @@ internal fun Commands.collectAndApply(
                 aliases,
             )
         }
+}
+
+private fun parseLanguage(source: Any?): String {
+    val sourceStack = source as? CommandSourceStack ?: parsingSourceStack.get()?.get()
+
+    return sourceStack?.let { PaperBrigadierSource.from(it).source.language }
+        ?: PaperServerLib.instanceOrNull?.serverTranslator?.defaultLanguage
+        ?: PaperUnboundCommandSource.language
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -64,14 +83,16 @@ internal class PaperArgumentTypeAdapter<PARSED : Any, NATIVE : Any>(
         nativeType
 
     override fun parse(reader: StringReader): PARSED =
-        delegate.parse(reader)
+        parseLocalized(reader, null)
 
     override fun <S : Any> parse(reader: StringReader, source: S): PARSED =
+        parseLocalized(reader, source)
+
+    private fun parseLocalized(reader: StringReader, source: Any?): PARSED =
         try {
             delegate.parse(reader)
         } catch (e: CommandSyntaxException) {
-            val sourceStack = source as? CommandSourceStack ?: throw e
-            throw e.localizedFor(PaperBrigadierSource.from(sourceStack))
+            throw e.localizedFor(parseLanguage(source))
         }
 
     override fun <S : Any> listSuggestions(

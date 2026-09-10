@@ -7,10 +7,13 @@ import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.command.brigadier.McTextMessage
 import su.plo.slib.chat.MessageTextConverter
 
-fun CommandSyntaxException.localizedFor(source: McBrigadierSource): CommandSyntaxException {
+fun CommandSyntaxException.localizedFor(source: McBrigadierSource): CommandSyntaxException =
+    localizedFor(source.source.language)
+
+fun CommandSyntaxException.localizedFor(language: String): CommandSyntaxException {
     val message = rawMessage as? McTextMessage ?: return this
     val converter = MessageTextConverter.converterOrNull() ?: return this
-    val converted = converter.convert(source.source.language, message.component)
+    val converted = converter.convert(language, message.component)
 
     val parsedInput = input ?: return CommandSyntaxException(type, converted)
 
