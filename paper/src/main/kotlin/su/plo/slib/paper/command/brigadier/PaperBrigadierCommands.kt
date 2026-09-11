@@ -20,6 +20,7 @@ import su.plo.slib.command.brigadier.collectBrigadierCommands
 import su.plo.slib.command.brigadier.copyFor
 import su.plo.slib.command.brigadier.localizedFor
 import su.plo.slib.command.brigadier.proxied
+import su.plo.slib.command.brigadier.unwrapNativeType
 import su.plo.slib.paper.PaperServerLib
 import su.plo.slib.paper.command.PaperUnboundCommandSource
 import java.lang.ref.WeakReference
@@ -69,9 +70,6 @@ private fun parseLanguage(source: Any?): String {
 internal fun ArgumentType<*>.toPaperArgumentType(): ArgumentType<*>? =
     if (this is CustomArgumentType<*, *>) PaperArgumentTypeAdapter(this as CustomArgumentType<Any, Any>)
     else null
-
-private tailrec fun ArgumentType<*>.unwrapNativeType(): ArgumentType<*> =
-    if (this is CustomArgumentType<*, *>) nativeType.unwrapNativeType() else this
 
 internal class PaperArgumentTypeAdapter<PARSED : Any, NATIVE : Any>(
     private val delegate: CustomArgumentType<PARSED, NATIVE>,

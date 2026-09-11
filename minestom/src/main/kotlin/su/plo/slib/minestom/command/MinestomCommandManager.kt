@@ -45,6 +45,7 @@ import su.plo.slib.command.brigadier.proxied
 import su.plo.slib.command.brigadier.toMcTextComponent
 import su.plo.slib.minestom.command.brigadier.MinestomArgumentType
 import su.plo.slib.minestom.command.brigadier.MinestomBrigadierSource
+import su.plo.slib.minestom.command.brigadier.withParsingSender
 
 class MinestomCommandManager(
     private val minecraftServer: McServerLib
@@ -163,18 +164,27 @@ class MinestomCommandManager(
     private fun <T> ArgumentCommandNode<McBrigadierSource, T>.toMinestom(): Pair<Argument<T>, CommandExecutor?> {
         val argumentType = type
         val executor = command?.toMinestom()
+        val customNode = this as? CustomArgumentCommandNode<*, *, *>
 
-        if (argumentType is MinestomArgumentType<T>) {
+        if (customNode == null && argumentType is MinestomArgumentType<T>) {
             return argumentType.argumentBuilder.invoke(name) to executor
         }
 
-        val minestomArgument = object : Argument<T>(name) {
+        val nativeArgument = (argumentType as? MinestomArgumentType<*>)?.argumentBuilder?.invoke(name)
+
+        val minestomArgument = object : Argument<T>(
+            name,
+            nativeArgument?.allowSpace() ?: false,
+            nativeArgument?.useRemaining() ?: false,
+        ) {
             @Suppress("UNCHECKED_CAST")
             override fun parse(sender: CommandSender, input: String): T {
                 pendingParseError.remove()
                 return try {
-                    if (this@toMinestom is CustomArgumentCommandNode<*, *, *>) {
-                        (customArgumentType.parse(StringReader(input)) as T)
+                    if (customNode != null) {
+                        withParsingSender(sender) {
+                            customNode.customArgumentType.parse(StringReader(input)) as T
+                        }
                     } else {
                         argumentType.parse(StringReader(input))
                     }
@@ -185,12 +195,13 @@ class MinestomCommandManager(
             }
 
             override fun parser(): ArgumentParserType =
-                argumentType.toMinestomParserType()
+                nativeArgument?.parser() ?: argumentType.toMinestomParserType()
 
             override fun nodeProperties(): ByteArray? {
-                val effectiveType = (argumentType as? CustomArgumentType<*, *>)?.nativeType ?: argumentType
-                if (effectiveType is StringArgumentType) {
-                    return NetworkBuffer.makeArray(NetworkBuffer.VAR_INT, effectiveType.type.ordinal)
+                nativeArgument?.let { return it.nodeProperties() }
+
+                if (argumentType is StringArgumentType) {
+                    return NetworkBuffer.makeArray(NetworkBuffer.VAR_INT, argumentType.type.ordinal)
                 }
 
                 return super.nodeProperties()

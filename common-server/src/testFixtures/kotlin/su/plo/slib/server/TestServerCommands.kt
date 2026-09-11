@@ -9,6 +9,8 @@ import su.plo.slib.api.command.brigadier.McTextMessage
 import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
 import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
+import su.plo.slib.server.command.NestedGameProfilesArgumentType
+import su.plo.slib.server.command.NestedGameProfilesTarget
 import su.plo.slib.server.command.TranslatedArgumentType
 import su.plo.slib.server.command.UuidArgumentType
 import java.util.concurrent.atomic.AtomicBoolean
@@ -98,6 +100,22 @@ fun registerCommands() {
                     val gameProfiles = targets.resolve(source)
 
                     source.source.sendMessage("Found game profiles: $gameProfiles; Source: ${source.source}; Executor: ${source.executor}")
+                }
+            }
+        )
+
+        registry.register(
+            literalCommand("brigadier-nested-custom-type") {
+                val target by argument("target", NestedGameProfilesArgumentType())
+
+                executes {
+                    val message =
+                        when (target) {
+                            is NestedGameProfilesTarget.Everyone -> "everyone"
+                            is NestedGameProfilesTarget.Selector -> "native selector"
+                        }
+
+                    source.source.sendMessage("Nested custom type: $message")
                 }
             }
         )

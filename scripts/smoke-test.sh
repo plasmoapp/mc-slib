@@ -32,6 +32,7 @@ case "$ENV_TYPE" in
           "Command 'brigadier-position-selector' registered"
           "Command 'brigadier-game-profiles-selector' registered"
           "Command 'brigadier-custom-type' registered"
+          "Command 'brigadier-nested-custom-type' registered"
           "Command 'brigadier-server-translation' registered"
           "Command 'brigadier-multi-arg' registered"
           "Message from main thread"
@@ -43,6 +44,8 @@ case "$ENV_TYPE" in
         )
         COMMAND_INPUTS=(
           "brigadier-custom-type invalid-uuid"
+          "brigadier-nested-custom-type everyone"
+          "brigadier-nested-custom-type @a"
           "brigadier-server-translation bad"
           "brigadier-server-translation ok"
           "brigadier-entity-selector entities @e"
@@ -54,6 +57,8 @@ case "$ENV_TYPE" in
         )
         COMMAND_OUTPUT_PATTERNS=(
           "Invalid UUID"
+          "Nested custom type: everyone"
+          "Nested custom type: native selector"
           "slib argument error: bad"
           "slib execute error: ok"
           "Found entities:"
