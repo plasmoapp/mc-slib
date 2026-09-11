@@ -3,21 +3,19 @@ package su.plo.slib.command.brigadier
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.RedirectModifier
 import com.mojang.brigadier.StringReader
+import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
-import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.context.CommandContextBuilder
 import com.mojang.brigadier.context.ParsedArgument
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.suggestion.SuggestionProvider
-import com.mojang.brigadier.suggestion.Suggestions
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.ArgumentCommandNode
 import com.mojang.brigadier.tree.CommandNode
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.command.brigadier.McBrigadierSource
-import java.util.concurrent.CompletableFuture
 import java.util.function.Predicate
 
+@Suppress("UNCHECKED_CAST")
 class CustomArgumentCommandNode<S, PARSED, NATIVE>(
     name: String,
     val customArgumentType: CustomArgumentType<PARSED, NATIVE>,
@@ -30,7 +28,7 @@ class CustomArgumentCommandNode<S, PARSED, NATIVE>(
     customSuggestions: SuggestionProvider<S>?,
 ) : ArgumentCommandNode<S, NATIVE>(
     name,
-    customArgumentType.nativeType,
+    customArgumentType.unwrapNativeType() as ArgumentType<NATIVE>,
     command,
     requirement,
     redirect,
@@ -73,13 +71,7 @@ fun <S, PARSED, NATIVE> RequiredArgumentBuilder<S, PARSED>.buildCustom(
         isFork,
         suggestionsProvider ?:
             if (!type.useNativeSuggestions()) {
-                object : SuggestionProvider<S> {
-                    override fun getSuggestions(
-                        context: CommandContext<S?>,
-                        builder: SuggestionsBuilder,
-                    ): CompletableFuture<Suggestions> =
-                        type.listSuggestions(context, builder)
-                }
+                SuggestionProvider<S> { context, builder -> type.listSuggestions(context, builder) }
             } else {
                 null
             },
@@ -89,3 +81,6 @@ fun <S, PARSED, NATIVE> RequiredArgumentBuilder<S, PARSED>.buildCustom(
 
     return result
 }
+
+tailrec fun ArgumentType<*>.unwrapNativeType(): ArgumentType<*> =
+    if (this is CustomArgumentType<*, *>) nativeType.unwrapNativeType() else this

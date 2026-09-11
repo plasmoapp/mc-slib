@@ -1,7 +1,11 @@
 package su.plo.slib.api.command.brigadier
 
 import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.suggestion.Suggestions
+import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import org.jetbrains.annotations.ApiStatus
+import java.util.concurrent.CompletableFuture
 
 /**
  * An argument type that wraps a native argument type.
@@ -24,10 +28,21 @@ interface CustomArgumentType<PARSED, NATIVE> : ArgumentType<PARSED> {
     /**
      * Whether native suggestions should be used.
      *
-     * Set to `false` is you want to implement custom [listSuggestions].
+     * Set to `false` if you want to implement custom [listSuggestions].
      */
     fun useNativeSuggestions(): Boolean =
         true
+
+    /**
+     * Suggestions of the [nativeType].
+     *
+     * Override to implement custom suggestions, along with [useNativeSuggestions] set to `false`.
+     */
+    override fun <S> listSuggestions(
+        context: CommandContext<S>,
+        builder: SuggestionsBuilder,
+    ): CompletableFuture<Suggestions> =
+        nativeType.listSuggestions(context, builder)
 
     /**
      * This is controlled client-side and can't be changed server-side.
