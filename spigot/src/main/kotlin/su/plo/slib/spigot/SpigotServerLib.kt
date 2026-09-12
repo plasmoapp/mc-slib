@@ -9,7 +9,10 @@ import org.bukkit.World
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.WorldUnloadEvent
 import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.api.entity.player.McGameProfile
@@ -30,13 +33,13 @@ import su.plo.slib.language.ServerTranslatorFactory
 import su.plo.slib.logging.JavaLogger
 import su.plo.slib.logging.Slf4jLogger
 import su.plo.slib.spigot.channel.RegisterChannelHandler
-import su.plo.slib.spigot.integration.SpigotVanishIntegration
-import su.plo.slib.spigot.integration.PremiumVanishIntegration
 import su.plo.slib.spigot.channel.SpigotChannelManager
 import su.plo.slib.spigot.command.SpigotCommandManager
 import su.plo.slib.spigot.entity.SpigotServerEntity
 import su.plo.slib.spigot.entity.SpigotServerPlayer
 import su.plo.slib.spigot.extension.addChannel
+import su.plo.slib.spigot.integration.PremiumVanishIntegration
+import su.plo.slib.spigot.integration.SpigotVanishIntegration
 import su.plo.slib.spigot.permission.SpigotPermissionSupplier
 import su.plo.slib.spigot.scheduler.SpigotServerScheduler
 import su.plo.slib.spigot.util.SchedulerUtil
@@ -48,7 +51,7 @@ import java.util.function.Function
 
 class SpigotServerLib @JvmOverloads constructor(
     private val loader: JavaPlugin,
-    override val baseLogger: McLogger = McLoggerFactory.createLogger("slib")
+    override val baseLogger: McLogger = McLoggerFactory.createLogger("slib"),
 ) : McServerLib, Listener {
 
     init {
@@ -154,19 +157,7 @@ class SpigotServerLib @JvmOverloads constructor(
     override fun getPlayerByInstance(instance: Any): McServerPlayer {
         require(instance is Player) { "instance is not ${Player::class.java}" }
 
-        var serverPlayer = playerById[instance.uniqueId]
-        if ((serverPlayer?.getInstance() as? Player)?.entityId != instance.entityId) {
-            serverPlayer = SpigotServerPlayer(
-                loader,
-                this,
-                permissionSupplier,
-                instance
-            )
-
-            playerById[instance.uniqueId] = serverPlayer
-        }
-
-        return serverPlayer
+        return playerById[instance.uniqueId] ?: instance.wrap()
     }
 
     override fun getPlayerByName(name: String): McServerPlayer? =
@@ -210,24 +201,39 @@ class SpigotServerLib @JvmOverloads constructor(
         worldByInstance.remove(event.world)
     }
 
-    @EventHandler(ignoreCancelled = true)
-    fun onPlayerJoin(event: org.bukkit.event.player.PlayerJoinEvent) {
+    @EventHandler
+    fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
 
-        McPlayerJoinEvent.invoker.onPlayerJoin(
-            getPlayerByInstance(player)
-        )
+        McPlayerJoinEvent.invoker.onPlayerJoin(getPlayerByInstance(player))
 
         channelManager.registeredChannels.forEach(player::addChannel)
     }
 
     @EventHandler
-    fun onPlayerQuit(event: org.bukkit.event.player.PlayerQuitEvent) {
-        McPlayerQuitEvent.invoker.onPlayerQuit(
-            getPlayerByInstance(event.player)
-        )
+    fun onPlayerQuit(event: PlayerQuitEvent) {
+        McPlayerQuitEvent.invoker.onPlayerQuit(getPlayerByInstance(event.player))
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    fun onPlayerJoinEarly(event: PlayerJoinEvent) {
+        val player = event.player
+        val mcPlayer = player.wrap()
+        playerById[player.uniqueId] = mcPlayer
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun onPlayerQuitLate(event: PlayerQuitEvent) {
         playerById.remove(event.player.uniqueId)
     }
+
+    private fun Player.wrap(): McServerPlayer =
+        SpigotServerPlayer(
+            loader,
+            this@SpigotServerLib,
+            permissionSupplier,
+            this
+        )
 
     companion object {
         lateinit var instance: SpigotServerLib
