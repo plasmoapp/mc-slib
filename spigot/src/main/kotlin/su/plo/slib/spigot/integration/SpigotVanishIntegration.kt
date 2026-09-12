@@ -24,13 +24,18 @@ class SpigotVanishIntegration(
         val hiddenPlayer = event.entity as? Player ?: return
         if (!pendingHide.add(hiddenPlayer.uniqueId)) return
 
-        SchedulerUtil.runTaskFor(hiddenPlayer, plugin) {
-            pendingHide.remove(hiddenPlayer.uniqueId)
+        SchedulerUtil.runTaskFor(
+            hiddenPlayer,
+            plugin,
+            {
+                pendingHide.remove(hiddenPlayer.uniqueId)
 
-            val target = minecraftServer.getPlayerById(hiddenPlayer.uniqueId) ?: return@runTaskFor
+                val target = minecraftServer.getPlayerById(hiddenPlayer.uniqueId) ?: return@runTaskFor
 
-            McPlayerVisibilityChangedEvent.invoker.onVisibilityChanged(target, true)
-        }
+                McPlayerVisibilityChangedEvent.invoker.onVisibilityChanged(target, true)
+            },
+            { pendingHide.remove(hiddenPlayer.uniqueId) }
+        )
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -38,12 +43,17 @@ class SpigotVanishIntegration(
         val shownPlayer = event.entity as? Player ?: return
         if (!pendingShow.add(shownPlayer.uniqueId)) return
 
-        SchedulerUtil.runTaskFor(shownPlayer, plugin) {
-            pendingShow.remove(shownPlayer.uniqueId)
+        SchedulerUtil.runTaskFor(
+            shownPlayer,
+            plugin,
+            {
+                pendingShow.remove(shownPlayer.uniqueId)
 
-            val target = minecraftServer.getPlayerById(shownPlayer.uniqueId) ?: return@runTaskFor
+                val target = minecraftServer.getPlayerById(shownPlayer.uniqueId) ?: return@runTaskFor
 
-            McPlayerVisibilityChangedEvent.invoker.onVisibilityChanged(target, false)
-        }
+                McPlayerVisibilityChangedEvent.invoker.onVisibilityChanged(target, false)
+            },
+            { pendingShow.remove(shownPlayer.uniqueId) },
+        )
     }
 }

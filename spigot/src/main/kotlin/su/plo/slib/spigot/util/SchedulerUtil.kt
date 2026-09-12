@@ -35,19 +35,30 @@ object SchedulerUtil {
      * For non-Folia servers, runs on Bukkit scheduler.
      * For Folia servers, runs on the entity's scheduler.
      */
-    fun runTaskFor(entity: Entity, plugin: Plugin, task: Runnable) {
+    fun runTaskFor(entity: Entity, plugin: Plugin, task: Runnable) =
+        runTaskFor(entity, plugin, task, null)
+
+    /**
+     * Schedules a task to run for a given [entity].
+     *
+     * For non-Folia servers, runs on Bukkit scheduler.
+     * For Folia servers, runs on the entity's scheduler.
+     */
+    fun runTaskFor(entity: Entity, plugin: Plugin, task: Runnable, retired: Runnable?) {
         if (regionSchedulerSupported == false) {
             Bukkit.getScheduler().runTask(plugin, task)
             return
         }
 
         try {
-            entity.scheduler.run(
+            val scheduled = entity.scheduler.run(
                 plugin,
                 { task.run() },
-                null,
+                { retired?.run() },
             )
             regionSchedulerSupported = true
+
+            if (scheduled == null) retired?.run()
         } catch (_: LinkageError) {
             Bukkit.getScheduler().runTask(plugin, task)
             regionSchedulerSupported = false
