@@ -49,13 +49,18 @@ class SpigotServerScheduler(
 
         val future = CompletableFuture<T>()
 
-        SchedulerUtil.runTaskFor(entity.getInstance(), plugin) {
-            runCatching {
-                task.get()
-            }
-                .onSuccess { future.complete(it) }
-                .onFailure { future.completeExceptionally(it) }
-        }
+        SchedulerUtil.runTaskFor(
+            entity.getInstance(),
+            plugin,
+            {
+                runCatching {
+                    task.get()
+                }
+                    .onSuccess { future.complete(it) }
+                    .onFailure { future.completeExceptionally(it) }
+            },
+            { future.completeExceptionally(EntityRetiredException(entity.uuid)) },
+        )
 
         return future
     }
