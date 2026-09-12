@@ -1,15 +1,18 @@
 package su.plo.slib.spigot.channel
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerRegisterChannelEvent
 import su.plo.slib.api.server.event.player.McPlayerRegisterChannelsEvent
 import su.plo.slib.spigot.SpigotServerLib
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
 
 class RegisterChannelHandler(
     private val minecraftServer: SpigotServerLib
@@ -20,25 +23,32 @@ class RegisterChannelHandler(
 
     @EventHandler
     fun onPlayerRegisterChannel(event: PlayerRegisterChannelEvent) {
-        val player = event.player
+        val playerId = event.player.uniqueId
         val channel = event.channel
 
-        val updates = channelsUpdates.computeIfAbsent(
-            player.uniqueId
-        ) { _ -> ArrayList() }
+        val updates = channelsUpdates.computeIfAbsent(playerId) { _ -> ArrayList() }
         if (updates.contains(channel)) return
         updates.add(channel)
 
-        channelsFutures[player.uniqueId]?.cancel()
-        channelsFutures[player.uniqueId] = CoroutineScope(Dispatchers.Default).launch {
+        channelsFutures[playerId]?.cancel()
+        channelsFutures[playerId] = CoroutineScope(Dispatchers.Default).launch {
             delay(500L)
 
-            channelsFutures.remove(player.uniqueId)
+            channelsFutures.remove(playerId)
 
-            val channels = channelsUpdates.remove(player.uniqueId) ?: return@launch
+            val channels = channelsUpdates.remove(playerId) ?: return@launch
 
-            val mcServerPlayer = minecraftServer.getPlayerByInstance(player)
+            val mcServerPlayer = minecraftServer.getPlayerById(playerId) ?: return@launch
+
             McPlayerRegisterChannelsEvent.invoker.onPlayerRegisterChannels(mcServerPlayer, channels)
         }
+    }
+
+    @EventHandler
+    fun onPlayerQuit(event: PlayerQuitEvent) {
+        val playerId = event.player.uniqueId
+
+        channelsFutures.remove(playerId)?.cancel()
+        channelsUpdates.remove(playerId)
     }
 }
