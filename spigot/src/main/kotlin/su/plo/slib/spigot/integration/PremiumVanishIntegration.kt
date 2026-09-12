@@ -12,13 +12,13 @@ class PremiumVanishIntegration(
 ) : Listener {
     @EventHandler
     fun onPlayerHide(event: PostPlayerHideEvent) {
-        val target = minecraftServer.getPlayerByInstance(event.player)
+        val target = minecraftServer.getPlayerById(event.player.uniqueId) ?: return
         McPlayerVisibilityChangedEvent.invoker.onVisibilityChanged(target, true)
     }
 
     @EventHandler
     fun onPlayerShow(event: PostPlayerShowEvent) {
-        val target = minecraftServer.getPlayerByInstance(event.player)
+        val target = minecraftServer.getPlayerById(event.player.uniqueId) ?: return
         McPlayerVisibilityChangedEvent.invoker.onVisibilityChanged(target, false)
     }
 }
