@@ -53,7 +53,7 @@ interface McServerLib : McLib {
      *
      * The [instance] parameter represents the server-specific server instance:
      *  - For Bukkit `org.bukkit.World`
-     *  - For modded servers (Fabric/Forge) `net.minecraft.server.level.ServerLevel`
+     *  - For modded servers (Fabric/NeoForge) `net.minecraft.server.level.ServerLevel`
      *
      * @param instance The server-specific world instance.
      * @return The world.
@@ -72,7 +72,7 @@ interface McServerLib : McLib {
      *
      * The [instance] parameter represents the server-specific player instance:
      *  - For Bukkit: [org.bukkit.entity.Player]
-     *  - For modded servers (Fabric/Forge): [net.minecraft.server.level.ServerPlayer]
+     *  - For modded servers (Fabric/NeoForge): [net.minecraft.server.level.ServerPlayer]
      *
      * @param instance The server-specific player instance.
      * @return The player.
@@ -123,7 +123,7 @@ interface McServerLib : McLib {
      *
      * The [instance] parameter represents the server-specific entity instance:
      *  - For Bukkit: [org.bukkit.entity.Entity]
-     *  - For modded servers (Fabric/Forge): [net.minecraft.world.entity.Entity]
+     *  - For modded servers (Fabric/NeoForge): [net.minecraft.world.entity.Entity]
      *
      * @return The entity.
      */

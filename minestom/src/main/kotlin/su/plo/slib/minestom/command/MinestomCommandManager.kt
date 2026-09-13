@@ -32,16 +32,20 @@ import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.command.brigadier.CustomArgumentType
+import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.entity.McEntity
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.command.AbstractCommandManager
 import su.plo.slib.command.brigadier.CustomArgumentCommandNode
-import su.plo.slib.command.proxied
-import su.plo.slib.minestom.chat.McTextMessage
+import su.plo.slib.command.brigadier.applyEach
+import su.plo.slib.command.brigadier.collectBrigadierCommands
+import su.plo.slib.command.brigadier.proxied
+import su.plo.slib.command.brigadier.toMcTextComponent
 import su.plo.slib.minestom.command.brigadier.MinestomArgumentType
 import su.plo.slib.minestom.command.brigadier.MinestomBrigadierSource
+import su.plo.slib.minestom.command.brigadier.withParsingSender
 
 class MinestomCommandManager(
     private val minecraftServer: McServerLib
@@ -72,14 +76,16 @@ class MinestomCommandManager(
             MinecraftServer.getCommandManager().register(cmd)
         }
 
-        registerBrigadierCommands { command, _ ->
-            MinecraftServer.getCommandManager().register(
-                command.proxied(
-                    { it },
-                    { it },
-                ).toMinestom()
-            )
-        }
+        collectBrigadierCommands(McBrigadierRegistry.Phase.RUNTIME)
+            .applyEach(logger, logRegisteredCommands) { (node, _, aliases) ->
+                MinecraftServer.getCommandManager().register(
+                    node.proxied(
+                        logger,
+                        { it },
+                        { it },
+                    ).toMinestom(aliases)
+                )
+            }
 
         registered = true
     }
@@ -91,8 +97,8 @@ class MinestomCommandManager(
         else MinestomDefaultCommandSource(minecraftServer.textConverter, source)
     }
 
-    private fun LiteralCommandNode<McBrigadierSource>.toMinestom(): Command {
-        val minestomCommand = Command(name)
+    private fun LiteralCommandNode<McBrigadierSource>.toMinestom(aliases: Collection<String> = emptyList()): Command {
+        val minestomCommand = Command(name, *aliases.toTypedArray())
 
         children.filterIsInstance<LiteralCommandNode<McBrigadierSource>>()
             .forEach { minestomCommand.addSubcommand(it.toMinestom()) }
@@ -158,18 +164,27 @@ class MinestomCommandManager(
     private fun <T> ArgumentCommandNode<McBrigadierSource, T>.toMinestom(): Pair<Argument<T>, CommandExecutor?> {
         val argumentType = type
         val executor = command?.toMinestom()
+        val customNode = this as? CustomArgumentCommandNode<*, *, *>
 
-        if (argumentType is MinestomArgumentType<T>) {
+        if (customNode == null && argumentType is MinestomArgumentType<T>) {
             return argumentType.argumentBuilder.invoke(name) to executor
         }
 
-        val minestomArgument = object : Argument<T>(name) {
+        val nativeArgument = (argumentType as? MinestomArgumentType<*>)?.argumentBuilder?.invoke(name)
+
+        val minestomArgument = object : Argument<T>(
+            name,
+            nativeArgument?.allowSpace() ?: false,
+            nativeArgument?.useRemaining() ?: false,
+        ) {
             @Suppress("UNCHECKED_CAST")
             override fun parse(sender: CommandSender, input: String): T {
                 pendingParseError.remove()
                 return try {
-                    if (this@toMinestom is CustomArgumentCommandNode<*, *, *>) {
-                        (customArgumentType.parse(StringReader(input)) as T)
+                    if (customNode != null) {
+                        withParsingSender(sender) {
+                            customNode.customArgumentType.parse(StringReader(input)) as T
+                        }
                     } else {
                         argumentType.parse(StringReader(input))
                     }
@@ -180,12 +195,13 @@ class MinestomCommandManager(
             }
 
             override fun parser(): ArgumentParserType =
-                argumentType.toMinestomParserType()
+                nativeArgument?.parser() ?: argumentType.toMinestomParserType()
 
             override fun nodeProperties(): ByteArray? {
-                val effectiveType = (argumentType as? CustomArgumentType<*, *>)?.nativeType ?: argumentType
-                if (effectiveType is StringArgumentType) {
-                    return NetworkBuffer.makeArray(NetworkBuffer.VAR_INT, effectiveType.type.ordinal)
+                nativeArgument?.let { return it.nodeProperties() }
+
+                if (argumentType is StringArgumentType) {
+                    return NetworkBuffer.makeArray(NetworkBuffer.VAR_INT, argumentType.type.ordinal)
                 }
 
                 return super.nodeProperties()
@@ -244,18 +260,6 @@ class MinestomCommandManager(
     }
 
     private fun McCommandSource.sendParseError(e: CommandSyntaxException) {
-        val rawMessage = e.rawMessage
-        val messageArg =
-            if (rawMessage is McTextMessage) rawMessage.component
-            else McTextComponent.literal(rawMessage.string)
-
-        sendMessage(
-            McTextComponent.translatable(
-                "command.context.parse_error",
-                messageArg,
-                McTextComponent.literal(e.cursor.toString()),
-                McTextComponent.literal(e.context),
-            ).withStyle(McTextStyle.RED)
-        )
+        sendMessage(e.toMcTextComponent())
     }
 }

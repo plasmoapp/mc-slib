@@ -6,9 +6,6 @@
         "MixinPlayerList",
         "MixinServerPlayer",
         "accessor.CommandSourceStackAccessor"
-        //? if forge && <1.20.2 {
-        /*,"MixinServerGamePacketListenerImpl"
-        *///?}
         //? if >=1.21.10 {
         /*,"accessor.ServerPlayerCommandSourceAccessor"
         *///?}

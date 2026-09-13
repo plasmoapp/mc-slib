@@ -1,0 +1,30 @@
+package su.plo.slib.paper.command
+
+import org.bukkit.command.CommandSender
+import su.plo.slib.api.chat.component.McTextComponent
+import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.permission.PermissionTristate
+import su.plo.slib.paper.PaperServerLib
+import su.plo.slib.paper.util.extension.sendActionBar
+import su.plo.slib.paper.util.extension.sendMessage
+
+class PaperDefaultCommandSource(
+    private val minecraftServer: PaperServerLib,
+    private val source: CommandSender
+) : McCommandSource {
+
+    override fun sendMessage(text: McTextComponent) {
+        source.sendMessage(minecraftServer, text)
+    }
+
+    override fun sendActionBar(text: McTextComponent) {
+        source.sendActionBar(minecraftServer, text)
+    }
+
+    override val language: String
+        get() = "en_us"
+
+    override fun hasPermission(permission: String): Boolean = true
+
+    override fun getPermission(permission: String): PermissionTristate = PermissionTristate.FALSE
+}

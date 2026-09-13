@@ -4,7 +4,7 @@ set -e
 if [[ -z "$2" ]]; then
     echo "Usage: $0 <server|proxy> <gradle command>"
     echo "Example: $0 server modded:1.21-neoforge:runServer -Pmodded.versions_dev=1.21-neoforge"
-    echo "Example: $0 server spigot:runServer -Pspigot.run_minecraft_version=1.16.5"
+    echo "Example: $0 server paper:runServer -Ppaper.run_minecraft_version=1.21.11"
     echo "Example: $0 proxy velocity:runVelocity"
     echo "Example: $0 proxy bungee:runWaterfall"
     exit 1
@@ -18,7 +18,7 @@ FORBIDDEN_PATTERNS=()
 
 case "$ENV_TYPE" in
     server)
-        # console's stack is always the overworld on spigot/modded, so there is a world even without /execute in.
+        # console's stack is always the overworld on paper/modded, so there is a world even without /execute in.
         # minestom still takes it from the executor, which is null for the console.
         case "$COMMAND" in
             *minestom*) POSITION_WORLD="null" ;;
@@ -32,27 +32,55 @@ case "$ENV_TYPE" in
           "Command 'brigadier-position-selector' registered"
           "Command 'brigadier-game-profiles-selector' registered"
           "Command 'brigadier-custom-type' registered"
+          "Command 'brigadier-nested-custom-type' registered"
+          "Command 'brigadier-server-translation' registered"
           "Command 'brigadier-multi-arg' registered"
           "Message from main thread"
           "Channel handler registered: slib:channels/test"
         )
         FORBIDDEN_PATTERNS+=(
           "not registered in the mod loader networking"
+          "slibtest\\.(argument|command)\\."
         )
         COMMAND_INPUTS=(
           "brigadier-custom-type invalid-uuid"
+          "brigadier-nested-custom-type everyone"
+          "brigadier-nested-custom-type @a"
+          "brigadier-server-translation bad"
+          "brigadier-server-translation ok"
           "brigadier-entity-selector entities @e"
           "brigadier-entity-selector players @a"
           "brigadier-position-selector 100 100 100"
           "brigadier-multi-arg 7 13"
+          "brigadier-unbound-requires"
+          "brigadier-silent-feedback"
         )
         COMMAND_OUTPUT_PATTERNS=(
           "Invalid UUID"
+          "Nested custom type: everyone"
+          "Nested custom type: native selector"
+          "slib argument error: bad"
+          "slib execute error: ok"
           "Found entities:"
           "Found players:"
-          "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0, yaw=100.0, pitch=100.0\\)"
+          "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0, yaw=0.0, pitch=0.0\\)"
           "Multi-arg: a=7, b=13"
+          "Unbound requires guard survived parsing"
+          "Silent check feedback"
         )
+
+        # minestom has no datapacks, so it never hits bootstrap phase.
+        if [[ "$COMMAND" != *minestom* ]]; then
+            PATTERNS+=(
+              "Requirement of the command node 'brigadier-unbound-requires' threw before the server was initialized"
+              "Silent check: silent=true"
+              "Multi-arg: a=21, b=34"
+            )
+            FORBIDDEN_PATTERNS+=(
+              "Failed to load function"
+              "Whilst parsing command"
+            )
+        fi
         ;;
     proxy)
         PATTERNS=(
@@ -60,12 +88,20 @@ case "$ENV_TYPE" in
           "Command 'ping' registered"
           "Command 'brigadier-ping' registered"
           "Command 'brigadier-custom-type' registered"
+          "Command 'brigadier-server-translation' registered"
         )
         COMMAND_INPUTS=(
           "brigadier-custom-type invalid-uuid"
+          "brigadier-server-translation bad"
+          "brigadier-server-translation ok"
         )
         COMMAND_OUTPUT_PATTERNS=(
           "Invalid UUID"
+          "slib argument error: bad"
+          "slib execute error: ok"
+        )
+        FORBIDDEN_PATTERNS+=(
+          "slibtest\\.(argument|command)\\."
         )
         ;;
     *)
@@ -162,15 +198,6 @@ if [[ $STARTUP_OK -eq 0 ]]; then
 fi
 
 # Phase 2: send each command, wait for its expected output.
-# Paper 1.19.3 through 1.20.5 route stdin through CraftServer.dispatchCommand,
-# which only hits the Bukkit command map (no brigadier fallback until 1.20.6).
-# Set SKIP_COMMAND_IO=1 on affected versions to keep the startup checks while
-# opting out of the stdin round-trip.
-if [[ -n "$SKIP_COMMAND_IO" ]]; then
-    echo "Skipping command I/O phase (SKIP_COMMAND_IO=$SKIP_COMMAND_IO)"
-    COMMAND_INPUTS=()
-fi
-
 for i in "${!COMMAND_INPUTS[@]}"; do
     INPUT="${COMMAND_INPUTS[$i]}"
     PATTERN="${COMMAND_OUTPUT_PATTERNS[$i]}"

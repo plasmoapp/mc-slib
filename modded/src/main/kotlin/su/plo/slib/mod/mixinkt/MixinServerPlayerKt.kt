@@ -1,18 +1,12 @@
 package su.plo.slib.mod.mixinkt
 
-import net.minecraft.network.protocol.game.ServerboundClientInformationPacket
+import net.minecraft.server.level.ClientInformation
 import net.minecraft.server.level.ServerPlayer
 import su.plo.slib.mod.entity.ModServerPlayer
 import su.plo.slib.mod.extension.toMcServerPlayer
 
 object MixinServerPlayerKt {
-
-    //? if >1.20.1 {
-    /*fun updateOptions(player: ServerPlayer, packet: ClientInformation) {
-    *///?} else {
-    fun updateOptions(player: ServerPlayer, packet: ServerboundClientInformationPacket) {
-    //?}
-
+    fun updateOptions(player: ServerPlayer, packet: ClientInformation) {
         val mcServerPlayer = player.toMcServerPlayer() ?: return
 
         var language = "en_us"

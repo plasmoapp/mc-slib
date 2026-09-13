@@ -7,4 +7,6 @@ dependencies {
 
     testFixturesImplementation(project(":api:api-common"))
     testFixturesImplementation(project(":api:api-server"))
+
+    testFixturesImplementation(libs.mcdsl.brigadier)
 }

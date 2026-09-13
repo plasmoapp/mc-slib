@@ -18,8 +18,7 @@ slf4j = "1.7.30"
 semver4j = "6.0.0"
 
 # platforms
-paper = "1.20.1-R0.1-SNAPSHOT"
-spigot = "1.16.5-R0.1-SNAPSHOT"
+paper = "1.21.1-R0.1-SNAPSHOT"
 velocity = "3.1.1"
 bungee = "1.21-R0.4-SNAPSHOT"
 minestom = "2025.10.05-1.21.8"
@@ -32,6 +31,7 @@ sayanvanish = "1.7.3"
 adventure = "4.21.0"
 adventure-platform = "4.4.1"
 brigadier = "1.0.18"
+mcdsl = "2.2.0"
 fabric-permissions = "0.3.1"
 reflection-remapper = "0.1.2"
 
@@ -68,9 +68,10 @@ adventure-api         = { module = "net.kyori:adventure-api", version.ref = "adv
 adventure-gson        = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
 adventure-legacy      = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure" }
 adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
-adventure-bukkit      = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform" }
 adventure-bungee      = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
 brigadier             = { module = "com.mojang:brigadier", version.ref = "brigadier" }
+brigadier-paper       = { module = "com.mojang:brigadier", version = "1.3.10" }
+mcdsl-brigadier       = { module = "dev.apehum.mcdsl:brigadier", version.ref = "mcdsl" }
 fabric-permissions    = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions" }
 reflectionremapper    = { module = "xyz.jpenilla:reflection-remapper", version.ref = "reflection-remapper" }
 

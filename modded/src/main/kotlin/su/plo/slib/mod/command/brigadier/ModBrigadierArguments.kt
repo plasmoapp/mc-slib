@@ -63,7 +63,7 @@ class ModBrigadierArguments : McArgumentTypes.Provider {
             ServerPos3dResolver { source ->
                 val stack = source.getInstance<CommandSourceStack>()
                 val position = coordinates.getPosition(stack)
-                val rotation = coordinates.getRotation(stack)
+                val rotation = stack.rotation
 
                 val world = stack.level?.let { serverLib.getWorld(it) }
                     ?: (source.executor as? McServerEntity)?.world

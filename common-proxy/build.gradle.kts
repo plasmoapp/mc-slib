@@ -9,4 +9,5 @@ dependencies {
     testFixturesImplementation(project(":api:api-proxy"))
 
     testFixturesImplementation(libs.adventure.api)
+    testFixturesImplementation(libs.mcdsl.brigadier)
 }

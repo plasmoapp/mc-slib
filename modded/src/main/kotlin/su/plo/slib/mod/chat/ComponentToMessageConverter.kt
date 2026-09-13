@@ -2,9 +2,12 @@ package su.plo.slib.mod.chat
 
 import com.mojang.brigadier.Message
 import su.plo.slib.api.chat.component.McTextComponent
-import su.plo.slib.api.chat.converter.MessageTextConverter
+import su.plo.slib.chat.AdventureComponentTextConverter
+import su.plo.slib.chat.MessageTextConverter
 
 class ComponentToMessageConverter : MessageTextConverter {
-    override fun convert(text: McTextComponent): Message =
-        ComponentTextConverter.convert(text)
+    private val textConverter = AdventureComponentTextConverter()
+
+    override fun convert(language: String, text: McTextComponent): Message =
+        ComponentTextConverter.convertFromJson(textConverter.convertToJson(language, text))
 }
