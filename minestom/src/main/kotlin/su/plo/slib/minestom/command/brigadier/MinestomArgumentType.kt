@@ -32,18 +32,30 @@ data class MinestomArgumentType<S>(
                 "${this::class.java.name} can only be parsed while a command is being parsed"
             )
 
-        val input = reader.remaining
+        val input = reader.string
+        val start = reader.cursor
+        var end =
+            if (parsingArgument.allowSpace() && parsingArgument.useRemaining()) input.length
+            else input.wordEnd(start)
 
-        val parsed =
+        // mirrors CommandParserImpl.parseArgument, so the reader stops where minestom would have
+        while (true) {
             try {
-                parsingArgument.parse(sender, input)
+                val parsed = parsingArgument.parse(sender, input.substring(start, end))
+                reader.cursor = end
+
+                return parsed
             } catch (e: ArgumentSyntaxException) {
-                throw SimpleCommandExceptionType(LiteralMessage(e.message))
-                    .createWithContext(reader)
+                if (!parsingArgument.allowSpace() || end >= input.length) {
+                    throw SimpleCommandExceptionType(LiteralMessage(e.message))
+                        .createWithContext(reader)
+                }
+
+                end = input.wordEnd(end + 1)
             }
-
-        reader.cursor = reader.totalLength
-
-        return parsed
+        }
     }
+
+    private fun String.wordEnd(from: Int): Int =
+        indexOf(' ', from).takeIf { it >= 0 } ?: length
 }

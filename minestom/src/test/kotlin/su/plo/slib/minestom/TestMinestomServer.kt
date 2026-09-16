@@ -97,6 +97,8 @@ private fun registerVanillaTranslations() {
     val store = TranslationStore.messageFormat(Key.key("slib", "test"))
     store.defaultLocale(Locale.US)
     store.register("command.context.here", Locale.US, MessageFormat("<--[HERE]"))
+    store.register("command.unknown.command", Locale.US, MessageFormat("Unknown or incomplete command. See below for error"))
+    store.register("command.unknown.argument", Locale.US, MessageFormat("Incorrect argument for command"))
     store.register("argument.uuid.invalid", Locale.US, MessageFormat("Invalid UUID"))
     GlobalTranslator.translator().addSource(store)
 }

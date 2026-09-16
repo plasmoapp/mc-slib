@@ -57,6 +57,10 @@ case "$ENV_TYPE" in
           "brigadier-denied-requires literal"
           "brigadier-denied-requires argument 7"
           "brigadier-silent-feedback"
+          "brigadier-denied-requires"
+          "brigadier-denied-requires argument 8"
+          "brigadier-multi-arg 7 abc"
+          "brigadier-intermediate-custom-arg 1 2 3 \"unclosed"
         )
         COMMAND_OUTPUT_PATTERNS=(
           "Invalid UUID"
@@ -72,6 +76,10 @@ case "$ENV_TYPE" in
           "Denied requires checked: literal"
           "Denied requires checked: argument"
           "Silent check feedback"
+          "Unknown or incomplete command"
+          "Incorrect argument for command"
+          "Expected integer"
+          "Unclosed quoted string"
         )
 
         # minestom has no datapacks, so it never hits bootstrap phase.
