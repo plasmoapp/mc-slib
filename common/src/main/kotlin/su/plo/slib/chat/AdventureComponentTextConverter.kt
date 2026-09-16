@@ -121,8 +121,18 @@ class AdventureComponentTextConverter : ServerTextConverter<Component> {
         if (style.type === McTextStyle.Type.COLOR) {
             builder.color(NamedTextColor.NAMES.value(style.name.lowercase()))
         } else if (style.type === McTextStyle.Type.DECORATION) {
-            builder.decoration(TextDecoration.NAMES.value(style.name.lowercase())!!, true)
+            builder.decoration(style.toDecoration(), true)
         }
         return builder
     }
+
+    private fun McTextStyle.toDecoration(): TextDecoration =
+        when (this) {
+            McTextStyle.OBFUSCATED -> TextDecoration.OBFUSCATED
+            McTextStyle.BOLD -> TextDecoration.BOLD
+            McTextStyle.STRIKETHROUGH -> TextDecoration.STRIKETHROUGH
+            McTextStyle.UNDERLINE -> TextDecoration.UNDERLINED
+            McTextStyle.ITALIC -> TextDecoration.ITALIC
+            else -> throw IllegalArgumentException("$name is not a decoration")
+        }
 }
