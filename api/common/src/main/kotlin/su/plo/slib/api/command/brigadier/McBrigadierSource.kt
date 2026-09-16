@@ -1,6 +1,8 @@
 package su.plo.slib.api.command.brigadier
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException
 import su.plo.slib.api.chat.component.McTextComponent
+import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.entity.McEntity
 
@@ -59,6 +61,23 @@ interface McBrigadierSource {
      */
     fun sendFeedback(text: String) {
         sendFeedback(McTextComponent.literal(text))
+    }
+
+    /**
+     * Sends the exception's message to the [source] as a command failure, unless the source [isSilent].
+     *
+     * This is the counterpart of vanilla's `CommandSourceStack#handleError`:
+     * only the raw message is sent, without the input context.
+     *
+     * @param exception The exception to report.
+     */
+    fun sendFailure(exception: CommandSyntaxException) {
+        if (isSilent) return
+
+        val message = (exception.rawMessage as? McTextMessage)?.component
+            ?: McTextComponent.literal(exception.rawMessage.string)
+
+        source.sendMessage(McTextComponent.empty().append(message).withStyle(McTextStyle.RED))
     }
 
     /**

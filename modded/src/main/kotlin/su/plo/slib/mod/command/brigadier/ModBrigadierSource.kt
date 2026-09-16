@@ -1,8 +1,11 @@
 package su.plo.slib.mod.command.brigadier
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.network.chat.ComponentUtils
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.command.brigadier.McBrigadierSource
+import su.plo.slib.api.command.brigadier.McTextMessage
 import su.plo.slib.api.entity.McEntity
 import su.plo.slib.mod.ModServerLib
 import su.plo.slib.mod.command.ModUnboundCommandSource
@@ -18,6 +21,13 @@ data class ModBrigadierSource(
     @Suppress("UNCHECKED_CAST")
     override fun <T> getInstance(): T =
         instance as T
+
+    override fun sendFailure(exception: CommandSyntaxException) {
+        val rawMessage = exception.rawMessage
+        if (rawMessage is McTextMessage) return super.sendFailure(exception)
+
+        instance.sendFailure(ComponentUtils.fromMessage(rawMessage))
+    }
 
     companion object {
         fun from(sourceStack: CommandSourceStack): ModBrigadierSource {
