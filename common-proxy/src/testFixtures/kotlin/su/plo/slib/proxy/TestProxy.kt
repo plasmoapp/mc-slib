@@ -92,7 +92,7 @@ class TestProxy {
     private fun registerVanillaTranslations() {
         val store = TranslationStore.messageFormat(Key.key("slib", "test"))
         store.defaultLocale(Locale.US)
-        store.register("command.context.parse_error", Locale.US, MessageFormat("{0} at position {1}: {2}"))
+        store.register("command.context.here", Locale.US, MessageFormat("<--[HERE]"))
         store.register("argument.uuid.invalid", Locale.US, MessageFormat("Invalid UUID"))
         GlobalTranslator.translator().addSource(store)
     }

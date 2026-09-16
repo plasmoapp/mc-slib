@@ -10,7 +10,9 @@ import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.bungee.command.BungeeCommandManager
-import su.plo.slib.command.brigadier.toMcTextComponent
+import su.plo.slib.command.brigadier.parseException
+import su.plo.slib.command.brigadier.sendFailure
+import su.plo.slib.command.brigadier.sendParseFailure
 
 class BungeeBrigadierCommand(
     private val commandManager: BungeeCommandManager,
@@ -28,9 +30,16 @@ class BungeeBrigadierCommand(
         val input = listOf(command.literal, *arguments).joinToString(" ")
 
         try {
-            dispatcher.execute(input, context)
+            val parseResults = dispatcher.parse(input, context)
+            val parseException = parseResults.parseException()
+            if (parseException != null) {
+                context.source.sendParseFailure(parseException, input)
+                return
+            }
+
+            dispatcher.execute(parseResults)
         } catch (e: CommandSyntaxException) {
-            context.source.sendMessage(e.toMcTextComponent())
+            context.source.sendFailure(e)
         } catch (e: Exception) {
             context.source.sendMessage(
                 McTextComponent.literal(e.message ?: "Unknown error").withStyle(McTextStyle.RED)

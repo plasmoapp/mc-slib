@@ -19,7 +19,8 @@ import net.kyori.adventure.text.Component
 import net.minestom.server.MinecraftServer
 import net.minestom.server.command.ArgumentParserType
 import net.minestom.server.command.CommandSender
-import net.minestom.server.command.builder.Command
+import net.minestom.server.command.builder.Command as MinestomCommand
+import net.minestom.server.command.builder.CommandContext as MinestomCommandContext
 import net.minestom.server.command.builder.CommandExecutor
 import net.minestom.server.command.builder.arguments.Argument
 import net.minestom.server.command.builder.condition.CommandCondition
@@ -43,7 +44,8 @@ import su.plo.slib.command.brigadier.CustomArgumentCommandNode
 import su.plo.slib.command.brigadier.applyEach
 import su.plo.slib.command.brigadier.collectBrigadierCommands
 import su.plo.slib.command.brigadier.proxied
-import su.plo.slib.command.brigadier.toMcTextComponent
+import su.plo.slib.command.brigadier.sendFailure
+import su.plo.slib.command.brigadier.sendParseFailure
 import su.plo.slib.minestom.command.brigadier.MinestomArgumentType
 import su.plo.slib.minestom.command.brigadier.MinestomBrigadierSource
 import su.plo.slib.minestom.command.brigadier.withParsingSender
@@ -57,14 +59,14 @@ class MinestomCommandManager(
     // InvalidCommand, and the per-argument ArgumentCallback is orphan API that never fires.
     // We stash the original CommandSyntaxException here so the defaultExecutor (which does fire
     // on parse errors) can render the translatable message.
-    private val pendingParseError = ThreadLocal<CommandSyntaxException>()
+    private val pendingParseError = ThreadLocal<PendingParseError>()
 
     @Synchronized
     fun registerCommands() {
         McServerCommandsRegisterEvent.invoker.onCommandsRegister(this, minecraftServer)
 
         registerCommands { name, command, _ ->
-            val cmd = Command(name)
+            val cmd = MinestomCommand(name)
             cmd.setDefaultExecutor { sender, context ->
                 val source = getCommandSource(sender)
                 val args = context.map.map { it.value.toString() }.toTypedArray()
@@ -102,8 +104,8 @@ class MinestomCommandManager(
     private fun LiteralCommandNode<McBrigadierSource>.toMinestom(
         aliases: Collection<String> = emptyList(),
         pathRequirement: Predicate<McBrigadierSource> = requirement,
-    ): Command {
-        val minestomCommand = Command(name, *aliases.toTypedArray())
+    ): MinestomCommand {
+        val minestomCommand = MinestomCommand(name, *aliases.toTypedArray())
         minestomCommand.condition = requirement.toMinestomCondition()
 
         children.filterIsInstance<LiteralCommandNode<McBrigadierSource>>()
@@ -120,7 +122,7 @@ class MinestomCommandManager(
     }
 
     private fun registerArgumentSyntaxes(
-        minestomCommand: Command,
+        minestomCommand: MinestomCommand,
         node: ArgumentCommandNode<McBrigadierSource, *>,
         prefix: List<Argument<*>>,
         prefixRequirement: Predicate<McBrigadierSource>?,
@@ -170,7 +172,7 @@ class MinestomCommandManager(
             val error = pendingParseError.get()
             if (error != null) {
                 pendingParseError.remove()
-                getCommandSource(sender).sendParseError(error)
+                getCommandSource(sender).sendParseFailure(error.inCommand(context), context.input)
                 return@CommandExecutor
             }
             fallback?.apply(sender, context)
@@ -221,7 +223,7 @@ class MinestomCommandManager(
                         argumentType.parse(StringReader(input))
                     }
                 } catch (e: CommandSyntaxException) {
-                    pendingParseError.set(e)
+                    pendingParseError.set(PendingParseError(e, input))
                     throw ArgumentSyntaxException(e.message, input, -1)
                 }
             }
@@ -270,7 +272,7 @@ class MinestomCommandManager(
             try {
                 this@toMinestom.run(brigadierContext)
             } catch (e: CommandSyntaxException) {
-                source.sendParseError(e)
+                source.sendFailure(e)
             } catch (e: Exception) {
                 source.sendMessage(
                     McTextComponent.literal(e.message ?: "Unknown error").withStyle(McTextStyle.RED)
@@ -278,7 +280,7 @@ class MinestomCommandManager(
             }
         }
 
-    private fun net.minestom.server.command.builder.CommandContext.toBrigadier(
+    private fun MinestomCommandContext.toBrigadier(
         sender: CommandSender,
         command: com.mojang.brigadier.Command<McBrigadierSource>?,
     ): CommandContext<McBrigadierSource> =
@@ -300,7 +302,28 @@ class MinestomCommandManager(
         return MinestomBrigadierSource(source, source as? McEntity, this)
     }
 
-    private fun McCommandSource.sendParseError(e: CommandSyntaxException) {
-        sendMessage(e.toMcTextComponent())
+    private class PendingParseError(
+        val exception: CommandSyntaxException,
+        val argumentInput: String,
+    ) {
+        fun inCommand(context: MinestomCommandContext): CommandSyntaxException {
+            if (exception.input != argumentInput) return exception
+
+            val offset = context.failedArgumentOffset()
+            if (!context.input.startsWith(argumentInput, offset)) return exception
+
+            return CommandSyntaxException(
+                exception.type,
+                exception.rawMessage,
+                context.input,
+                offset + exception.cursor,
+            )
+        }
+
+        private fun MinestomCommandContext.failedArgumentOffset(): Int =
+            map.keys.sumOf { id ->
+                val raw = getRaw(id)
+                if (raw.isNullOrEmpty()) 0 else raw.length + 1
+            } + commandName.length + 1
     }
 }
