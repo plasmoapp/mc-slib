@@ -40,6 +40,7 @@ case "$ENV_TYPE" in
         )
         FORBIDDEN_PATTERNS+=(
           "not registered in the mod loader networking"
+          "Denied requires bypassed"
           "slibtest\\.(argument|command)\\."
         )
         COMMAND_INPUTS=(
@@ -53,6 +54,8 @@ case "$ENV_TYPE" in
           "brigadier-position-selector 100 100 100"
           "brigadier-multi-arg 7 13"
           "brigadier-unbound-requires"
+          "brigadier-denied-requires literal"
+          "brigadier-denied-requires argument 7"
           "brigadier-silent-feedback"
         )
         COMMAND_OUTPUT_PATTERNS=(
@@ -66,6 +69,8 @@ case "$ENV_TYPE" in
           "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0, yaw=0.0, pitch=0.0\\)"
           "Multi-arg: a=7, b=13"
           "Unbound requires guard survived parsing"
+          "Denied requires checked: literal"
+          "Denied requires checked: argument"
           "Silent check feedback"
         )
 

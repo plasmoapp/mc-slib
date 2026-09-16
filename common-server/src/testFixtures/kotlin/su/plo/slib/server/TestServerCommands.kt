@@ -170,6 +170,34 @@ fun registerCommands() {
         )
 
         registry.register(
+            literalCommand("brigadier-denied-requires") {
+                literalCommand("literal") {
+                    requires {
+                        logger.info("Denied requires checked: literal")
+                        false
+                    }
+
+                    executes {
+                        source.sendFeedback("Denied requires bypassed: literal")
+                    }
+                }
+
+                literalCommand("argument") {
+                    val value by argument("value", IntegerArgumentType.integer()) {
+                        requires {
+                            logger.info("Denied requires checked: argument")
+                            false
+                        }
+                    }
+
+                    executes {
+                        source.sendFeedback("Denied requires bypassed: argument $value")
+                    }
+                }
+            }
+        )
+
+        registry.register(
             literalCommand("brigadier-silent-feedback") {
                 executes {
                     logger.info("Silent check: silent=${source.isSilent}")
