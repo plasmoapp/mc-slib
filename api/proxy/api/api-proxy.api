@@ -1,0 +1,68 @@
+public abstract interface class su/plo/slib/api/proxy/McProxyLib : su/plo/slib/api/McLib {
+	public abstract fun getChannelManager ()Lsu/plo/slib/api/proxy/channel/McProxyChannelManager;
+	public abstract fun getCommandManager ()Lsu/plo/slib/api/command/McCommandManager;
+	public abstract fun getPlayerById (Ljava/util/UUID;)Lsu/plo/slib/api/proxy/player/McProxyPlayer;
+	public abstract fun getPlayerByInstance (Ljava/lang/Object;)Lsu/plo/slib/api/proxy/player/McProxyPlayer;
+	public abstract fun getPlayerByName (Ljava/lang/String;)Lsu/plo/slib/api/proxy/player/McProxyPlayer;
+	public abstract fun getPlayers ()Ljava/util/Collection;
+	public abstract fun getPort ()I
+	public abstract fun getServerInfoByName (Ljava/lang/String;)Lsu/plo/slib/api/proxy/server/McProxyServerInfo;
+	public abstract fun getServerInfoByServerInstance (Ljava/lang/Object;)Lsu/plo/slib/api/proxy/server/McProxyServerInfo;
+	public abstract fun getServers ()Ljava/util/Collection;
+}
+
+public abstract interface class su/plo/slib/api/proxy/channel/McProxyChannelHandler {
+	public abstract fun receive (Lsu/plo/slib/api/proxy/connection/McProxyConnection;Lsu/plo/slib/api/proxy/connection/McProxyConnection;[B)Z
+}
+
+public abstract interface class su/plo/slib/api/proxy/channel/McProxyChannelManager {
+	public abstract fun clear ()V
+	public abstract fun registerChannelHandler (Ljava/lang/String;Lsu/plo/slib/api/proxy/channel/McProxyChannelHandler;)V
+	public abstract fun unregisterChannelHandler (Ljava/lang/String;Lsu/plo/slib/api/proxy/channel/McProxyChannelHandler;)V
+}
+
+public abstract interface class su/plo/slib/api/proxy/command/McProxyCommand : su/plo/slib/api/command/McCommand {
+	public fun passToBackendServer (Lsu/plo/slib/api/command/McCommandSource;[Ljava/lang/String;)Z
+}
+
+public abstract interface class su/plo/slib/api/proxy/connection/McProxyConnection {
+	public abstract fun sendPacket (Ljava/lang/String;[B)V
+}
+
+public abstract interface class su/plo/slib/api/proxy/connection/McProxyServerConnection : su/plo/slib/api/proxy/connection/McProxyConnection {
+	public abstract fun getServerInfo ()Lsu/plo/slib/api/proxy/server/McProxyServerInfo;
+}
+
+public final class su/plo/slib/api/proxy/event/command/McProxyCommandExecuteEvent : su/plo/slib/api/event/GlobalEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/proxy/event/command/McProxyCommandExecuteEvent;
+}
+
+public abstract interface class su/plo/slib/api/proxy/event/command/McProxyCommandExecuteEvent$Callback {
+	public abstract fun onCommandExecute (Lsu/plo/slib/api/command/McCommandSource;Ljava/lang/String;)V
+}
+
+public final class su/plo/slib/api/proxy/event/command/McProxyCommandsRegisterEvent : su/plo/slib/api/event/command/McCommandsRegisterEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/proxy/event/command/McProxyCommandsRegisterEvent;
+}
+
+public final class su/plo/slib/api/proxy/event/player/McProxyServerConnectedEvent : su/plo/slib/api/event/GlobalEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/proxy/event/player/McProxyServerConnectedEvent;
+}
+
+public abstract interface class su/plo/slib/api/proxy/event/player/McProxyServerConnectedEvent$Callback {
+	public abstract fun onServerConnected (Lsu/plo/slib/api/proxy/player/McProxyPlayer;Lsu/plo/slib/api/proxy/server/McProxyServerInfo;)V
+}
+
+public abstract interface class su/plo/slib/api/proxy/player/McProxyPlayer : su/plo/slib/api/entity/player/McPlayer, su/plo/slib/api/proxy/connection/McProxyConnection {
+	public fun canSee (Lsu/plo/slib/api/entity/player/McPlayer;)Z
+	public abstract fun canSee (Lsu/plo/slib/api/proxy/player/McProxyPlayer;)Z
+	public abstract fun getInstance ()Ljava/lang/Object;
+	public abstract fun getServer ()Lsu/plo/slib/api/proxy/connection/McProxyServerConnection;
+}
+
+public abstract interface class su/plo/slib/api/proxy/server/McProxyServerInfo {
+	public abstract fun getAddress ()Ljava/net/SocketAddress;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getPlayerCount ()I
+}
+

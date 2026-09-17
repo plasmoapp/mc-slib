@@ -1,0 +1,455 @@
+public abstract interface class su/plo/slib/api/McLib {
+	public fun createLogger (Ljava/lang/String;)Lsu/plo/slib/api/logging/McLogger;
+	public fun getBaseLogger ()Lsu/plo/slib/api/logging/McLogger;
+	public abstract fun getCommandManager ()Lsu/plo/slib/api/command/McCommandManager;
+	public abstract fun getConfigsFolder ()Ljava/io/File;
+	public abstract fun getPermissionManager ()Lsu/plo/slib/api/permission/PermissionManager;
+	public abstract fun getServerTranslator ()Lsu/plo/slib/api/language/ServerTranslator;
+	public abstract fun getTextConverter ()Lsu/plo/slib/api/chat/converter/ServerTextConverter;
+}
+
+public final class su/plo/slib/api/chat/component/McLiteralText : su/plo/slib/api/chat/component/McTextComponent {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getText ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class su/plo/slib/api/chat/component/McTextComponent {
+	public static final field Companion Lsu/plo/slib/api/chat/component/McTextComponent$Companion;
+	public fun <init> ()V
+	public final fun append (Ljava/util/Collection;)Lsu/plo/slib/api/chat/component/McTextComponent;
+	public final fun append ([Lsu/plo/slib/api/chat/component/McTextComponent;)Lsu/plo/slib/api/chat/component/McTextComponent;
+	public final fun clickEvent (Lsu/plo/slib/api/chat/style/McTextClickEvent;)Lsu/plo/slib/api/chat/component/McTextComponent;
+	public static final fun empty ()Lsu/plo/slib/api/chat/component/McTextComponent;
+	public final fun getClickEvent ()Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public final fun getHoverEvent ()Lsu/plo/slib/api/chat/style/McTextHoverEvent;
+	public final fun getSiblings ()Ljava/util/List;
+	public final fun getStyles ()Ljava/util/List;
+	public final fun hoverEvent (Lsu/plo/slib/api/chat/style/McTextHoverEvent;)Lsu/plo/slib/api/chat/component/McTextComponent;
+	public static final fun literal (Ljava/lang/String;)Lsu/plo/slib/api/chat/component/McLiteralText;
+	public final fun mergeWith (Lsu/plo/slib/api/chat/component/McTextComponent;)Lsu/plo/slib/api/chat/component/McTextComponent;
+	public final fun setClickEvent (Lsu/plo/slib/api/chat/style/McTextClickEvent;)V
+	public final fun setHoverEvent (Lsu/plo/slib/api/chat/style/McTextHoverEvent;)V
+	public static final fun translatable (Ljava/lang/String;[Ljava/lang/Object;)Lsu/plo/slib/api/chat/component/McTranslatableText;
+	public final fun withStyle (Lsu/plo/slib/api/chat/style/McTextStyle;)Lsu/plo/slib/api/chat/component/McTextComponent;
+	public final fun withStyle ([Lsu/plo/slib/api/chat/style/McTextStyle;)Lsu/plo/slib/api/chat/component/McTextComponent;
+}
+
+public final class su/plo/slib/api/chat/component/McTextComponent$Companion {
+	public final fun empty ()Lsu/plo/slib/api/chat/component/McTextComponent;
+	public final fun literal (Ljava/lang/String;)Lsu/plo/slib/api/chat/component/McLiteralText;
+	public final fun translatable (Ljava/lang/String;[Ljava/lang/Object;)Lsu/plo/slib/api/chat/component/McTranslatableText;
+}
+
+public final class su/plo/slib/api/chat/component/McTranslatableText : su/plo/slib/api/chat/component/McTextComponent {
+	public fun <init> (Ljava/lang/String;[Ljava/lang/Object;)V
+	public final fun getArgs ()[Ljava/lang/Object;
+	public final fun getKey ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class su/plo/slib/api/chat/converter/McTextConverter {
+	public fun convert (Ljava/util/List;)Ljava/util/List;
+	public abstract fun convert (Lsu/plo/slib/api/chat/component/McTextComponent;)Ljava/lang/Object;
+	public abstract fun convertFromJson (Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun convertToJson (Ljava/lang/Object;)Ljava/lang/String;
+	public fun convertToJson (Lsu/plo/slib/api/chat/component/McTextComponent;)Ljava/lang/String;
+}
+
+public abstract interface class su/plo/slib/api/chat/converter/MessageTextConverter {
+	public static final field Companion Lsu/plo/slib/api/chat/converter/MessageTextConverter$Companion;
+	public abstract fun convert (Lsu/plo/slib/api/chat/component/McTextComponent;)Lcom/mojang/brigadier/Message;
+	public static fun converter ()Lsu/plo/slib/api/chat/converter/MessageTextConverter;
+}
+
+public final class su/plo/slib/api/chat/converter/MessageTextConverter$Companion {
+	public final fun converter ()Lsu/plo/slib/api/chat/converter/MessageTextConverter;
+}
+
+public abstract interface class su/plo/slib/api/chat/converter/ServerTextConverter : su/plo/slib/api/chat/converter/McTextConverter {
+	public abstract fun convert (Ljava/lang/String;Lsu/plo/slib/api/chat/component/McTextComponent;)Ljava/lang/Object;
+	public fun convert (Lsu/plo/slib/api/command/McCommandSource;Lsu/plo/slib/api/chat/component/McTextComponent;)Ljava/lang/Object;
+	public abstract fun convertToJson (Ljava/lang/String;Lsu/plo/slib/api/chat/component/McTextComponent;)Ljava/lang/String;
+	public fun convertToJson (Lsu/plo/slib/api/command/McCommandSource;Lsu/plo/slib/api/chat/component/McTextComponent;)Ljava/lang/String;
+}
+
+public final class su/plo/slib/api/chat/style/McTextClickEvent {
+	public static final field Companion Lsu/plo/slib/api/chat/style/McTextClickEvent$Companion;
+	public synthetic fun <init> (Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun changePage (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public static final fun clickEvent (Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public static final fun copyToClipboard (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public final fun getAction ()Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;
+	public final fun getValue ()Ljava/lang/String;
+	public static final fun openUrl (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public static final fun runCommand (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public static final fun suggestCommand (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+}
+
+public final class su/plo/slib/api/chat/style/McTextClickEvent$Action : java/lang/Enum {
+	public static final field CHANGE_PAGE Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;
+	public static final field COPY_TO_CLIPBOARD Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;
+	public static final field OPEN_FILE Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;
+	public static final field OPEN_URL Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;
+	public static final field RUN_COMMAND Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;
+	public static final field SUGGEST_COMMAND Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;
+	public static fun values ()[Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;
+}
+
+public final class su/plo/slib/api/chat/style/McTextClickEvent$Companion {
+	public final fun changePage (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public final fun clickEvent (Lsu/plo/slib/api/chat/style/McTextClickEvent$Action;Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public final fun copyToClipboard (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public final fun openUrl (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public final fun runCommand (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+	public final fun suggestCommand (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextClickEvent;
+}
+
+public final class su/plo/slib/api/chat/style/McTextHoverEvent {
+	public static final field Companion Lsu/plo/slib/api/chat/style/McTextHoverEvent$Companion;
+	public synthetic fun <init> (Lsu/plo/slib/api/chat/style/McTextHoverEvent$Action;Ljava/lang/Object;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getAction ()Lsu/plo/slib/api/chat/style/McTextHoverEvent$Action;
+	public final fun getValue ()Ljava/lang/Object;
+	public static final fun showText (Lsu/plo/slib/api/chat/component/McTextComponent;)Lsu/plo/slib/api/chat/style/McTextHoverEvent;
+}
+
+public final class su/plo/slib/api/chat/style/McTextHoverEvent$Action : java/lang/Enum {
+	public static final field SHOW_TEXT Lsu/plo/slib/api/chat/style/McTextHoverEvent$Action;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextHoverEvent$Action;
+	public static fun values ()[Lsu/plo/slib/api/chat/style/McTextHoverEvent$Action;
+}
+
+public final class su/plo/slib/api/chat/style/McTextHoverEvent$Companion {
+	public final fun showText (Lsu/plo/slib/api/chat/component/McTextComponent;)Lsu/plo/slib/api/chat/style/McTextHoverEvent;
+}
+
+public final class su/plo/slib/api/chat/style/McTextStyle : java/lang/Enum {
+	public static final field AQUA Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field BLACK Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field BLUE Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field BOLD Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field Companion Lsu/plo/slib/api/chat/style/McTextStyle$Companion;
+	public static final field DARK_AQUA Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field DARK_BLUE Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field DARK_GRAY Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field DARK_GREEN Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field DARK_PURPLE Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field DARK_RED Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field GOLD Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field GRAY Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field GREEN Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field ITALIC Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field LIGHT_PURPLE Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field OBFUSCATED Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field RED Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field RESET Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field STRIKETHROUGH Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field UNDERLINE Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field WHITE Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static final field YELLOW Lsu/plo/slib/api/chat/style/McTextStyle;
+	public final fun getColorChar ()C
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getType ()Lsu/plo/slib/api/chat/style/McTextStyle$Type;
+	public fun toString ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextStyle;
+	public static fun values ()[Lsu/plo/slib/api/chat/style/McTextStyle;
+}
+
+public final class su/plo/slib/api/chat/style/McTextStyle$Companion {
+}
+
+public final class su/plo/slib/api/chat/style/McTextStyle$Type : java/lang/Enum {
+	public static final field COLOR Lsu/plo/slib/api/chat/style/McTextStyle$Type;
+	public static final field DECORATION Lsu/plo/slib/api/chat/style/McTextStyle$Type;
+	public static final field RESET Lsu/plo/slib/api/chat/style/McTextStyle$Type;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lsu/plo/slib/api/chat/style/McTextStyle$Type;
+	public static fun values ()[Lsu/plo/slib/api/chat/style/McTextStyle$Type;
+}
+
+public abstract interface class su/plo/slib/api/command/McChatHolder {
+	public abstract fun getLanguage ()Ljava/lang/String;
+	public fun sendActionBar (Ljava/lang/String;)V
+	public abstract fun sendActionBar (Lsu/plo/slib/api/chat/component/McTextComponent;)V
+	public fun sendMessage (Ljava/lang/String;)V
+	public abstract fun sendMessage (Lsu/plo/slib/api/chat/component/McTextComponent;)V
+}
+
+public abstract interface class su/plo/slib/api/command/McCommand {
+	public abstract fun execute (Lsu/plo/slib/api/command/McCommandSource;[Ljava/lang/String;)V
+	public fun hasPermission (Lsu/plo/slib/api/command/McCommandSource;[Ljava/lang/String;)Z
+	public fun suggest (Lsu/plo/slib/api/command/McCommandSource;[Ljava/lang/String;)Ljava/util/List;
+}
+
+public abstract class su/plo/slib/api/command/McCommandManager {
+	public static final field Companion Lsu/plo/slib/api/command/McCommandManager$Companion;
+	public fun <init> ()V
+	public static final fun argument (Ljava/lang/String;Lcom/mojang/brigadier/arguments/ArgumentType;)Lcom/mojang/brigadier/builder/RequiredArgumentBuilder;
+	public abstract fun clear ()V
+	public final fun getCommandNamespace ()Ljava/lang/String;
+	public abstract fun getCommandSource (Ljava/lang/Object;)Lsu/plo/slib/api/command/McCommandSource;
+	public final fun getLogRegisteredCommands ()Z
+	public abstract fun getRegisteredBrigadierCommands ()Ljava/util/List;
+	public abstract fun getRegisteredCommands ()Ljava/util/Map;
+	public static final fun literal (Ljava/lang/String;)Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;
+	public final fun register (Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;)V
+	public abstract fun register (Lcom/mojang/brigadier/tree/LiteralCommandNode;)V
+	public final fun register (Ljava/lang/String;Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;)V
+	public abstract fun register (Ljava/lang/String;Lcom/mojang/brigadier/tree/LiteralCommandNode;)V
+	public abstract fun register (Ljava/lang/String;Ljava/lang/String;Lsu/plo/slib/api/command/McCommand;[Ljava/lang/String;)V
+	public abstract fun register (Ljava/lang/String;Lsu/plo/slib/api/command/McCommand;[Ljava/lang/String;)V
+	public final fun setCommandNamespace (Ljava/lang/String;)V
+	public final fun setLogRegisteredCommands (Z)V
+}
+
+public final class su/plo/slib/api/command/McCommandManager$Companion {
+	public final fun argument (Ljava/lang/String;Lcom/mojang/brigadier/arguments/ArgumentType;)Lcom/mojang/brigadier/builder/RequiredArgumentBuilder;
+	public final fun literal (Ljava/lang/String;)Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;
+}
+
+public abstract interface class su/plo/slib/api/command/McCommandSource : su/plo/slib/api/command/McChatHolder, su/plo/slib/api/command/McPermissionHolder {
+}
+
+public abstract interface class su/plo/slib/api/command/McPermissionHolder {
+	public abstract fun getPermission (Ljava/lang/String;)Lsu/plo/slib/api/permission/PermissionTristate;
+	public abstract fun hasPermission (Ljava/lang/String;)Z
+}
+
+public abstract interface class su/plo/slib/api/command/brigadier/ArgumentResolver {
+	public abstract fun resolve (Lsu/plo/slib/api/command/brigadier/McBrigadierSource;)Ljava/lang/Object;
+}
+
+public abstract interface class su/plo/slib/api/command/brigadier/CustomArgumentType : com/mojang/brigadier/arguments/ArgumentType {
+	public fun getExamples ()Ljava/util/Collection;
+	public abstract fun getNativeType ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public fun useNativeSuggestions ()Z
+}
+
+public abstract interface class su/plo/slib/api/command/brigadier/McBrigadierSource {
+	public abstract fun getExecutor ()Lsu/plo/slib/api/entity/McEntity;
+	public abstract fun getInstance ()Ljava/lang/Object;
+	public abstract fun getSource ()Lsu/plo/slib/api/command/McCommandSource;
+	public fun isSilent ()Z
+	public fun sendFeedback (Ljava/lang/String;)V
+	public fun sendFeedback (Lsu/plo/slib/api/chat/component/McTextComponent;)V
+}
+
+public abstract interface class su/plo/slib/api/entity/McEntity {
+	public abstract fun getEyeHeight ()D
+	public abstract fun getHitBoxHeight ()F
+	public abstract fun getHitBoxWidth ()F
+	public abstract fun getId ()I
+	public abstract fun getInstance ()Ljava/lang/Object;
+	public abstract fun getLookAngle ()Lsu/plo/slib/api/position/Pos3d;
+	public abstract fun getLookAngle (Lsu/plo/slib/api/position/Pos3d;)Lsu/plo/slib/api/position/Pos3d;
+	public abstract fun getPosition ()Lsu/plo/slib/api/position/Pos3d;
+	public abstract fun getPosition (Lsu/plo/slib/api/position/Pos3d;)Lsu/plo/slib/api/position/Pos3d;
+	public abstract fun getUuid ()Ljava/util/UUID;
+}
+
+public final class su/plo/slib/api/entity/player/McGameProfile {
+	public fun <init> (Ljava/util/UUID;Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/UUID;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/util/UUID;Ljava/lang/String;Ljava/util/List;)Lsu/plo/slib/api/entity/player/McGameProfile;
+	public static synthetic fun copy$default (Lsu/plo/slib/api/entity/player/McGameProfile;Ljava/util/UUID;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lsu/plo/slib/api/entity/player/McGameProfile;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()Ljava/util/UUID;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getProperties ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class su/plo/slib/api/entity/player/McGameProfile$Property {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lsu/plo/slib/api/entity/player/McGameProfile$Property;
+	public static synthetic fun copy$default (Lsu/plo/slib/api/entity/player/McGameProfile$Property;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lsu/plo/slib/api/entity/player/McGameProfile$Property;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getSignature ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class su/plo/slib/api/entity/player/McPlayer : su/plo/slib/api/command/McCommandSource {
+	public abstract fun canSee (Lsu/plo/slib/api/entity/player/McPlayer;)Z
+	public abstract fun getGameProfile ()Lsu/plo/slib/api/entity/player/McGameProfile;
+	public abstract fun getInstance ()Ljava/lang/Object;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getUuid ()Ljava/util/UUID;
+	public abstract fun isOnline ()Z
+	public abstract fun kick (Lsu/plo/slib/api/chat/component/McTextComponent;)V
+	public abstract fun sendPacket (Ljava/lang/String;[B)V
+}
+
+public abstract class su/plo/slib/api/event/GlobalEvent {
+	public fun <init> (Ljava/util/function/Function;)V
+	public final fun clearListeners ()V
+	public final fun getInvoker ()Ljava/lang/Object;
+	public final fun registerListener (Ljava/lang/Object;)V
+	public final fun unregisterListener (Ljava/lang/Object;)V
+}
+
+public abstract class su/plo/slib/api/event/command/McCommandsRegisterEvent : su/plo/slib/api/event/GlobalEvent {
+	public fun <init> ()V
+}
+
+public abstract interface class su/plo/slib/api/event/command/McCommandsRegisterEvent$Callback {
+	public abstract fun onCommandsRegister (Lsu/plo/slib/api/command/McCommandManager;Lsu/plo/slib/api/McLib;)V
+}
+
+public final class su/plo/slib/api/event/player/McPlayerJoinEvent : su/plo/slib/api/event/GlobalEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/event/player/McPlayerJoinEvent;
+}
+
+public abstract interface class su/plo/slib/api/event/player/McPlayerJoinEvent$Callback {
+	public abstract fun onPlayerJoin (Lsu/plo/slib/api/entity/player/McPlayer;)V
+}
+
+public final class su/plo/slib/api/event/player/McPlayerQuitEvent : su/plo/slib/api/event/GlobalEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/event/player/McPlayerQuitEvent;
+}
+
+public abstract interface class su/plo/slib/api/event/player/McPlayerQuitEvent$Callback {
+	public abstract fun onPlayerQuit (Lsu/plo/slib/api/entity/player/McPlayer;)V
+}
+
+public final class su/plo/slib/api/event/player/McPlayerVisibilityChangedEvent : su/plo/slib/api/event/GlobalEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/event/player/McPlayerVisibilityChangedEvent;
+}
+
+public abstract interface class su/plo/slib/api/event/player/McPlayerVisibilityChangedEvent$Callback {
+	public abstract fun onVisibilityChanged (Lsu/plo/slib/api/entity/player/McPlayer;Z)V
+}
+
+public final class su/plo/slib/api/event/player/McPlayerVisibilityCheckEvent : su/plo/slib/api/event/GlobalEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/event/player/McPlayerVisibilityCheckEvent;
+}
+
+public abstract interface class su/plo/slib/api/event/player/McPlayerVisibilityCheckEvent$Callback {
+	public abstract fun shouldHide (Lsu/plo/slib/api/entity/player/McPlayer;Lsu/plo/slib/api/entity/player/McPlayer;)Z
+}
+
+public final class su/plo/slib/api/language/ServerLanguageFormat : java/lang/Enum {
+	public static final field LEGACY_AMPERSAND Lsu/plo/slib/api/language/ServerLanguageFormat;
+	public static final field MINI_MESSAGE Lsu/plo/slib/api/language/ServerLanguageFormat;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lsu/plo/slib/api/language/ServerLanguageFormat;
+	public static fun values ()[Lsu/plo/slib/api/language/ServerLanguageFormat;
+}
+
+public abstract interface class su/plo/slib/api/language/ServerTranslator {
+	public abstract fun getDefaultLanguage ()Ljava/lang/String;
+	public abstract fun getForcedLanguage ()Ljava/lang/String;
+	public abstract fun getLanguage (Ljava/lang/String;)Ljava/util/Map;
+	public abstract fun register (Ljava/lang/String;Ljava/util/Map;)V
+	public abstract fun setDefaultLanguage (Ljava/lang/String;)V
+	public abstract fun setForcedLanguage (Ljava/lang/String;)V
+}
+
+public final class su/plo/slib/api/logging/McLazyLogger : kotlin/Lazy, su/plo/slib/api/logging/McLogger {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun debug (Ljava/lang/String;[Ljava/lang/Object;)V
+	public fun error (Ljava/lang/String;[Ljava/lang/Object;)V
+	public fun getName ()Ljava/lang/String;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun getValue ()Lsu/plo/slib/api/logging/McLogger;
+	public fun info (Ljava/lang/String;[Ljava/lang/Object;)V
+	public fun isInitialized ()Z
+	public fun trace (Ljava/lang/String;[Ljava/lang/Object;)V
+	public fun warn (Ljava/lang/String;[Ljava/lang/Object;)V
+}
+
+public abstract interface class su/plo/slib/api/logging/McLogger {
+	public abstract fun debug (Ljava/lang/String;[Ljava/lang/Object;)V
+	public abstract fun error (Ljava/lang/String;[Ljava/lang/Object;)V
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun info (Ljava/lang/String;[Ljava/lang/Object;)V
+	public abstract fun trace (Ljava/lang/String;[Ljava/lang/Object;)V
+	public abstract fun warn (Ljava/lang/String;[Ljava/lang/Object;)V
+}
+
+public final class su/plo/slib/api/logging/McLoggerFactory {
+	public static final field INSTANCE Lsu/plo/slib/api/logging/McLoggerFactory;
+	public static field supplier Lsu/plo/slib/api/logging/McLoggerFactory$Supplier;
+	public static final fun createLogger (Ljava/lang/String;)Lsu/plo/slib/api/logging/McLazyLogger;
+	public static final fun createLogger (Lsu/plo/slib/api/logging/McLogger;Ljava/lang/String;)Lsu/plo/slib/api/logging/McLazyLogger;
+	public final fun getSupplier ()Lsu/plo/slib/api/logging/McLoggerFactory$Supplier;
+	public final fun setSupplier (Lsu/plo/slib/api/logging/McLoggerFactory$Supplier;)V
+}
+
+public abstract interface class su/plo/slib/api/logging/McLoggerFactory$Supplier {
+	public abstract fun createLogger (Ljava/lang/String;)Lsu/plo/slib/api/logging/McLogger;
+}
+
+public final class su/plo/slib/api/permission/PermissionDefault : java/lang/Enum {
+	public static final field FALSE Lsu/plo/slib/api/permission/PermissionDefault;
+	public static final field NOT_OP Lsu/plo/slib/api/permission/PermissionDefault;
+	public static final field OP Lsu/plo/slib/api/permission/PermissionDefault;
+	public static final field TRUE Lsu/plo/slib/api/permission/PermissionDefault;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getValue (Z)Z
+	public static fun valueOf (Ljava/lang/String;)Lsu/plo/slib/api/permission/PermissionDefault;
+	public static fun values ()[Lsu/plo/slib/api/permission/PermissionDefault;
+}
+
+public final class su/plo/slib/api/permission/PermissionManager {
+	public static final field Companion Lsu/plo/slib/api/permission/PermissionManager$Companion;
+	public fun <init> ()V
+	public final fun clear ()V
+	public final fun getNoPermissionMessage ()Lsu/plo/slib/api/chat/component/McTextComponent;
+	public final fun getPermissionDefault (Ljava/lang/String;)Lsu/plo/slib/api/permission/PermissionDefault;
+	public final fun register (Ljava/lang/String;Lsu/plo/slib/api/permission/PermissionDefault;)V
+	public final fun setNoPermissionMessage (Lsu/plo/slib/api/chat/component/McTextComponent;)V
+	public final fun unregister (Ljava/lang/String;)Z
+}
+
+public final class su/plo/slib/api/permission/PermissionManager$Companion {
+}
+
+public final class su/plo/slib/api/permission/PermissionTristate : java/lang/Enum {
+	public static final field Companion Lsu/plo/slib/api/permission/PermissionTristate$Companion;
+	public static final field FALSE Lsu/plo/slib/api/permission/PermissionTristate;
+	public static final field TRUE Lsu/plo/slib/api/permission/PermissionTristate;
+	public static final field UNDEFINED Lsu/plo/slib/api/permission/PermissionTristate;
+	public final fun booleanValue (Z)Z
+	public static final fun fromBoolean (Ljava/lang/Boolean;)Lsu/plo/slib/api/permission/PermissionTristate;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lsu/plo/slib/api/permission/PermissionTristate;
+	public static fun values ()[Lsu/plo/slib/api/permission/PermissionTristate;
+}
+
+public final class su/plo/slib/api/permission/PermissionTristate$Companion {
+	public final fun fromBoolean (Ljava/lang/Boolean;)Lsu/plo/slib/api/permission/PermissionTristate;
+}
+
+public final class su/plo/slib/api/position/Pos3d {
+	public fun <init> ()V
+	public fun <init> (DDD)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun component3 ()D
+	public final fun copy (DDD)Lsu/plo/slib/api/position/Pos3d;
+	public static synthetic fun copy$default (Lsu/plo/slib/api/position/Pos3d;DDDILjava/lang/Object;)Lsu/plo/slib/api/position/Pos3d;
+	public final fun distanceSquared (Lsu/plo/slib/api/position/Pos3d;)D
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getX ()D
+	public final fun getY ()D
+	public final fun getZ ()D
+	public fun hashCode ()I
+	public final fun setX (D)V
+	public final fun setY (D)V
+	public final fun setZ (D)V
+	public fun toString ()Ljava/lang/String;
+}
+

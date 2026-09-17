@@ -1,0 +1,147 @@
+public abstract interface class su/plo/slib/api/server/McServerLib : su/plo/slib/api/McLib {
+	public abstract fun executeInMainThread (Ljava/lang/Runnable;)V
+	public abstract fun getChannelManager ()Lsu/plo/slib/api/server/channel/McServerChannelManager;
+	public abstract fun getCommandManager ()Lsu/plo/slib/api/command/McCommandManager;
+	public abstract fun getEntityByInstance (Ljava/lang/Object;)Lsu/plo/slib/api/server/entity/McServerEntity;
+	public abstract fun getGameProfile (Ljava/lang/String;)Lsu/plo/slib/api/entity/player/McGameProfile;
+	public abstract fun getGameProfile (Ljava/util/UUID;)Lsu/plo/slib/api/entity/player/McGameProfile;
+	public abstract fun getPlayerById (Ljava/util/UUID;)Lsu/plo/slib/api/server/entity/player/McServerPlayer;
+	public abstract fun getPlayerByInstance (Ljava/lang/Object;)Lsu/plo/slib/api/server/entity/player/McServerPlayer;
+	public abstract fun getPlayerByName (Ljava/lang/String;)Lsu/plo/slib/api/server/entity/player/McServerPlayer;
+	public abstract fun getPlayers ()Ljava/util/Collection;
+	public abstract fun getPort ()I
+	public abstract fun getScheduler ()Lsu/plo/slib/api/server/scheduler/McServerScheduler;
+	public abstract fun getVersion ()Ljava/lang/String;
+	public abstract fun getWorld (Ljava/lang/Object;)Lsu/plo/slib/api/server/world/McServerWorld;
+	public fun getWorld (Ljava/lang/String;)Lsu/plo/slib/api/server/world/McServerWorld;
+	public fun getWorldByKey (Ljava/lang/String;)Lsu/plo/slib/api/server/world/McServerWorld;
+	public abstract fun getWorlds ()Ljava/util/Collection;
+}
+
+public abstract interface class su/plo/slib/api/server/channel/McServerChannelHandler {
+	public abstract fun receive (Lsu/plo/slib/api/server/entity/player/McServerPlayer;[B)V
+}
+
+public abstract interface class su/plo/slib/api/server/channel/McServerChannelManager {
+	public abstract fun clear ()V
+	public abstract fun getRegisteredChannels ()Ljava/util/Collection;
+	public abstract fun registerChannelHandler (Ljava/lang/String;Lsu/plo/slib/api/server/channel/McServerChannelHandler;)V
+	public abstract fun unregisterChannelHandler (Ljava/lang/String;Lsu/plo/slib/api/server/channel/McServerChannelHandler;)V
+}
+
+public final class su/plo/slib/api/server/channel/McServerChannelRegistry {
+	public static final field INSTANCE Lsu/plo/slib/api/server/channel/McServerChannelRegistry;
+	public final fun channels ()Ljava/util/Set;
+	public final fun register (Ljava/lang/String;)V
+}
+
+public final class su/plo/slib/api/server/command/brigadier/McArgumentTypes {
+	public static final field INSTANCE Lsu/plo/slib/api/server/command/brigadier/McArgumentTypes;
+	public static final fun entities ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public static final fun entity ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public static final fun gameProfiles ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public static final fun player ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public static final fun players ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public static final fun position ()Lcom/mojang/brigadier/arguments/ArgumentType;
+}
+
+public abstract interface class su/plo/slib/api/server/command/brigadier/McArgumentTypes$Provider {
+	public abstract fun entities ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public abstract fun entity ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public abstract fun gameProfiles ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public abstract fun player ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public abstract fun players ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public abstract fun position ()Lcom/mojang/brigadier/arguments/ArgumentType;
+}
+
+public abstract interface class su/plo/slib/api/server/command/brigadier/McEntitiesArgumentResolver : su/plo/slib/api/command/brigadier/ArgumentResolver {
+}
+
+public abstract interface class su/plo/slib/api/server/command/brigadier/McEntityArgumentResolver : su/plo/slib/api/command/brigadier/ArgumentResolver {
+}
+
+public abstract interface class su/plo/slib/api/server/command/brigadier/McGameProfilesArgumentResolver : su/plo/slib/api/command/brigadier/ArgumentResolver {
+}
+
+public abstract interface class su/plo/slib/api/server/command/brigadier/McPlayerArgumentResolver : su/plo/slib/api/command/brigadier/ArgumentResolver {
+}
+
+public abstract interface class su/plo/slib/api/server/command/brigadier/McPlayersArgumentResolver : su/plo/slib/api/command/brigadier/ArgumentResolver {
+}
+
+public abstract interface class su/plo/slib/api/server/command/brigadier/ServerPos3dResolver : su/plo/slib/api/command/brigadier/ArgumentResolver {
+}
+
+public abstract interface class su/plo/slib/api/server/entity/McServerEntity : su/plo/slib/api/entity/McEntity {
+	public abstract fun getServerPosition ()Lsu/plo/slib/api/server/position/ServerPos3d;
+	public abstract fun getServerPosition (Lsu/plo/slib/api/server/position/ServerPos3d;)Lsu/plo/slib/api/server/position/ServerPos3d;
+	public abstract fun getWorld ()Lsu/plo/slib/api/server/world/McServerWorld;
+	public abstract fun isValid ()Z
+}
+
+public abstract interface class su/plo/slib/api/server/entity/player/McServerPlayer : su/plo/slib/api/entity/player/McPlayer, su/plo/slib/api/server/entity/McServerEntity {
+	public fun canSee (Lsu/plo/slib/api/entity/player/McPlayer;)Z
+	public abstract fun canSee (Lsu/plo/slib/api/server/entity/player/McServerPlayer;)Z
+	public abstract fun getHasLabelScoreboard ()Z
+	public abstract fun getInstance ()Ljava/lang/Object;
+	public abstract fun getRegisteredChannels ()Ljava/util/Collection;
+	public abstract fun getSpectatorTarget ()Lsu/plo/slib/api/server/entity/McServerEntity;
+	public abstract fun isSneaking ()Z
+	public abstract fun isSpectator ()Z
+}
+
+public final class su/plo/slib/api/server/event/command/McServerCommandsRegisterEvent : su/plo/slib/api/event/command/McCommandsRegisterEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/server/event/command/McServerCommandsRegisterEvent;
+}
+
+public final class su/plo/slib/api/server/event/player/McPlayerRegisterChannelsEvent : su/plo/slib/api/event/GlobalEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/server/event/player/McPlayerRegisterChannelsEvent;
+}
+
+public abstract interface class su/plo/slib/api/server/event/player/McPlayerRegisterChannelsEvent$Callback {
+	public abstract fun onPlayerRegisterChannels (Lsu/plo/slib/api/server/entity/player/McServerPlayer;Ljava/util/List;)V
+}
+
+public final class su/plo/slib/api/server/position/ServerPos3d {
+	public fun <init> ()V
+	public fun <init> (Lsu/plo/slib/api/server/world/McServerWorld;DDD)V
+	public fun <init> (Lsu/plo/slib/api/server/world/McServerWorld;DDDF)V
+	public fun <init> (Lsu/plo/slib/api/server/world/McServerWorld;DDDFF)V
+	public synthetic fun <init> (Lsu/plo/slib/api/server/world/McServerWorld;DDDFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun distanceSquared (Lsu/plo/slib/api/server/position/ServerPos3d;)D
+	public final fun getLookAngle ()Lsu/plo/slib/api/position/Pos3d;
+	public final fun getPitch ()F
+	public final fun getWorld ()Lsu/plo/slib/api/server/world/McServerWorld;
+	public final fun getX ()D
+	public final fun getY ()D
+	public final fun getYaw ()F
+	public final fun getZ ()D
+	public final fun setPitch (F)V
+	public final fun setWorld (Lsu/plo/slib/api/server/world/McServerWorld;)V
+	public final fun setX (D)V
+	public final fun setY (D)V
+	public final fun setYaw (F)V
+	public final fun setZ (D)V
+	public final fun toPosition ()Lsu/plo/slib/api/position/Pos3d;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class su/plo/slib/api/server/scheduler/McServerScheduler {
+	public fun runTask (Ljava/util/function/Supplier;)Ljava/util/concurrent/CompletableFuture;
+	public abstract fun runTask (Ljava/util/function/Supplier;Ljava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
+	public static synthetic fun runTask$default (Lsu/plo/slib/api/server/scheduler/McServerScheduler;Ljava/util/function/Supplier;Ljava/lang/Object;ILjava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
+	public fun runTaskAt (Lsu/plo/slib/api/server/position/ServerPos3d;Ljava/util/function/Supplier;)Ljava/util/concurrent/CompletableFuture;
+	public abstract fun runTaskAt (Lsu/plo/slib/api/server/position/ServerPos3d;Ljava/util/function/Supplier;Ljava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
+	public static synthetic fun runTaskAt$default (Lsu/plo/slib/api/server/scheduler/McServerScheduler;Lsu/plo/slib/api/server/position/ServerPos3d;Ljava/util/function/Supplier;Ljava/lang/Object;ILjava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
+	public fun runTaskFor (Lsu/plo/slib/api/server/entity/McServerEntity;Ljava/util/function/Supplier;)Ljava/util/concurrent/CompletableFuture;
+	public abstract fun runTaskFor (Lsu/plo/slib/api/server/entity/McServerEntity;Ljava/util/function/Supplier;Ljava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
+	public static synthetic fun runTaskFor$default (Lsu/plo/slib/api/server/scheduler/McServerScheduler;Lsu/plo/slib/api/server/entity/McServerEntity;Ljava/util/function/Supplier;Ljava/lang/Object;ILjava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
+}
+
+public abstract interface class su/plo/slib/api/server/world/McServerWorld {
+	public abstract fun getInstance ()Ljava/lang/Object;
+	public abstract fun getKey ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun sendGameEvent (Lsu/plo/slib/api/server/entity/McServerEntity;Ljava/lang/String;)V
+}
+
