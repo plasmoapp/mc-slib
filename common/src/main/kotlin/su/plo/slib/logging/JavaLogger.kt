@@ -9,23 +9,28 @@ class JavaLogger(
 ) : Logger(name, null), McLogger {
 
     override fun trace(format: String, vararg arguments: Any?) {
-        log(Level.FINEST, String.format(format.convertFromSlf4jFormat(), *arguments))
+        logFormatted(Level.FINEST, format, arguments)
     }
 
     override fun debug(format: String, vararg arguments: Any?) {
-        log(Level.ALL, String.format(format.convertFromSlf4jFormat(), *arguments))
+        logFormatted(Level.ALL, format, arguments)
     }
 
     override fun info(format: String, vararg arguments: Any?) {
-        log(Level.INFO, String.format(format.convertFromSlf4jFormat(), *arguments))
+        logFormatted(Level.INFO, format, arguments)
     }
 
     override fun warn(format: String, vararg arguments: Any?) {
-        log(Level.WARNING, String.format(format.convertFromSlf4jFormat(), *arguments))
+        logFormatted(Level.WARNING, format, arguments)
     }
 
     override fun error(format: String, vararg arguments: Any?) {
-        log(Level.SEVERE, String.format(format.convertFromSlf4jFormat(), *arguments))
+        logFormatted(Level.SEVERE, format, arguments)
+    }
+
+    private fun logFormatted(level: Level, format: String, arguments: Array<out Any?>) {
+        val thrown = arguments.lastOrNull() as? Throwable
+        log(level, String.format(format.convertFromSlf4jFormat(), *arguments), thrown)
     }
 
     private fun String.convertFromSlf4jFormat(): String =
