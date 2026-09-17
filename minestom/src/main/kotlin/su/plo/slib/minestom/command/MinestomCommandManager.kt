@@ -211,6 +211,44 @@ class MinestomCommandManager(
             else -> throw IllegalArgumentException("Invalid argument type: $this")
         }
 
+    private fun ArgumentType<*>.toMinestomNodeProperties(): ByteArray? =
+        when (this) {
+            is DoubleArgumentType -> numberProperties(
+                minimum.takeIf { it != -Double.MAX_VALUE },
+                maximum.takeIf { it != Double.MAX_VALUE },
+                NetworkBuffer.DOUBLE,
+            )
+            is FloatArgumentType -> numberProperties(
+                minimum.takeIf { it != -Float.MAX_VALUE },
+                maximum.takeIf { it != Float.MAX_VALUE },
+                NetworkBuffer.FLOAT,
+            )
+            is IntegerArgumentType -> numberProperties(
+                minimum.takeIf { it != Int.MIN_VALUE },
+                maximum.takeIf { it != Int.MAX_VALUE },
+                NetworkBuffer.INT,
+            )
+            is LongArgumentType -> numberProperties(
+                minimum.takeIf { it != Long.MIN_VALUE },
+                maximum.takeIf { it != Long.MAX_VALUE },
+                NetworkBuffer.LONG,
+            )
+            is StringArgumentType -> NetworkBuffer.makeArray(NetworkBuffer.VAR_INT, type.ordinal)
+            is CustomArgumentType<*, *> -> nativeType.toMinestomNodeProperties()
+            else -> null
+        }
+
+    private fun <T : Any> numberProperties(min: T?, max: T?, type: NetworkBuffer.Type<T>): ByteArray =
+        NetworkBuffer.makeArray { buffer ->
+            var flags = 0
+            if (min != null) flags = flags or 0x01
+            if (max != null) flags = flags or 0x02
+
+            buffer.write(NetworkBuffer.BYTE, flags.toByte())
+            min?.let { buffer.write(type, it) }
+            max?.let { buffer.write(type, it) }
+        }
+
     private fun <T> ArgumentCommandNode<McBrigadierSource, T>.toMinestom(
         pathRequirement: Predicate<McBrigadierSource>,
     ): Pair<Argument<T>, CommandExecutor?> {
@@ -249,15 +287,8 @@ class MinestomCommandManager(
             override fun parser(): ArgumentParserType =
                 nativeArgument?.parser() ?: argumentType.toMinestomParserType()
 
-            override fun nodeProperties(): ByteArray? {
-                nativeArgument?.let { return it.nodeProperties() }
-
-                if (argumentType is StringArgumentType) {
-                    return NetworkBuffer.makeArray(NetworkBuffer.VAR_INT, argumentType.type.ordinal)
-                }
-
-                return super.nodeProperties()
-            }
+            override fun nodeProperties(): ByteArray? =
+                nativeArgument?.nodeProperties() ?: argumentType.toMinestomNodeProperties()
         }
 
         val suggestionCallback = SuggestionCallback { sender, context, suggestion ->
