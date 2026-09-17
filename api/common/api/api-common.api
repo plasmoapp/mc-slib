@@ -56,16 +56,6 @@ public abstract interface class su/plo/slib/api/chat/converter/McTextConverter {
 	public fun convertToJson (Lsu/plo/slib/api/chat/component/McTextComponent;)Ljava/lang/String;
 }
 
-public abstract interface class su/plo/slib/api/chat/converter/MessageTextConverter {
-	public static final field Companion Lsu/plo/slib/api/chat/converter/MessageTextConverter$Companion;
-	public abstract fun convert (Lsu/plo/slib/api/chat/component/McTextComponent;)Lcom/mojang/brigadier/Message;
-	public static fun converter ()Lsu/plo/slib/api/chat/converter/MessageTextConverter;
-}
-
-public final class su/plo/slib/api/chat/converter/MessageTextConverter$Companion {
-	public final fun converter ()Lsu/plo/slib/api/chat/converter/MessageTextConverter;
-}
-
 public abstract interface class su/plo/slib/api/chat/converter/ServerTextConverter : su/plo/slib/api/chat/converter/McTextConverter {
 	public abstract fun convert (Ljava/lang/String;Lsu/plo/slib/api/chat/component/McTextComponent;)Ljava/lang/Object;
 	public fun convert (Lsu/plo/slib/api/command/McCommandSource;Lsu/plo/slib/api/chat/component/McTextComponent;)Ljava/lang/Object;
@@ -192,13 +182,8 @@ public abstract class su/plo/slib/api/command/McCommandManager {
 	public final fun getCommandNamespace ()Ljava/lang/String;
 	public abstract fun getCommandSource (Ljava/lang/Object;)Lsu/plo/slib/api/command/McCommandSource;
 	public final fun getLogRegisteredCommands ()Z
-	public abstract fun getRegisteredBrigadierCommands ()Ljava/util/List;
 	public abstract fun getRegisteredCommands ()Ljava/util/Map;
 	public static final fun literal (Ljava/lang/String;)Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;
-	public final fun register (Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;)V
-	public abstract fun register (Lcom/mojang/brigadier/tree/LiteralCommandNode;)V
-	public final fun register (Ljava/lang/String;Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;)V
-	public abstract fun register (Ljava/lang/String;Lcom/mojang/brigadier/tree/LiteralCommandNode;)V
 	public abstract fun register (Ljava/lang/String;Ljava/lang/String;Lsu/plo/slib/api/command/McCommand;[Ljava/lang/String;)V
 	public abstract fun register (Ljava/lang/String;Lsu/plo/slib/api/command/McCommand;[Ljava/lang/String;)V
 	public final fun setCommandNamespace (Ljava/lang/String;)V
@@ -225,16 +210,51 @@ public abstract interface class su/plo/slib/api/command/brigadier/ArgumentResolv
 public abstract interface class su/plo/slib/api/command/brigadier/CustomArgumentType : com/mojang/brigadier/arguments/ArgumentType {
 	public fun getExamples ()Ljava/util/Collection;
 	public abstract fun getNativeType ()Lcom/mojang/brigadier/arguments/ArgumentType;
+	public fun listSuggestions (Lcom/mojang/brigadier/context/CommandContext;Lcom/mojang/brigadier/suggestion/SuggestionsBuilder;)Ljava/util/concurrent/CompletableFuture;
 	public fun useNativeSuggestions ()Z
+}
+
+public abstract interface class su/plo/slib/api/command/brigadier/McBrigadierRegistry {
+	public abstract fun getPhase ()Lsu/plo/slib/api/command/brigadier/McBrigadierRegistry$Phase;
+	public fun register (Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;)V
+	public fun register (Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;Ljava/lang/String;)V
+	public fun register (Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;Ljava/lang/String;Ljava/util/Collection;)V
+	public fun register (Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;Ljava/util/Collection;)V
+	public fun register (Lcom/mojang/brigadier/tree/LiteralCommandNode;)V
+	public fun register (Lcom/mojang/brigadier/tree/LiteralCommandNode;Ljava/lang/String;)V
+	public abstract fun register (Lcom/mojang/brigadier/tree/LiteralCommandNode;Ljava/lang/String;Ljava/util/Collection;)V
+	public fun register (Lcom/mojang/brigadier/tree/LiteralCommandNode;Ljava/util/Collection;)V
+}
+
+public final class su/plo/slib/api/command/brigadier/McBrigadierRegistry$Phase : java/lang/Enum {
+	public static final field BOOTSTRAP Lsu/plo/slib/api/command/brigadier/McBrigadierRegistry$Phase;
+	public static final field RUNTIME Lsu/plo/slib/api/command/brigadier/McBrigadierRegistry$Phase;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lsu/plo/slib/api/command/brigadier/McBrigadierRegistry$Phase;
+	public static fun values ()[Lsu/plo/slib/api/command/brigadier/McBrigadierRegistry$Phase;
 }
 
 public abstract interface class su/plo/slib/api/command/brigadier/McBrigadierSource {
 	public abstract fun getExecutor ()Lsu/plo/slib/api/entity/McEntity;
 	public abstract fun getInstance ()Ljava/lang/Object;
 	public abstract fun getSource ()Lsu/plo/slib/api/command/McCommandSource;
+	public fun isBound ()Z
 	public fun isSilent ()Z
+	public fun sendFailure (Lcom/mojang/brigadier/exceptions/CommandSyntaxException;)V
 	public fun sendFeedback (Ljava/lang/String;)V
 	public fun sendFeedback (Lsu/plo/slib/api/chat/component/McTextComponent;)V
+}
+
+public final class su/plo/slib/api/command/brigadier/McTextMessage : com/mojang/brigadier/Message {
+	public static final field Companion Lsu/plo/slib/api/command/brigadier/McTextMessage$Companion;
+	public synthetic fun <init> (Lsu/plo/slib/api/chat/component/McTextComponent;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getComponent ()Lsu/plo/slib/api/chat/component/McTextComponent;
+	public fun getString ()Ljava/lang/String;
+	public static final fun of (Lsu/plo/slib/api/chat/component/McTextComponent;)Lsu/plo/slib/api/command/brigadier/McTextMessage;
+}
+
+public final class su/plo/slib/api/command/brigadier/McTextMessage$Companion {
+	public final fun of (Lsu/plo/slib/api/chat/component/McTextComponent;)Lsu/plo/slib/api/command/brigadier/McTextMessage;
 }
 
 public abstract interface class su/plo/slib/api/entity/McEntity {
@@ -297,6 +317,14 @@ public abstract class su/plo/slib/api/event/GlobalEvent {
 	public final fun getInvoker ()Ljava/lang/Object;
 	public final fun registerListener (Ljava/lang/Object;)V
 	public final fun unregisterListener (Ljava/lang/Object;)V
+}
+
+public final class su/plo/slib/api/event/command/McBrigadierCommandsRegisterEvent : su/plo/slib/api/event/GlobalEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/event/command/McBrigadierCommandsRegisterEvent;
+}
+
+public abstract interface class su/plo/slib/api/event/command/McBrigadierCommandsRegisterEvent$Callback {
+	public abstract fun onCommandsRegister (Lsu/plo/slib/api/command/brigadier/McBrigadierRegistry;)V
 }
 
 public abstract class su/plo/slib/api/event/command/McCommandsRegisterEvent : su/plo/slib/api/event/GlobalEvent {
@@ -385,11 +413,10 @@ public abstract interface class su/plo/slib/api/logging/McLogger {
 
 public final class su/plo/slib/api/logging/McLoggerFactory {
 	public static final field INSTANCE Lsu/plo/slib/api/logging/McLoggerFactory;
-	public static field supplier Lsu/plo/slib/api/logging/McLoggerFactory$Supplier;
 	public static final fun createLogger (Ljava/lang/String;)Lsu/plo/slib/api/logging/McLazyLogger;
 	public static final fun createLogger (Lsu/plo/slib/api/logging/McLogger;Ljava/lang/String;)Lsu/plo/slib/api/logging/McLazyLogger;
-	public final fun getSupplier ()Lsu/plo/slib/api/logging/McLoggerFactory$Supplier;
-	public final fun setSupplier (Lsu/plo/slib/api/logging/McLoggerFactory$Supplier;)V
+	public static final fun getSupplier ()Lsu/plo/slib/api/logging/McLoggerFactory$Supplier;
+	public static final fun overrideSupplier (Lsu/plo/slib/api/logging/McLoggerFactory$Supplier;)V
 }
 
 public abstract interface class su/plo/slib/api/logging/McLoggerFactory$Supplier {
