@@ -29,6 +29,7 @@ import net.minestom.server.command.builder.arguments.Argument
 import net.minestom.server.command.builder.arguments.ArgumentLiteral
 import net.minestom.server.command.builder.condition.CommandCondition
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException
+import net.minestom.server.command.builder.suggestion.Suggestion
 import net.minestom.server.command.builder.suggestion.SuggestionCallback
 import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.minestom.server.entity.Player
@@ -303,7 +304,7 @@ class MinestomCommandManager(
 
         val suggestionCallback = SuggestionCallback { sender, context, suggestion ->
             val brigadierContext = context.toBrigadier(sender, command)
-            val suggestions = listSuggestions(brigadierContext, SuggestionsBuilder(context.input, 0)).get()
+            val suggestions = listSuggestions(brigadierContext, suggestion.toBrigadier()).get()
 
             suggestions.list.forEach {
                 suggestion.addEntry(
@@ -314,6 +315,12 @@ class MinestomCommandManager(
         minestomArgument.suggestionCallback = suggestionCallback.requiring(pathRequirement)
 
         return minestomArgument to executor
+    }
+
+    private fun Suggestion.toBrigadier(): SuggestionsBuilder {
+        val input = input.removeSuffix("\u0000")
+
+        return SuggestionsBuilder(input, (start - 1).coerceIn(0, input.length))
     }
 
     // minestom never checks conditions when suggesting, so a client can ask for suggestions of a node it can't use
