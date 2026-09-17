@@ -1,4 +1,4 @@
-name: Build PR
+name: Build
 
 on:
   pull_request:
@@ -9,6 +9,7 @@ on:
       - ready_for_review
   push:
     branches:
+      - main
       - '*/**'
   workflow_dispatch:
 
