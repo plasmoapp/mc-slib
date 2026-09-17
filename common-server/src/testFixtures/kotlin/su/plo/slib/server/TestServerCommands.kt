@@ -2,9 +2,12 @@ package su.plo.slib.server
 
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import dev.apehum.mcdsl.command.literalCommand
 import su.plo.slib.api.chat.component.McTextComponent
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.command.brigadier.McTextMessage
 import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
 import su.plo.slib.api.logging.McLoggerFactory
@@ -154,6 +157,25 @@ fun registerCommands() {
                     source.source.sendMessage("Position: $resolved; Message: $message")
                 }
             }
+        )
+
+        // mcdsl refuses to mix arguments with sub-commands
+        registry.register(
+            LiteralArgumentBuilder.literal<McBrigadierSource>("brigadier-literal-after-argument")
+                .then(
+                    RequiredArgumentBuilder.argument<McBrigadierSource, Int>("value", IntegerArgumentType.integer())
+                        .then(
+                            LiteralArgumentBuilder.literal<McBrigadierSource>("double")
+                                .executes { context ->
+                                    val value = IntegerArgumentType.getInteger(context, "value")
+
+                                    context.source.source.sendMessage("Literal after argument: ${value * 2}")
+
+                                    1
+                                }
+                        )
+                )
+                .build()
         )
 
         registry.register(

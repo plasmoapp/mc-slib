@@ -16,6 +16,7 @@ import com.mojang.brigadier.context.StringRange
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.ArgumentCommandNode
+import com.mojang.brigadier.tree.CommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
 import net.kyori.adventure.text.Component
 import net.minestom.server.MinecraftServer
@@ -25,6 +26,7 @@ import net.minestom.server.command.builder.Command as MinestomCommand
 import net.minestom.server.command.builder.CommandContext as MinestomCommandContext
 import net.minestom.server.command.builder.CommandExecutor
 import net.minestom.server.command.builder.arguments.Argument
+import net.minestom.server.command.builder.arguments.ArgumentLiteral
 import net.minestom.server.command.builder.condition.CommandCondition
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException
 import net.minestom.server.command.builder.suggestion.SuggestionCallback
@@ -122,17 +124,17 @@ class MinestomCommandManager(
             }
 
         children.filterIsInstance<ArgumentCommandNode<McBrigadierSource, *>>()
-            .forEach { registerArgumentSyntaxes(dispatcher, minestomCommand, it, emptyList(), null, pathRequirement) }
+            .forEach { registerSyntaxes(dispatcher, minestomCommand, it, emptyList(), null, pathRequirement) }
 
         minestomCommand.defaultExecutor = dispatcher.toMinestomExecutor()
 
         return minestomCommand
     }
 
-    private fun registerArgumentSyntaxes(
+    private fun registerSyntaxes(
         dispatcher: CommandDispatcher<McBrigadierSource>,
         minestomCommand: MinestomCommand,
-        node: ArgumentCommandNode<McBrigadierSource, *>,
+        node: CommandNode<McBrigadierSource>,
         prefix: List<Argument<*>>,
         prefixRequirement: Predicate<McBrigadierSource>?,
         parentPathRequirement: Predicate<McBrigadierSource>,
@@ -141,8 +143,7 @@ class MinestomCommandManager(
         val (argument, executor) = node.toMinestom(pathRequirement)
         val pathSoFar = prefix + argument
         val requirement = prefixRequirement?.and(node.requirement) ?: node.requirement
-        val argDescendants = node.children.filterIsInstance<ArgumentCommandNode<McBrigadierSource, *>>()
-        val hasSyntax = executor != null || argDescendants.isEmpty()
+        val hasSyntax = executor != null || node.children.isEmpty()
 
         if (hasSyntax) {
             minestomCommand.addConditionalSyntax(
@@ -152,8 +153,8 @@ class MinestomCommandManager(
             )
         }
 
-        argDescendants.forEach { child ->
-            registerArgumentSyntaxes(
+        node.children.forEach { child ->
+            registerSyntaxes(
                 dispatcher,
                 minestomCommand,
                 child,
@@ -249,7 +250,16 @@ class MinestomCommandManager(
             max?.let { buffer.write(type, it) }
         }
 
-    private fun <T> ArgumentCommandNode<McBrigadierSource, T>.toMinestom(
+    private fun CommandNode<McBrigadierSource>.toMinestom(
+        pathRequirement: Predicate<McBrigadierSource>,
+    ): Pair<Argument<*>, CommandExecutor?> =
+        when (this) {
+            is ArgumentCommandNode<McBrigadierSource, *> -> toMinestomArgument(pathRequirement)
+            is LiteralCommandNode<McBrigadierSource> -> ArgumentLiteral(name) to command?.toMinestom()
+            else -> throw IllegalArgumentException("Unsupported command node: $this")
+        }
+
+    private fun <T> ArgumentCommandNode<McBrigadierSource, T>.toMinestomArgument(
         pathRequirement: Predicate<McBrigadierSource>,
     ): Pair<Argument<T>, CommandExecutor?> {
         val argumentType = type

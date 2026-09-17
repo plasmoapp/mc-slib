@@ -35,6 +35,7 @@ case "$ENV_TYPE" in
           "Command 'brigadier-nested-custom-type' registered"
           "Command 'brigadier-server-translation' registered"
           "Command 'brigadier-multi-arg' registered"
+          "Command 'brigadier-literal-after-argument' registered"
           "Message from main thread"
           "Channel handler registered: slib:channels/test"
         )
@@ -53,6 +54,7 @@ case "$ENV_TYPE" in
           "brigadier-entity-selector players @a"
           "brigadier-position-selector 100 100 100"
           "brigadier-multi-arg 7 13"
+          "brigadier-literal-after-argument 21 double"
           "brigadier-unbound-requires"
           "brigadier-denied-requires literal"
           "brigadier-denied-requires argument 7"
@@ -72,6 +74,7 @@ case "$ENV_TYPE" in
           "Found players:"
           "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0, yaw=0.0, pitch=0.0\\)"
           "Multi-arg: a=7, b=13"
+          "Literal after argument: 42"
           "Unbound requires guard survived parsing"
           "Denied requires checked: literal"
           "Denied requires checked: argument"
