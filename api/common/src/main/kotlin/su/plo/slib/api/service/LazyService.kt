@@ -1,7 +1,9 @@
 package su.plo.slib.api.service
 
+import org.jetbrains.annotations.ApiStatus
 import java.util.ServiceLoader
 
+@ApiStatus.Internal
 inline fun <reified T> lazyService(): Lazy<T> =
     lazy {
         // some loaders can't find service by class's classloader,

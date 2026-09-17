@@ -356,18 +356,22 @@ public abstract interface class su/plo/slib/api/language/ServerTranslator {
 	public abstract fun setForcedLanguage (Ljava/lang/String;)V
 }
 
-public final class su/plo/slib/api/logging/McLazyLogger : kotlin/Lazy, su/plo/slib/api/logging/McLogger {
+public final class su/plo/slib/api/logging/McLazyLogger : su/plo/slib/api/logging/McLogger {
 	public fun <init> (Ljava/lang/String;)V
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lsu/plo/slib/api/logging/McLazyLogger$NameResolver;)V
 	public fun debug (Ljava/lang/String;[Ljava/lang/Object;)V
 	public fun error (Ljava/lang/String;[Ljava/lang/Object;)V
 	public fun getName ()Ljava/lang/String;
-	public synthetic fun getValue ()Ljava/lang/Object;
-	public fun getValue ()Lsu/plo/slib/api/logging/McLogger;
+	public final fun getValue ()Lsu/plo/slib/api/logging/McLogger;
 	public fun info (Ljava/lang/String;[Ljava/lang/Object;)V
-	public fun isInitialized ()Z
+	public final fun isInitialized ()Z
 	public fun trace (Ljava/lang/String;[Ljava/lang/Object;)V
 	public fun warn (Ljava/lang/String;[Ljava/lang/Object;)V
+}
+
+public abstract interface class su/plo/slib/api/logging/McLazyLogger$NameResolver {
+	public abstract fun resolve (Lsu/plo/slib/api/logging/McLazyLogger;)Ljava/lang/String;
 }
 
 public abstract interface class su/plo/slib/api/logging/McLogger {

@@ -1,19 +1,21 @@
 package su.plo.slib.api.logging
 
 class McLazyLogger(
-    private val nameResolver: (McLazyLogger) -> String
-) : McLogger, Lazy<McLogger> {
+    private val nameResolver: NameResolver,
+) : McLogger {
+    constructor(name: String) : this(NameResolver { name })
 
-    constructor(name: String) : this({ _ -> name })
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    constructor(nameResolver: (McLazyLogger) -> String) : this(NameResolver { nameResolver(it) })
 
     private var logger: McLogger? = null
 
-    private val resolvedName by lazy { nameResolver(this) }
+    private val resolvedName by lazy { nameResolver.resolve(this) }
 
-    override val value: McLogger
+    val value: McLogger
         get() = logger ?: McLoggerFactory.supplier.createLogger(resolvedName)
 
-    override fun isInitialized(): Boolean =
+    fun isInitialized(): Boolean =
         logger != null
 
     override fun getName(): String = resolvedName
@@ -32,4 +34,8 @@ class McLazyLogger(
 
     override fun error(format: String, vararg arguments: Any?) =
         value.error(format, *arguments)
+
+    fun interface NameResolver {
+        fun resolve(logger: McLazyLogger): String
+    }
 }
