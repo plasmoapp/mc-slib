@@ -4,6 +4,7 @@ import su.plo.slib.api.position.Pos3d
 import su.plo.slib.api.server.world.McServerWorld
 import java.lang.ref.Reference
 import java.lang.ref.WeakReference
+import kotlin.jvm.internal.DefaultConstructorMarker
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -20,16 +21,38 @@ import kotlin.math.sin
  * @property yaw The yaw (horizontal rotation) angle of the entity at this position (default is 0 degrees).
  * @property pitch The pitch (vertical rotation) angle of the entity at this position (default is 0 degrees).
  */
-class ServerPos3d @JvmOverloads constructor(
+class ServerPos3d(
     world: McServerWorld?,
     var x: Double,
     var y: Double,
     var z: Double,
-    var yaw: Float = 0f,
-    var pitch: Float = 0f
+    var yaw: Float,
+    var pitch: Float,
 ) {
+    constructor(world: McServerWorld?, x: Double, y: Double, z: Double) : this(world, x, y, z, 0f, 0f)
+
+    constructor(world: McServerWorld?, x: Double, y: Double, z: Double, yaw: Float) : this(world, x, y, z, yaw, 0f)
 
     constructor() : this(null, 0.0, 0.0, 0.0)
+
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    constructor(
+        world: McServerWorld?,
+        x: Double,
+        y: Double,
+        z: Double,
+        yaw: Float,
+        pitch: Float,
+        defaultsMask: Int,
+        marker: DefaultConstructorMarker?
+    ) : this(
+        world,
+        x,
+        y,
+        z,
+        if (defaultsMask and 0x10 != 0) 0f else yaw,
+        if (defaultsMask and 0x20 != 0) 0f else pitch
+    )
 
     private var worldReference: Reference<McServerWorld> = WeakReference(world)
 
