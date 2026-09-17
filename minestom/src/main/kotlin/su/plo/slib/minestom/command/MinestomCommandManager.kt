@@ -32,7 +32,6 @@ import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.minestom.server.entity.Player
 import net.minestom.server.network.NetworkBuffer
 import su.plo.slib.api.chat.component.McTextComponent
-import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.command.brigadier.CustomArgumentType
@@ -191,7 +190,7 @@ class MinestomCommandManager(
                 return@CommandExecutor
             }
 
-            source.catchingFailures { execute(parseResults) }
+            source.catchingFailures(context.input) { execute(parseResults) }
         }
 
     private fun CommandDispatcher<McBrigadierSource>.parseAs(
@@ -286,18 +285,17 @@ class MinestomCommandManager(
         CommandExecutor { sender, context ->
             val brigadierContext = context.toBrigadier(sender, this@toMinestom)
 
-            getCommandSource(sender).catchingFailures { this@toMinestom.run(brigadierContext) }
+            getCommandSource(sender).catchingFailures(context.input) { this@toMinestom.run(brigadierContext) }
         }
 
-    private inline fun McCommandSource.catchingFailures(block: () -> Unit) {
+    private inline fun McCommandSource.catchingFailures(input: String, block: () -> Unit) {
         try {
             block()
         } catch (e: CommandSyntaxException) {
             sendFailure(e)
         } catch (e: Exception) {
-            sendMessage(
-                McTextComponent.literal(e.message ?: "Unknown error").withStyle(McTextStyle.RED)
-            )
+            logger.error("Failed to execute command /{}", input, e)
+            sendFailure(McTextComponent.translatable("command.failed"))
         }
     }
 

@@ -7,8 +7,8 @@ import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.TabExecutor
 import su.plo.slib.api.chat.component.McTextComponent
-import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.command.brigadier.McBrigadierSource
+import su.plo.slib.api.logging.McLogger
 import su.plo.slib.bungee.command.BungeeCommandManager
 import su.plo.slib.command.brigadier.parseException
 import su.plo.slib.command.brigadier.sendFailure
@@ -16,6 +16,7 @@ import su.plo.slib.command.brigadier.sendParseFailure
 
 class BungeeBrigadierCommand(
     private val commandManager: BungeeCommandManager,
+    private val logger: McLogger,
     private val command: LiteralCommandNode<McBrigadierSource>,
     aliases: Collection<String> = emptyList(),
 ) : Command(command.literal, null, *aliases.toTypedArray()), TabExecutor {
@@ -41,9 +42,8 @@ class BungeeBrigadierCommand(
         } catch (e: CommandSyntaxException) {
             context.source.sendFailure(e)
         } catch (e: Exception) {
-            context.source.sendMessage(
-                McTextComponent.literal(e.message ?: "Unknown error").withStyle(McTextStyle.RED)
-            )
+            logger.error("Failed to execute command /{}", input, e)
+            context.source.sendFailure(McTextComponent.translatable("command.failed"))
         }
     }
 

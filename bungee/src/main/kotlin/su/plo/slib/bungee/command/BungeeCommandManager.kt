@@ -43,6 +43,7 @@ class BungeeCommandManager(
                     plugin,
                     BungeeBrigadierCommand(
                         this,
+                        logger,
                         node.proxied(logger, { it }, { it }),
                         aliases,
                     ),
