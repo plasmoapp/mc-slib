@@ -44,7 +44,7 @@ class BungeeCommandManager(
                     BungeeBrigadierCommand(
                         this,
                         logger,
-                        node.proxied(logger, { it }, { it }),
+                        node.proxied(logger, { it }, { it }, sourceUnwrapper = { it }),
                         aliases,
                     ),
                 )

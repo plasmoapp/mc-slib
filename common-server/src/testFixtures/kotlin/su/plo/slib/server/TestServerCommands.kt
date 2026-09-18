@@ -1,5 +1,6 @@
 package su.plo.slib.server
 
+import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
@@ -183,12 +184,32 @@ fun registerCommands() {
 
                                     context.source.source.sendMessage("Literal after argument: ${value * 2}")
 
-                                    1
+                                    Command.SINGLE_SUCCESS
                                 }
                         )
                 )
                 .build()
         )
+
+        val redirectCommand = literalCommand<McBrigadierSource>("brigadier-redirect") {
+            val value by argument("value", IntegerArgumentType.integer())
+
+            executes {
+                source.source.sendMessage("Redirect: $value")
+            }
+        }
+        redirectCommand.addChild(
+            LiteralArgumentBuilder.literal<McBrigadierSource>("again")
+                .redirect(redirectCommand)
+                .build()
+        )
+        redirectCommand.addChild(
+            LiteralArgumentBuilder.literal<McBrigadierSource>("fork")
+                .fork(redirectCommand) { context -> listOf(context.source) }
+                .build()
+                .apply { addChild(LiteralArgumentBuilder.literal<McBrigadierSource>("shadowed").build()) }
+        )
+        registry.register(redirectCommand)
 
         registry.register(
             literalCommand("brigadier-unbound-requires") {

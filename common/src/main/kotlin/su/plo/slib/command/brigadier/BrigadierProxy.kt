@@ -11,9 +11,11 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import com.mojang.brigadier.tree.ArgumentCommandNode
 import com.mojang.brigadier.tree.CommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
+import com.mojang.brigadier.tree.RootCommandNode
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.logging.McLogger
+import java.util.IdentityHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 
 private val notBoundCommandException = SimpleCommandExceptionType(
@@ -32,7 +34,10 @@ fun <S> LiteralCommandNode<S>.copyLiteral(newLiteral: String): LiteralCommandNod
         builder.redirect(this)
     }
 
-    return builder.build()
+    val copy = builder.build()
+    if (redirect != null) children.forEach { copy.addChild(it) }
+
+    return copy
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -44,99 +49,116 @@ fun <S> LiteralCommandNode<McBrigadierSource>.proxied(
     sourceFactory: (S) -> McBrigadierSource,
     contextFactory: (CommandContext<S>) -> CommandContext<McBrigadierSource>,
     argumentTypeMapper: (ArgumentType<*>) -> ArgumentType<*>? = { null },
+    sourceUnwrapper: (McBrigadierSource) -> S = { it.getInstance() },
 ): LiteralCommandNode<S> =
-    toProxyNode(logger, sourceFactory, contextFactory, argumentTypeMapper) as LiteralCommandNode<S>
+    CommandNodeProxy(logger, sourceFactory, contextFactory, argumentTypeMapper, sourceUnwrapper)
+        .proxy(this) as LiteralCommandNode<S>
 
-private fun <S> CommandNode<McBrigadierSource>.toProxyNode(
-    logger: McLogger,
-    sourceFactory: (S) -> McBrigadierSource,
-    contextFactory: (CommandContext<S>) -> CommandContext<McBrigadierSource>,
-    argumentTypeMapper: (ArgumentType<*>) -> ArgumentType<*>? = { null },
-): CommandNode<S> {
-    var mappedArgumentType: ArgumentType<*>? = null
+private class CommandNodeProxy<S>(
+    private val logger: McLogger,
+    private val sourceFactory: (S) -> McBrigadierSource,
+    private val contextFactory: (CommandContext<S>) -> CommandContext<McBrigadierSource>,
+    private val argumentTypeMapper: (ArgumentType<*>) -> ArgumentType<*>?,
+    private val sourceUnwrapper: (McBrigadierSource) -> S,
+) {
+    private val proxies = IdentityHashMap<CommandNode<McBrigadierSource>, CommandNode<S>>()
 
-    val node =
-        when (this) {
-            is LiteralCommandNode -> LiteralArgumentBuilder.literal<S>(literal)
-            is ArgumentCommandNode<McBrigadierSource, *> -> {
-                mappedArgumentType = argumentTypeMapper(type)
-                RequiredArgumentBuilder.argument(name, (mappedArgumentType ?: type) as ArgumentType<Any>)
+    fun proxy(node: CommandNode<McBrigadierSource>): CommandNode<S> {
+        proxies[node]?.let { return it }
+
+        val redirect = node.redirect?.let { target ->
+            require(target !is RootCommandNode) {
+                "Command node '${node.name}' redirects to a root node, which can't be proxied"
             }
-            else -> throw IllegalArgumentException("Unsupported command node: $this")
+            proxy(target)
         }
+        proxies[node]?.let { return it }
 
-    redirect?.let { redirect ->
-        val modifier = redirectModifier
+        val proxy = node.toProxyNode(redirect)
+        proxies[node] = proxy
 
-        if (modifier == null) {
-            node.redirect(redirect.toProxyNode(logger, sourceFactory, contextFactory, argumentTypeMapper))
-        } else {
-            val proxiedModifier = RedirectModifier { context ->
-                val context = contextFactory(context)
-                modifier.apply(context).map { it.getInstance() }
-            }
+        node.children.forEach { proxy.addChild(proxy(it)) }
 
-            node.fork(
-                redirect.toProxyNode(logger, sourceFactory, contextFactory, argumentTypeMapper),
-                proxiedModifier,
-            )
-        }
+        return proxy
     }
 
-    children
-        .map { it.toProxyNode(logger, sourceFactory, contextFactory, argumentTypeMapper) }
-        .forEach { node.then(it) }
+    private fun CommandNode<McBrigadierSource>.toProxyNode(redirect: CommandNode<S>?): CommandNode<S> {
+        var mappedArgumentType: ArgumentType<*>? = null
 
-    requirement?.let { requirement ->
-        val warned = AtomicBoolean()
+        val node =
+            when (this) {
+                is LiteralCommandNode -> LiteralArgumentBuilder.literal<S>(literal)
+                is ArgumentCommandNode<McBrigadierSource, *> -> {
+                    mappedArgumentType = argumentTypeMapper(type)
+                    RequiredArgumentBuilder.argument(name, (mappedArgumentType ?: type) as ArgumentType<Any>)
+                }
 
-        node.requires { sourceStack ->
-            val source = sourceFactory(sourceStack)
+                else -> throw IllegalArgumentException("Unsupported command node: $this")
+            }
 
-            if (source.isBound) {
-                requirement.test(source)
-            } else {
-                try {
+        if (redirect != null) {
+            val modifier = redirectModifier
+            val proxiedModifier = modifier?.let {
+                RedirectModifier<S> { context ->
+                    val context = contextFactory(context)
+                    modifier.apply(context).map(sourceUnwrapper)
+                }
+            }
+
+            node.forward(redirect, proxiedModifier, isFork)
+        }
+
+        requirement?.let { requirement ->
+            val warned = AtomicBoolean()
+
+            node.requires { sourceStack ->
+                val source = sourceFactory(sourceStack)
+
+                if (source.isBound) {
                     requirement.test(source)
-                } catch (e: Throwable) {
-                    if (warned.compareAndSet(false, true)) {
-                        warnUnboundRequirementFailure(logger, this@toProxyNode, e)
+                } else {
+                    try {
+                        requirement.test(source)
+                    } catch (e: Throwable) {
+                        if (warned.compareAndSet(false, true)) {
+                            warnUnboundRequirementFailure(logger, this@toProxyNode, e)
+                        }
+                        true
                     }
-                    true
                 }
             }
         }
-    }
 
-    command?.let { command ->
-        node.executes { context ->
-            val context = contextFactory(context)
-            if (!context.source.isBound) throw notBoundCommandException.create()
-
-            try {
-                command.run(context)
-            } catch (e: CommandSyntaxException) {
-                throw e.localizedFor(context.source)
-            }
-        }
-    }
-
-    if (this is ArgumentCommandNode<McBrigadierSource, *>) {
-        val node = node as RequiredArgumentBuilder<S, *>
-        if (this.customSuggestions != null) {
-            node.suggests { context, builder ->
+        command?.let { command ->
+            node.executes { context ->
                 val context = contextFactory(context)
-                listSuggestions(context, builder)
+                if (!context.source.isBound) throw notBoundCommandException.create()
+
+                try {
+                    command.run(context)
+                } catch (e: CommandSyntaxException) {
+                    throw e.localizedFor(context.source)
+                }
             }
         }
-    }
 
-    if (mappedArgumentType == null && node is RequiredArgumentBuilder<S, *> && node.type is CustomArgumentType<*, *>) {
-        @Suppress("UNCHECKED_CAST")
-        return (node as RequiredArgumentBuilder<S, Any>).buildCustom<S, Any, Any>(sourceFactory)
-    }
+        if (this is ArgumentCommandNode<McBrigadierSource, *>) {
+            val node = node as RequiredArgumentBuilder<S, *>
+            if (this.customSuggestions != null) {
+                node.suggests { context, builder ->
+                    val context = contextFactory(context)
+                    listSuggestions(context, builder)
+                }
+            }
+        }
 
-    return node.build()
+        if (mappedArgumentType == null && node is RequiredArgumentBuilder<S, *> && node.type is CustomArgumentType<*, *>) {
+            @Suppress("UNCHECKED_CAST")
+            return (node as RequiredArgumentBuilder<S, Any>).buildCustom<S, Any, Any>(sourceFactory)
+        }
+
+        return node.build()
+    }
 }
 
 private fun warnUnboundRequirementFailure(

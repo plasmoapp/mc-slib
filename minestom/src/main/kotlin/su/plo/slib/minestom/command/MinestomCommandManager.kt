@@ -87,6 +87,7 @@ class MinestomCommandManager(
                         logger,
                         { it },
                         { it },
+                        sourceUnwrapper = { it },
                     ).toMinestom(aliases)
                 )
             }
