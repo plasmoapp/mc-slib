@@ -6,7 +6,7 @@ on:
       - opened
   workflow_run:
     workflows:
-      - 'Build PR'
+      - 'Build'
     types:
       - completed
   issue_comment:
