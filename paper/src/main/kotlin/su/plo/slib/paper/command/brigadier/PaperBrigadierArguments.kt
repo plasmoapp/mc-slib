@@ -7,6 +7,8 @@ import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
+import io.papermc.paper.command.brigadier.argument.resolvers.ArgumentResolver as PaperArgumentResolver
+import io.papermc.paper.math.Position
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.command.brigadier.McTextMessage
@@ -74,7 +76,15 @@ class PaperBrigadierArguments : McArgumentTypes.Provider {
         }
 
     override fun position(): ArgumentType<ServerPos3dResolver> =
-        argumentResolver(ArgumentTypes.blockPosition()) { coordinates ->
+        positionResolver(ArgumentTypes.finePosition(false))
+
+    override fun blockPosition(): ArgumentType<ServerPos3dResolver> =
+        positionResolver(ArgumentTypes.blockPosition())
+
+    private fun <R : PaperArgumentResolver<out Position>> positionResolver(
+        nativeType: ArgumentType<R>,
+    ): ArgumentType<ServerPos3dResolver> =
+        argumentResolver(nativeType) { coordinates ->
             ServerPos3dResolver { source ->
                 val sourceStack = source.getInstance<CommandSourceStack>()
                 val position = coordinates.resolve(sourceStack)

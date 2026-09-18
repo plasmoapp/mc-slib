@@ -136,6 +136,18 @@ fun registerCommands() {
         )
 
         registry.register(
+            literalCommand("brigadier-block-position-selector") {
+                val position by argument("position", McArgumentTypes.blockPosition())
+
+                executes {
+                    val resolved = position.resolve(source)
+
+                    source.source.sendMessage("Block position: $resolved; Source: ${source.source}; Executor: ${source.executor}")
+                }
+            }
+        )
+
+        registry.register(
             literalCommand("brigadier-multi-arg") {
                 val a by argument("a", IntegerArgumentType.integer())
                 val b by argument("b", IntegerArgumentType.integer())

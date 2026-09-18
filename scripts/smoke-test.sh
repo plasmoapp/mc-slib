@@ -30,6 +30,7 @@ case "$ENV_TYPE" in
           "Command 'ping' registered"
           "Command 'brigadier-entity-selector' registered"
           "Command 'brigadier-position-selector' registered"
+          "Command 'brigadier-block-position-selector' registered"
           "Command 'brigadier-game-profiles-selector' registered"
           "Command 'brigadier-custom-type' registered"
           "Command 'brigadier-nested-custom-type' registered"
@@ -53,6 +54,8 @@ case "$ENV_TYPE" in
           "brigadier-entity-selector entities @e"
           "brigadier-entity-selector players @a"
           "brigadier-position-selector 100 100 100"
+          "brigadier-position-selector 100.5 64 -31.75"
+          "brigadier-block-position-selector 100 100 100"
           "brigadier-multi-arg 7 13"
           "brigadier-literal-after-argument 21 double"
           "brigadier-unbound-requires"
@@ -73,6 +76,8 @@ case "$ENV_TYPE" in
           "Found entities:"
           "Found players:"
           "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0, yaw=0.0, pitch=0.0\\)"
+          "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.5, y=64.0, z=-31.75,"
+          "Block position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=100.0, z=100.0,"
           "Multi-arg: a=7, b=13"
           "Literal after argument: 42"
           "Unbound requires guard survived parsing"
@@ -95,6 +100,14 @@ case "$ENV_TYPE" in
             FORBIDDEN_PATTERNS+=(
               "Failed to load function"
               "Whilst parsing command"
+            )
+            COMMAND_INPUTS+=(
+              "execute positioned 100.5 64 -31.75 run brigadier-position-selector ~ ~ ~"
+              "execute positioned 100.5 64 -31.75 run brigadier-block-position-selector ~ ~ ~"
+            )
+            COMMAND_OUTPUT_PATTERNS+=(
+              "Position: ServerPos3d\\(world=$POSITION_WORLD, x=100.5, y=64.0, z=-31.75,"
+              "Block position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=64.0, z=-32.0,"
             )
         fi
         ;;

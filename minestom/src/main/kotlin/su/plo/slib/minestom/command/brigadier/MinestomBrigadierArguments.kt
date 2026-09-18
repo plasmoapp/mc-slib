@@ -2,10 +2,14 @@ package su.plo.slib.minestom.command.brigadier
 
 import com.mojang.brigadier.arguments.ArgumentType
 import net.minestom.server.MinecraftServer
+import net.minestom.server.command.builder.arguments.Argument
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeBlockPosition
+import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec3
+import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.Player
+import net.minestom.server.utils.location.RelativeVec
 import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
@@ -77,14 +81,21 @@ class MinestomBrigadierArguments : McArgumentTypes.Provider {
         }
 
     override fun position(): ArgumentType<ServerPos3dResolver> =
-        argumentResolver(
-            MinestomArgumentType { name -> ArgumentRelativeBlockPosition(name) }
-        ) { resolver ->
+        positionResolver(::ArgumentRelativeVec3) { it }
+
+    override fun blockPosition(): ArgumentType<ServerPos3dResolver> =
+        positionResolver(::ArgumentRelativeBlockPosition) { it.apply(Vec.Operator.FLOOR) }
+
+    private fun positionResolver(
+        argumentBuilder: (String) -> Argument<RelativeVec>,
+        resolve: (Vec) -> Vec,
+    ): ArgumentType<ServerPos3dResolver> =
+        argumentResolver(MinestomArgumentType(argumentBuilder)) { resolver ->
             ServerPos3dResolver { source ->
                 val entity = source.executor as? McServerEntity
                 val entityPosition = entity?.getServerPosition()
 
-                val position = resolver.from(entity?.getInstance<Entity>())
+                val position = resolve(resolver.from(entity?.getInstance<Entity>()))
 
                 ServerPos3d(
                     entity?.world,
