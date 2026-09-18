@@ -13,7 +13,7 @@ class JavaLogger(
     }
 
     override fun debug(format: String, vararg arguments: Any?) {
-        logFormatted(Level.ALL, format, arguments)
+        logFormatted(Level.FINE, format, arguments)
     }
 
     override fun info(format: String, vararg arguments: Any?) {
@@ -29,10 +29,26 @@ class JavaLogger(
     }
 
     private fun logFormatted(level: Level, format: String, arguments: Array<out Any?>) {
+        if (!isLoggable(level)) return
+
         val thrown = arguments.lastOrNull() as? Throwable
-        log(level, String.format(format.convertFromSlf4jFormat(), *arguments), thrown)
+        val formatArguments = if (thrown != null) arguments.dropLast(1) else arguments.asList()
+
+        log(level, format.formatSlf4j(formatArguments), thrown)
     }
 
-    private fun String.convertFromSlf4jFormat(): String =
-        replace("{}", "%s")
+    private fun String.formatSlf4j(arguments: List<Any?>): String {
+        val result = StringBuilder(length)
+        var start = 0
+
+        for (argument in arguments) {
+            val placeholder = indexOf("{}", start)
+            if (placeholder < 0) break
+
+            result.append(this, start, placeholder).append(argument)
+            start = placeholder + 2
+        }
+
+        return result.append(this, start, length).toString()
+    }
 }
