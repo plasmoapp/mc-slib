@@ -31,6 +31,8 @@ import su.plo.slib.mod.entity.ModServerEntity
 import su.plo.slib.mod.entity.ModServerPlayer
 import su.plo.slib.mod.event.server.ServerStoppingEvent
 import su.plo.slib.mod.extension.toMcGameProfile
+import su.plo.slib.mod.mixin.accessor.ProfileCacheAccessor
+import su.plo.slib.mod.mixin.accessor.ProfileCacheEntryAccessor
 import su.plo.slib.mod.permission.ModPermissionSupplier
 import su.plo.slib.mod.scheduler.ModServerScheduler
 import su.plo.slib.mod.world.ModServerWorld
@@ -38,10 +40,6 @@ import java.io.File
 import java.util.UUID
 import java.util.function.Function
 import kotlin.time.Duration.Companion.seconds
-
-//? if >=1.21.9 {
-/*import com.mojang.authlib.GameProfile
-*///?}
 
 object ModServerLib : McServerLib {
 
@@ -141,31 +139,26 @@ object ModServerLib : McServerLib {
     }
 
     override fun getGameProfile(playerId: UUID): McGameProfile? {
+        getPlayerById(playerId)?.let { return it.gameProfile }
+
         //? if >=1.21.9 {
-        /*return minecraftServer.services().nameToIdCache.get(playerId)
-            .map {
-                minecraftServer.services().profileResolver.fetchById(playerId)
-                    .orElse(GameProfile(it.id, it.name))
-            }
-            .map { it.toMcGameProfile() }
-            .orElse(null)
+        /*return minecraftServer.services().nameToIdCache.get(playerId).orElse(null)?.toMcGameProfile()
         *///?} else {
         return minecraftServer.profileCache?.get(playerId)?.orElse(null)?.toMcGameProfile()
         //?}
     }
 
     override fun getGameProfile(name: String): McGameProfile? {
+        getPlayerByName(name)?.let { return it.gameProfile }
+
         //? if >=1.21.9 {
-        /*return minecraftServer.services().nameToIdCache.get(name)
-            .map {
-                minecraftServer.services().profileResolver.fetchByName(name)
-                    .orElse(GameProfile(it.id, it.name))
-            }
-            .map { it.toMcGameProfile() }
-            .orElse(null)
+        /*val profileCache = minecraftServer.services().nameToIdCache as? ProfileCacheAccessor
         *///?} else {
-        return minecraftServer.profileCache?.get(name)?.orElse(null)?.toMcGameProfile()
+        val profileCache = minecraftServer.profileCache as? ProfileCacheAccessor
         //?}
+        val entry = profileCache?.slib_getProfilesByName()?.get(name.lowercase()) as? ProfileCacheEntryAccessor
+
+        return entry?.slib_getProfile()?.toMcGameProfile()
     }
 
     private fun worldsCleanupTick() {

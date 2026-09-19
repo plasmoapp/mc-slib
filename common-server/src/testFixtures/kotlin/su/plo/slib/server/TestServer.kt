@@ -20,6 +20,7 @@ class TestServer(
         minecraftServer.serverTranslator.defaultLanguage = UNTRANSLATED_LANGUAGE
         minecraftServer.serverTranslator.register(TEST_LANGUAGE, testTranslations)
 
+        serverLib = minecraftServer
         registerCommands()
 
         McPlayerJoinEvent.registerListener { player ->

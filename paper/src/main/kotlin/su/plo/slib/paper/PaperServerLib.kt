@@ -1,9 +1,7 @@
 package su.plo.slib.paper
 
-import com.google.common.collect.ImmutableList
 import com.google.common.collect.Maps
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import org.bukkit.World
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
@@ -35,6 +33,7 @@ import su.plo.slib.paper.command.PaperCommandManager
 import su.plo.slib.paper.entity.PaperServerEntity
 import su.plo.slib.paper.entity.PaperServerPlayer
 import su.plo.slib.paper.extension.addChannel
+import su.plo.slib.paper.extension.toMcGameProfileOrNull
 import su.plo.slib.paper.integration.PaperVanishIntegration
 import su.plo.slib.paper.integration.PremiumVanishIntegration
 import su.plo.slib.paper.permission.PaperPermissionSupplier
@@ -42,7 +41,6 @@ import su.plo.slib.paper.scheduler.PaperServerScheduler
 import su.plo.slib.paper.util.SchedulerUtil
 import su.plo.slib.paper.world.PaperServerWorld
 import java.io.File
-import java.util.Optional
 import java.util.UUID
 import java.util.function.Function
 
@@ -150,21 +148,11 @@ class PaperServerLib @JvmOverloads constructor(
         playerById[playerId] ?: Bukkit.getPlayer(playerId)?.let { getPlayerByInstance(it) }
 
     override fun getGameProfile(playerId: UUID): McGameProfile? =
-        Optional.of(Bukkit.getServer().getOfflinePlayer(playerId))
-            .filter { it.isOnline || it.hasPlayedBefore() }
-            .map(::getGameProfile)
-            .orElse(null)
+        Bukkit.getPlayer(playerId)?.playerProfile?.toMcGameProfileOrNull()
+            ?: Bukkit.createProfile(playerId).takeIf { it.completeFromCache() }?.toMcGameProfileOrNull()
 
-    @Suppress("DEPRECATION")
     override fun getGameProfile(name: String): McGameProfile? =
-        Optional.of(Bukkit.getServer().getOfflinePlayer(name))
-            .filter { it.isOnline || it.hasPlayedBefore() }
-            .map(::getGameProfile)
-            .orElse(null)
-
-    private fun getGameProfile(offlinePlayer: OfflinePlayer): McGameProfile =
-        // todo: use game profile properties?
-        McGameProfile(offlinePlayer.uniqueId, offlinePlayer.name ?: "", ImmutableList.of())
+        Bukkit.getOfflinePlayerIfCached(name)?.playerProfile?.toMcGameProfileOrNull()
 
     override fun getEntityByInstance(instance: Any): McServerEntity {
         require(instance is Entity) { "instance is not ${Entity::class.java}" }

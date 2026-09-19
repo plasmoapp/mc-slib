@@ -12,6 +12,7 @@ import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.command.brigadier.McTextMessage
 import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.server.command.NestedGameProfilesArgumentType
 import su.plo.slib.server.command.NestedGameProfilesTarget
@@ -21,6 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 private val registered = AtomicBoolean()
 private val logger = McLoggerFactory.createLogger("TestServerCommands")
+
+internal lateinit var serverLib: McServerLib
 
 private val commandFailed = DynamicCommandExceptionType { value ->
     McTextMessage.of(
@@ -104,6 +107,26 @@ fun registerCommands() {
                     val gameProfiles = targets.resolve(source)
 
                     source.source.sendMessage("Found game profiles: $gameProfiles; Source: ${source.source}; Executor: ${source.executor}")
+                }
+            }
+        )
+
+        registry.register(
+            literalCommand("game-profile") {
+                literalCommand("uuid") {
+                    val uuid by argument("uuid", UuidArgumentType())
+
+                    executes {
+                        source.sendFeedback("Game profile: ${serverLib.getGameProfile(uuid)}")
+                    }
+                }
+
+                literalCommand("name") {
+                    val playerName by argument("name", StringArgumentType.word())
+
+                    executes {
+                        source.sendFeedback("Game profile: ${serverLib.getGameProfile(playerName)}")
+                    }
                 }
             }
         )

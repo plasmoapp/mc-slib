@@ -5,7 +5,9 @@
     "mixins": [
         "MixinPlayerList",
         "MixinServerPlayer",
-        "accessor.CommandSourceStackAccessor"
+        "accessor.CommandSourceStackAccessor",
+        "accessor.ProfileCacheAccessor",
+        "accessor.ProfileCacheEntryAccessor"
         //? if >=1.21.10 {
         /*,"accessor.ServerPlayerCommandSourceAccessor"
         *///?}
