@@ -11,6 +11,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType as PaperCustomArgumentType
+import io.papermc.paper.plugin.configuration.PluginMeta
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.command.brigadier.McBrigadierSource
@@ -22,6 +23,7 @@ import su.plo.slib.command.brigadier.localizedFor
 import su.plo.slib.command.brigadier.proxied
 import su.plo.slib.command.brigadier.unwrapNativeType
 import su.plo.slib.paper.PaperServerLib
+import su.plo.slib.paper.command.PaperPluginBinding
 import su.plo.slib.paper.command.PaperUnboundCommandSource
 import java.lang.ref.WeakReference
 import java.util.concurrent.CompletableFuture
@@ -33,9 +35,12 @@ import java.util.concurrent.CompletableFuture
 private val parsingSourceStack = ThreadLocal<WeakReference<CommandSourceStack>>()
 
 internal fun Commands.collectAndApply(
+    owner: PluginMeta,
     logger: McLogger,
     logRegistered: Boolean,
 ) {
+    val binding = PaperPluginBinding(owner)
+
     val phase =
         if (PaperServerLib.instanceOrNull == null) McBrigadierRegistry.Phase.BOOTSTRAP
         else McBrigadierRegistry.Phase.RUNTIME
@@ -43,6 +48,7 @@ internal fun Commands.collectAndApply(
     collectBrigadierCommands(phase)
         .applyEach(logger, logRegistered) { (node, description, aliases) ->
             register(
+                owner,
                 node.proxied(
                     logger,
                     { sourceStack ->
@@ -51,6 +57,7 @@ internal fun Commands.collectAndApply(
                     },
                     { it.toMc() },
                     { it.toPaperArgumentType() },
+                    isUnbound = binding::isUnbound,
                 ),
                 description,
                 aliases,

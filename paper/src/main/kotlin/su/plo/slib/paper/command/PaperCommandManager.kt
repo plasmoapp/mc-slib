@@ -21,6 +21,8 @@ class PaperCommandManager(
 ) : AbstractCommandManager<McCommand>(minecraftServer.baseLogger) {
     @Synchronized
     fun registerCommands(loader: JavaPlugin) {
+        val binding = PaperPluginBinding(loader.pluginMeta)
+
         McServerCommandsRegisterEvent.invoker.onCommandsRegister(this, minecraftServer)
         registered = true
 
@@ -28,8 +30,8 @@ class PaperCommandManager(
             val registrar = event.registrar()
 
             try {
-                if (!isCommandHandlerBootstrapped) registrar.collectAndApply(logger, logRegisteredCommands)
-                registerBasicCommands(loader.pluginMeta, registrar)
+                if (!isCommandHandlerBootstrapped) registrar.collectAndApply(loader.pluginMeta, logger, logRegisteredCommands)
+                registerBasicCommands(loader.pluginMeta, binding, registrar)
             } catch (e: Throwable) {
                 logger.error("Failed to register commands", e)
             }
@@ -44,7 +46,7 @@ class PaperCommandManager(
     }
 
     @Synchronized
-    private fun registerBasicCommands(pluginMeta: PluginMeta, registrar: Commands) {
+    private fun registerBasicCommands(pluginMeta: PluginMeta, binding: PaperPluginBinding, registrar: Commands) {
         registerCommands { name, command, namespace ->
             try {
                 val namespacePluginMeta = Bukkit.getPluginManager().plugins
@@ -57,7 +59,7 @@ class PaperCommandManager(
                     name,
                     null,
                     emptyList(),
-                    PaperBasicCommand(minecraftServer, this, command),
+                    PaperBasicCommand(minecraftServer, this, command, binding),
                 )
             } catch (e: Throwable) {
                 logger.error("Failed to register command '{}'", name, e)

@@ -26,6 +26,7 @@ fun BootstrapContext.registerCommandHandler(
         lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { event ->
             try {
                 event.registrar().collectAndApply(
+                    pluginMeta,
                     McLoggerFactory.createLogger(logger, "CommandManager"),
                     PaperServerLib.instanceOrNull?.commandManager?.logRegisteredCommands ?: logRegisteredCommands,
                 )

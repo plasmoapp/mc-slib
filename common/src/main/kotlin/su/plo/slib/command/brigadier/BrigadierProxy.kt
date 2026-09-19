@@ -22,6 +22,10 @@ private val notBoundCommandException = SimpleCommandExceptionType(
     LiteralMessage("This command is not available yet, the server is still starting")
 )
 
+private val unboundCommandException = SimpleCommandExceptionType(
+    LiteralMessage("This command is no longer available")
+)
+
 fun <S> LiteralCommandNode<S>.copyLiteral(newLiteral: String): LiteralCommandNode<S> {
     val builder = LiteralArgumentBuilder.literal<S>(newLiteral)
         .requires(requirement)
@@ -50,8 +54,9 @@ fun <S> LiteralCommandNode<McBrigadierSource>.proxied(
     contextFactory: (CommandContext<S>) -> CommandContext<McBrigadierSource>,
     argumentTypeMapper: (ArgumentType<*>) -> ArgumentType<*>? = { null },
     sourceUnwrapper: (McBrigadierSource) -> S = { it.getInstance() },
+    isUnbound: () -> Boolean = { false },
 ): LiteralCommandNode<S> =
-    CommandNodeProxy(logger, sourceFactory, contextFactory, argumentTypeMapper, sourceUnwrapper)
+    CommandNodeProxy(logger, sourceFactory, contextFactory, argumentTypeMapper, sourceUnwrapper, isUnbound)
         .proxy(this) as LiteralCommandNode<S>
 
 private class CommandNodeProxy<S>(
@@ -60,6 +65,7 @@ private class CommandNodeProxy<S>(
     private val contextFactory: (CommandContext<S>) -> CommandContext<McBrigadierSource>,
     private val argumentTypeMapper: (ArgumentType<*>) -> ArgumentType<*>?,
     private val sourceUnwrapper: (McBrigadierSource) -> S,
+    private val isUnbound: () -> Boolean,
 ) {
     private val proxies = IdentityHashMap<CommandNode<McBrigadierSource>, CommandNode<S>>()
 
@@ -99,7 +105,9 @@ private class CommandNodeProxy<S>(
         if (redirect != null) {
             val modifier = redirectModifier
             val proxiedModifier = modifier?.let {
-                RedirectModifier<S> { context ->
+                RedirectModifier { context ->
+                    if (isUnbound()) throw unboundCommandException.create()
+
                     val context = contextFactory(context)
                     modifier.apply(context).map(sourceUnwrapper)
                 }
@@ -112,6 +120,8 @@ private class CommandNodeProxy<S>(
             val warned = AtomicBoolean()
 
             node.requires { sourceStack ->
+                if (isUnbound()) return@requires false
+
                 val source = sourceFactory(sourceStack)
 
                 if (source.isBound) {
@@ -131,6 +141,8 @@ private class CommandNodeProxy<S>(
 
         command?.let { command ->
             node.executes { context ->
+                if (isUnbound()) throw unboundCommandException.create()
+
                 val context = contextFactory(context)
                 if (!context.source.isBound) throw notBoundCommandException.create()
 
@@ -146,6 +158,8 @@ private class CommandNodeProxy<S>(
             val node = node as RequiredArgumentBuilder<S, *>
             if (this.customSuggestions != null) {
                 node.suggests { context, builder ->
+                    if (isUnbound()) return@suggests builder.buildFuture()
+
                     val context = contextFactory(context)
                     listSuggestions(context, builder)
                 }
