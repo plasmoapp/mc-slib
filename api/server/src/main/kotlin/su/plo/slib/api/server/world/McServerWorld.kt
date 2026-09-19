@@ -12,7 +12,7 @@ interface McServerWorld {
      *
      * The returned value differs between platforms:
      *   - For Bukkit: the world folder name, e.g. "world_nether"
-     *   - For modded servers (Fabric/Forge): the dimension key, e.g. "minecraft:the_nether"
+     *   - For modded servers (Fabric/NeoForge): the dimension key, e.g. "minecraft:the_nether"
      *   - For Minestom: the instance uuid
      *
      * Prefer [key] for anything that has to be portable between platforms or persisted.
@@ -47,7 +47,7 @@ interface McServerWorld {
      *
      * The return type of this method may vary depending on the server platform:
      *   - For Bukkit: [org.bukkit.World]
-     *   - For modded servers (Fabric/Forge): [net.minecraft.server.level.ServerLevel]
+     *   - For modded servers (Fabric/NeoForge): [net.minecraft.server.level.ServerLevel]
      *
      * @return The server's implementation object associated with this world.
      * @param T The expected type of the implementation object.

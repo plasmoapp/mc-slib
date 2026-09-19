@@ -8,15 +8,18 @@ import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.event.EventHandler
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.proxy.command.McProxyCommand
 import su.plo.slib.api.proxy.event.command.McProxyCommandExecuteEvent
 import su.plo.slib.bungee.BungeeProxyLib
 import su.plo.slib.bungee.command.brigadier.BungeeBrigadierCommand
 import su.plo.slib.command.AbstractCommandManager
-import su.plo.slib.command.proxied
+import su.plo.slib.command.brigadier.applyEach
+import su.plo.slib.command.brigadier.collectBrigadierCommands
+import su.plo.slib.command.brigadier.proxied
 
 class BungeeCommandManager(
-    private val minecraftProxy: BungeeProxyLib
+    private val minecraftProxy: BungeeProxyLib,
 ) : AbstractCommandManager<McProxyCommand>(minecraftProxy.baseLogger), Listener {
 
     @EventHandler
@@ -34,12 +37,18 @@ class BungeeCommandManager(
             proxyServer.pluginManager.registerCommand(plugin, BungeeCommand(minecraftProxy, this, command, name))
         }
 
-        registerBrigadierCommands { command, _ ->
-            proxyServer.pluginManager.registerCommand(
-                plugin,
-                BungeeBrigadierCommand(this, command.proxied({ it }, { it })),
-            )
-        }
+        collectBrigadierCommands(McBrigadierRegistry.Phase.RUNTIME)
+            .applyEach(logger, logRegisteredCommands) { (node, _, aliases) ->
+                proxyServer.pluginManager.registerCommand(
+                    plugin,
+                    BungeeBrigadierCommand(
+                        this,
+                        logger,
+                        node.proxied(logger, { it }, { it }, sourceUnwrapper = { it }),
+                        aliases,
+                    ),
+                )
+            }
 
         registered = true
     }

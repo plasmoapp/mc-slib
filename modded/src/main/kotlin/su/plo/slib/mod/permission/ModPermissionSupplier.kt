@@ -5,9 +5,7 @@ import su.plo.slib.api.permission.PermissionTristate
 import su.plo.slib.permission.PermissionSupplier
 import su.plo.slib.mod.ModServerLib
 
-//? if forge {
-/*import net.minecraftforge.server.permission.PermissionAPI
-*///?} elif neoforge {
+//? if neoforge {
 /*import net.neoforged.neoforge.server.permission.PermissionAPI
 *///?}
 
@@ -33,18 +31,10 @@ class ModPermissionSupplier(
         //? if fabric {
         return FabricPermissionsProvider.getPermission(player, permission)
         //?} else {
-
-        /*//? if >=1.18.2 {
-        val permissionNode = PermissionAPI.getRegisteredNodes().find { it.nodeName == permission } ?: return PermissionTristate.UNDEFINED
+        /*val permissionNode = PermissionAPI.getRegisteredNodes().find { it.nodeName == permission } ?: return PermissionTristate.UNDEFINED
         val value = permissionNode.defaultResolver.resolve(player, player.uuid) as? Boolean
 
         return PermissionTristate.fromBoolean(value)
-        //?} else {
-        /^if (!PermissionAPI.getPermissionHandler().registeredNodes.contains(permission))
-            return PermissionTristate.UNDEFINED
-
-        return PermissionTristate.fromBoolean(PermissionAPI.hasPermission(player, permission))
-        ^///?}
         *///?}
     }
 }

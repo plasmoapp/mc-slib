@@ -1,6 +1,8 @@
 package su.plo.slib.api.command.brigadier
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException
 import su.plo.slib.api.chat.component.McTextComponent
+import su.plo.slib.api.chat.style.McTextStyle
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.entity.McEntity
 
@@ -26,6 +28,21 @@ interface McBrigadierSource {
         get() = false
 
     /**
+     * Checks if the platform library is initialized for this source.
+     *
+     * This is `false` only while a command registered in [McBrigadierRegistry.Phase.BOOTSTRAP],
+     * i.e. when datapack functions are loaded.
+     * In that state [source] answers [McCommandSource.hasPermission] with `true`,
+     * reports every permission as undefined, discards anything sent to it,
+     * and [executor] is always `null`.
+     *
+     * `requires` predicates run during parsing,
+     * so they must not depend on state that only exists once the plugin or mod is initialized.
+     */
+    val isBound: Boolean
+        get() = true
+
+    /**
      * Sends command feedback to the [source], unless the source [isSilent].
      *
      * This is the counterpart of vanilla's `CommandSourceStack#sendSuccess`.
@@ -47,10 +64,28 @@ interface McBrigadierSource {
     }
 
     /**
+     * Sends the exception's message to the [source] as a command failure, unless the source [isSilent].
+     *
+     * This is the counterpart of vanilla's `CommandSourceStack#handleError`:
+     * only the raw message is sent, without the input context.
+     *
+     * @param exception The exception to report.
+     */
+    fun sendFailure(exception: CommandSyntaxException) {
+        if (isSilent) return
+
+        val message = (exception.rawMessage as? McTextMessage)?.component
+            ?: McTextComponent.literal(exception.rawMessage.string)
+
+        source.sendMessage(McTextComponent.empty().append(message).withStyle(McTextStyle.RED))
+    }
+
+    /**
      * Gets the server's implementation instance for this source.
      *
      * The return type may vary depending on the server platform:
-     *   - For servers (Paper/Fabric/Forge/NeoForge): [net.minecraft.commands.CommandSourceStack]
+     *   - For Paper: [io.papermc.paper.command.brigadier.CommandSourceStack]
+     *   - For modded servers (Fabric/NeoForge): [net.minecraft.commands.CommandSourceStack]
      *   - For Minestom: [net.minestom.server.command.CommandSender]
      *   - For BungeeCord: [net.md_5.bungee.api.CommandSender]
      *   - For Velocity: [com.velocitypowered.api.command.CommandSource]

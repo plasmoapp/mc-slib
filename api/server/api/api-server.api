@@ -37,6 +37,7 @@ public final class su/plo/slib/api/server/channel/McServerChannelRegistry {
 
 public final class su/plo/slib/api/server/command/brigadier/McArgumentTypes {
 	public static final field INSTANCE Lsu/plo/slib/api/server/command/brigadier/McArgumentTypes;
+	public static final fun blockPosition ()Lcom/mojang/brigadier/arguments/ArgumentType;
 	public static final fun entities ()Lcom/mojang/brigadier/arguments/ArgumentType;
 	public static final fun entity ()Lcom/mojang/brigadier/arguments/ArgumentType;
 	public static final fun gameProfiles ()Lcom/mojang/brigadier/arguments/ArgumentType;
@@ -46,6 +47,7 @@ public final class su/plo/slib/api/server/command/brigadier/McArgumentTypes {
 }
 
 public abstract interface class su/plo/slib/api/server/command/brigadier/McArgumentTypes$Provider {
+	public abstract fun blockPosition ()Lcom/mojang/brigadier/arguments/ArgumentType;
 	public abstract fun entities ()Lcom/mojang/brigadier/arguments/ArgumentType;
 	public abstract fun entity ()Lcom/mojang/brigadier/arguments/ArgumentType;
 	public abstract fun gameProfiles ()Lcom/mojang/brigadier/arguments/ArgumentType;

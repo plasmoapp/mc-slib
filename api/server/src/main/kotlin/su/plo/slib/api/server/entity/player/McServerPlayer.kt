@@ -56,7 +56,7 @@ interface McServerPlayer : McPlayer, McServerEntity {
      *
      * The return type may vary depending on the server platform:
      *   - For Bukkit: [org.bukkit.entity.Player]
-     *   - For modded servers (Fabric/Forge): [net.minecraft.server.level.ServerPlayer]
+     *   - For modded servers (Fabric/NeoForge): [net.minecraft.server.level.ServerPlayer]
      *
      * @return The server's implementation object associated with this entity.
      * @param T The expected type of the entity object.

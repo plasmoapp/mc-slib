@@ -23,7 +23,7 @@ tasks {
         exclude("META-INF/versions/**")
 
         // Shadow 9.x merges Multi-Release from transitive deps (examination, option),
-        // but the actual META-INF/versions classes aren't included, breaking Forge's securejarhandler
+        // but the actual META-INF/versions classes aren't included, breaking NeoForge's securejarhandler
         doLast {
             val jarFile = archiveFile.get().asFile
             val uri = URI.create("jar:${jarFile.toURI()}")

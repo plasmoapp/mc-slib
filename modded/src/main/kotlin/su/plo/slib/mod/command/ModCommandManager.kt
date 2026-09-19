@@ -6,11 +6,15 @@ import net.minecraft.commands.CommandSourceStack
 import net.minecraft.world.entity.player.Player
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.command.AbstractCommandManager
-import su.plo.slib.command.copyFor
-import su.plo.slib.command.proxied
+import su.plo.slib.command.brigadier.applyEach
+import su.plo.slib.command.brigadier.collectBrigadierCommands
+import su.plo.slib.command.brigadier.copyLiteral
+import su.plo.slib.command.brigadier.copyFor
+import su.plo.slib.command.brigadier.proxied
 import su.plo.slib.mod.command.brigadier.ModBrigadierSource
 import su.plo.slib.mod.mixin.accessor.CommandSourceStackAccessor
 
@@ -23,21 +27,26 @@ class ModCommandManager(
 ) : AbstractCommandManager<McCommand>(minecraftServer.baseLogger) {
 
     @Synchronized
-    fun registerCommands(dispatcher: CommandDispatcher<CommandSourceStack>) {
+    fun registerCommands(
+        dispatcher: CommandDispatcher<CommandSourceStack>,
+        phase: McBrigadierRegistry.Phase,
+    ) {
         registerCommands { name, command, _ ->
             val modCommand = ModCommand(minecraftServer, this, command)
             modCommand.register(dispatcher, name)
         }
 
-        @Suppress("UNCHECKED_CAST")
-        registerBrigadierCommands { command, _ ->
-            dispatcher.root.addChild(
-                command.proxied(
+        collectBrigadierCommands(phase)
+            .applyEach(logger, logRegisteredCommands) { (node, _, aliases) ->
+                val proxied = node.proxied(
+                    logger,
                     ModBrigadierSource::from,
                     { it.toMc() },
                 )
-            )
-        }
+
+                dispatcher.root.addChild(proxied)
+                aliases.forEach { alias -> dispatcher.root.addChild(proxied.copyLiteral(alias)) }
+            }
 
         this.registered = true
     }

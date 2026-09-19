@@ -5,10 +5,9 @@
     "mixins": [
         "MixinPlayerList",
         "MixinServerPlayer",
-        "accessor.CommandSourceStackAccessor"
-        //? if forge && <1.20.2 {
-        /*,"MixinServerGamePacketListenerImpl"
-        *///?}
+        "accessor.CommandSourceStackAccessor",
+        "accessor.ProfileCacheAccessor",
+        "accessor.ProfileCacheEntryAccessor"
         //? if >=1.21.10 {
         /*,"accessor.ServerPlayerCommandSourceAccessor"
         *///?}

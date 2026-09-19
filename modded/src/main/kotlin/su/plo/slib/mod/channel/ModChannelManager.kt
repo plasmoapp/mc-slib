@@ -2,7 +2,6 @@ package su.plo.slib.mod.channel
 
 import com.google.common.collect.Multimaps
 import com.google.common.collect.SetMultimap
-import io.netty.buffer.ByteBufUtil
 import net.minecraft.resources.ResourceLocation
 import su.plo.slib.api.server.channel.McServerChannelHandler
 import su.plo.slib.api.server.channel.McServerChannelManager
@@ -10,31 +9,17 @@ import su.plo.slib.mod.extension.toMcServerPlayer
 import java.util.*
 
 //? if fabric {
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-//? if >=1.20.5 {
-/*import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
-*///?}
 //?} elif neoforge {
 /*import net.minecraft.server.level.ServerPlayer
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.network.handling.IPayloadHandler
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
-*///?} elif forge {
-/*import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
-import net.minecraftforge.network.NetworkDirection
-import net.minecraftforge.network.NetworkEvent
-import net.minecraftforge.network.event.EventNetworkChannel
-//? if >=1.20.2 {
-/^import net.minecraftforge.network.ChannelBuilder
-^///?} else {
-import net.minecraftforge.network.NetworkRegistry
-import net.minecraftforge.network.NetworkRegistry.ChannelBuilder
-//?}
 *///?}
 
-//? if forge || neoforge {
+//? if neoforge {
 /*import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.channel.McServerChannelRegistry
 *///?}
@@ -46,7 +31,7 @@ class ModChannelManager : McServerChannelManager {
 
     override val registeredChannels: MutableSet<String> = HashSet()
 
-    //? if forge || neoforge {
+    //? if neoforge {
     /*init {
         instance = this
     }
@@ -69,16 +54,6 @@ class ModChannelManager : McServerChannelManager {
 
         channelsRegistered = true
     }
-    *///?} elif forge {
-    /*@Synchronized
-    @SubscribeEvent
-    fun onCommonSetup(event: FMLCommonSetupEvent) {
-        if (channelsRegistered) return
-
-        declaredChannelKeys().forEach { getOrCreateForgeChannel(it) }
-
-        channelsRegistered = true
-    }
     *///?}
 
     @Synchronized
@@ -94,8 +69,7 @@ class ModChannelManager : McServerChannelManager {
         }
 
         //? if fabric {
-        //? if >=1.20.5 {
-        /*val codec = getOrRegisterCodec(channelKey)
+        val codec = getOrRegisterCodec(channelKey)
 
         ServerPlayNetworking.registerGlobalReceiver(codec.type) { payload, context ->
             internalHandlers.get(channelKey)
@@ -103,19 +77,7 @@ class ModChannelManager : McServerChannelManager {
                     channelHandler.receive(context.player().toMcServerPlayer(), payload.data)
                 }
         }
-        *///?} else {
-        ServerPlayNetworking.registerGlobalReceiver(channelKey) { _, player, _, buf, _ ->
-            val messageBytes = ByteBufUtil.getBytes(buf)
-
-            internalHandlers.get(channelKey)
-                .forEach { channelHandler ->
-                    channelHandler.receive(player.toMcServerPlayer(), messageBytes)
-                }
-        }
-        //?}
-        //?} elif forge {
-        /*getOrCreateForgeChannel(channelKey)
-        *///?} elif neoforge {
+        //?} else {
         /*warnIfChannelNotRegistered(channelKey)
         *///?}
     }
@@ -129,18 +91,43 @@ class ModChannelManager : McServerChannelManager {
     }
 
     companion object {
-        //? if forge || neoforge {
-        /*private val lateChannelMessage =
+        private val codecs: MutableMap<ResourceLocation, ByteArrayCodec> = HashMap()
+
+        fun getOrRegisterCodec(channelKey: ResourceLocation): ByteArrayCodec = codecs.computeIfAbsent(channelKey) {
+            ByteArrayCodec(channelKey)
+                //? if fabric {
+                .also {
+                    PayloadTypeRegistry.playC2S().register(it.type, it)
+                    PayloadTypeRegistry.playS2C().register(it.type, it)
+                }
+                //?}
+        }
+
+        //? if neoforge {
+        /*private val logger = McLoggerFactory.createLogger("ModChannelManager")
+
+        internal var instance: ModChannelManager? = null
+
+        private val lateChannelMessage =
             """
                 Channel {} is not registered in the mod loader networking.
                 Register it with McServerChannelRegistry.register from your mod entrypoint.
             """.trim().lines().joinToString(" ")
 
-        private val logger = McLoggerFactory.createLogger("ModChannelManager")
-
-        internal var instance: ModChannelManager? = null
+        private val clientHandlers: MutableMap<ResourceLocation, IPayloadHandler<ByteArrayPayload>> = HashMap()
+        private val registeredPayloads: MutableSet<ResourceLocation> = HashSet()
 
         private var channelsRegistered = false
+
+        @Deprecated("Use ModClientChannelManager.registerHandler, it works on any loader and version")
+        fun registerClientHandler(channel: ResourceLocation, handler: IPayloadHandler<ByteArrayPayload>) {
+            setClientHandler(channel, handler)
+        }
+
+        internal fun setClientHandler(channel: ResourceLocation, handler: IPayloadHandler<ByteArrayPayload>) {
+            clientHandlers[channel] = handler
+            warnIfChannelNotRegistered(channel)
+        }
 
         private fun declaredChannelKeys(): Set<ResourceLocation> =
             McServerChannelRegistry.channels()
@@ -152,22 +139,6 @@ class ModChannelManager : McServerChannelManager {
             } else {
                 logger.warn(lateChannelMessage, channelKey, cause)
             }
-        }
-        *///?}
-
-        //? if neoforge {
-        /*private val clientHandlers: MutableMap<ResourceLocation, IPayloadHandler<ByteArrayPayload>> = HashMap()
-
-        private val registeredPayloads: MutableSet<ResourceLocation> = HashSet()
-
-        @Deprecated("Use ModClientChannelManager.registerHandler, it works on any loader and version")
-        fun registerClientHandler(channel: ResourceLocation, handler: IPayloadHandler<ByteArrayPayload>) {
-            setClientHandler(channel, handler)
-        }
-
-        internal fun setClientHandler(channel: ResourceLocation, handler: IPayloadHandler<ByteArrayPayload>) {
-            clientHandlers[channel] = handler
-            warnIfChannelNotRegistered(channel)
         }
 
         private fun registerPayload(registrar: PayloadRegistrar, channelKey: ResourceLocation, codec: ByteArrayCodec) {
@@ -211,101 +182,6 @@ class ModChannelManager : McServerChannelManager {
             if (!channelsRegistered || channelKey in registeredPayloads) return
 
             warnChannelRegisteredLate(channelKey)
-        }
-        *///?}
-
-        //? if >=1.20.5 {
-        /*private val codecs: MutableMap<ResourceLocation, ByteArrayCodec> = HashMap()
-
-        fun getOrRegisterCodec(channelKey: ResourceLocation): ByteArrayCodec = codecs.computeIfAbsent(channelKey) {
-            ByteArrayCodec(channelKey)
-        //? if fabric {
-                .also {
-                    PayloadTypeRegistry.playC2S().register(it.type, it)
-                    PayloadTypeRegistry.playS2C().register(it.type, it)
-                }
-        //?}
-        }
-        *///?}
-
-        //? if forge {
-        /*private val channels: MutableMap<ResourceLocation, EventNetworkChannel> = HashMap()
-
-        @JvmStatic
-        fun getForgeChannel(channelKey: ResourceLocation): EventNetworkChannel? =
-            channels[channelKey]
-
-        /^*
-         * You can add your own forge channel here, if you are using channel for client-side
-         ^/
-        @Deprecated("Use McServerChannelRegistry.register instead")
-        @JvmStatic
-        fun addForgeChannel(channelKey: ResourceLocation, channel: EventNetworkChannel) {
-            if (channels.containsKey(channelKey)) return
-
-            channels[channelKey] = channel
-            addChannelListener(channelKey, channel)
-        }
-
-        @Synchronized
-        internal fun getOrCreateForgeChannel(channelKey: ResourceLocation): EventNetworkChannel? {
-            channels[channelKey]?.let { return it }
-
-            val channel = try {
-                createForgeChannel(channelKey)
-            } catch (e: Exception) {
-                warnChannelRegisteredLate(channelKey, e)
-                return null
-            }
-
-            channels[channelKey] = channel
-            addChannelListener(channelKey, channel)
-
-            return channel
-        }
-
-        private fun createForgeChannel(channelKey: ResourceLocation): EventNetworkChannel =
-            ChannelBuilder.named(channelKey)
-        //? if >=1.20.2 {
-                /^.optional()
-        ^///?} else {
-                .networkProtocolVersion { NetworkRegistry.ACCEPTVANILLA }
-                .clientAcceptedVersions(NetworkRegistry.acceptMissingOr(NetworkRegistry.ACCEPTVANILLA))
-                .serverAcceptedVersions(NetworkRegistry.acceptMissingOr(NetworkRegistry.ACCEPTVANILLA))
-        //?}
-                .eventNetworkChannel()
-
-        private fun addChannelListener(channelKey: ResourceLocation, channel: EventNetworkChannel) {
-            channel.addListener<NetworkEvent> { event ->
-            //? if >=1.20.2 {
-                /^val context = event.source
-                val connection = context.connection
-            ^///?} else {
-                val context = event.source.get()
-                val connection = context.networkManager
-            //?}
-            //? if >=1.20.5 {
-                /^val clientbound = context.isClientSide
-                val serverbound = !clientbound
-            ^///?} else {
-                val clientbound = context.direction == NetworkDirection.PLAY_TO_CLIENT
-                val serverbound = context.direction == NetworkDirection.PLAY_TO_SERVER
-            //?}
-
-                if (event.payload == null || !(clientbound || serverbound)) return@addListener
-
-                val messageBytes = ByteBufUtil.getBytes(event.payload)
-
-                if (clientbound) {
-                    ModClientChannelManager.receive(channelKey, messageBytes, connection)
-                    return@addListener
-                }
-
-                instance?.internalHandlers?.get(channelKey)
-                    ?.forEach { channelHandler ->
-                        channelHandler.receive(context.sender!!.toMcServerPlayer(), messageBytes)
-                    }
-            }
         }
         *///?}
     }

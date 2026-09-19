@@ -40,10 +40,16 @@ object McArgumentTypes {
     fun gameProfiles(): ArgumentType<McGameProfilesArgumentResolver> = provider.gameProfiles()
 
     /**
-     * Returns an argument type that resolves position.
+     * Returns an argument type that resolves a precise position.
      */
     @JvmStatic
     fun position(): ArgumentType<ServerPos3dResolver> = provider.position()
+
+    /**
+     * Returns an argument type that resolves a block position.
+     */
+    @JvmStatic
+    fun blockPosition(): ArgumentType<ServerPos3dResolver> = provider.blockPosition()
 
     private val provider: Provider by lazyService()
 
@@ -60,5 +66,7 @@ object McArgumentTypes {
         fun gameProfiles(): ArgumentType<McGameProfilesArgumentResolver>
 
         fun position(): ArgumentType<ServerPos3dResolver>
+
+        fun blockPosition(): ArgumentType<ServerPos3dResolver>
     }
 }

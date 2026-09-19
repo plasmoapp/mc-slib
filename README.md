@@ -17,7 +17,7 @@ implementation("su.plo.slib:api-common:$libVersion")
 ```
 
 ### Server
-API for server platforms: Spigot/Fabric/Forge
+API for server platforms: Paper/Fabric/NeoForge
 ```kotlin
 implementation("su.plo.slib:api-server:$libVersion")
 ```
@@ -38,21 +38,21 @@ modImplementation("su.plo.slib:fabric-$mcVersion:$libVersion")
 
 You also need to add
 
-Initialization: [FabricMod.kt](https://github.com/plasmoapp/mc-slib/blob/main/versions/src/test/kotlin/FabricMod.kt)
+Initialization: [TestFabricMod.kt](https://github.com/plasmoapp/mc-slib/blob/main/modded/src/test/kotlin/su/plo/slib/mod/TestFabricMod.kt)
 
-### Forge
+### NeoForge
 ```kotlin
-implementation("su.plo.slib:forge-$mcVersion:$libVersion")
+implementation("su.plo.slib:neoforge-$mcVersion:$libVersion")
 ```
 
-Initialization: [ForgeMod.kt](https://github.com/plasmoapp/mc-slib/blob/main/versions/1.19.3-forge/src/test/kotlin/ForgeMod.kt)
+Initialization: [TestNeoForgeMod.kt](https://github.com/plasmoapp/mc-slib/blob/main/modded/src/test/kotlin/su/plo/slib/mod/TestNeoForgeMod.kt)
 
-### Spigot
+### Paper
 ```kotlin
-implementation("su.plo.slib:spigot:$libVersion")
+implementation("su.plo.slib:paper:$libVersion")
 ```
 
-Initialization: [SpigotPlugin.kt](https://github.com/plasmoapp/mc-slib/blob/main/spigot/src/test/kotlin/SpigotPlugin.kt)
+Initialization: [PaperPlugin.kt](https://github.com/plasmoapp/mc-slib/blob/main/paper/src/test/kotlin/PaperPlugin.kt)
 
 ### Minestom
 ```kotlin
@@ -77,40 +77,15 @@ Initialization: [VelocityPlugin.kt](https://github.com/plasmoapp/mc-slib/blob/ma
 
 
 ## Version
-<img alt="version" src="https://img.shields.io/badge/dynamic/xml?label=%20&query=/metadata/versioning/versions/version[not(contains(text(),'%2B'))][last()]&url=https://repo.plasmoverse.com/snapshots/su/plo/slib/common/maven-metadata.xml">
+<img alt="version" src="https://img.shields.io/badge/dynamic/xml?label=%20&query=/metadata/versioning/versions/version[not(contains(text(),'%2B'))][last()]&url=https://repo.plasmoverse.com/releases/su/plo/slib/common/maven-metadata.xml">
 
-### Fabric/Forge minecraft versions
-There is not all minecraft versions for Fabric/Forge platforms, so you need to use older/newer supported minecraft version
-<table>
-    <tbody>
-        <tr>
-            <th>slib minecraft version</th>
-            <th>Supported minecraft versions</th>
-        </tr>
-        <tr>
-            <td>1.16.5</td>
-            <td>1.16.5</td>
-        </tr>
-        <tr>
-            <td>1.17.1</td>
-            <td>1.17.1</td>
-        </tr>
-        <tr>
-            <td>1.19.3</td>
-            <td>1.18.2-1.19.4</td>
-        </tr>
-        <tr>
-            <td>1.20.1</td>
-            <td>1.20.1</td>
-        </tr>
-        <tr>
-            <td>1.20.2</td>
-            <td>1.20.2+</td>
-        </tr>
-    </tbody>
-</table>
+### Fabric/NeoForge minecraft versions
+Not every minecraft version is built for the Fabric/NeoForge platforms,
+so you need to use the closest older supported version.
 
-For instance, with minecraft 1.18.2, you need to use 1.19.3:
+The supported versions are listed in [settings.gradle.kts](https://github.com/plasmoapp/mc-slib/blob/main/settings.gradle.kts).
+
+For instance, with minecraft 1.21.1, you need to use 1.21:
 ```kotlin
-implementation("su.plo.slib:$platform-1.19.3:$libVersion")
+implementation("su.plo.slib:$platform-1.21:$libVersion")
 ````

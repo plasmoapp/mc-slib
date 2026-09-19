@@ -71,7 +71,7 @@ interface McEntity {
      *
      * The return type may vary depending on the server platform:
      *   - For Bukkit: [org.bukkit.entity.LivingEntity]
-     *   - For modded servers (Fabric/Forge): [net.minecraft.world.entity.Entity]
+     *   - For modded servers (Fabric/NeoForge): [net.minecraft.world.entity.Entity]
      *
      * @return The server's implementation object associated with this entity.
      * @param T The expected type of the server's implementation instance.

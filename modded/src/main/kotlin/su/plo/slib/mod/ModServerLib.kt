@@ -16,7 +16,6 @@ import su.plo.slib.api.entity.player.McPlayer
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLazyLogger
 import su.plo.slib.api.logging.McLogger
-import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionManager
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
@@ -32,7 +31,8 @@ import su.plo.slib.mod.entity.ModServerEntity
 import su.plo.slib.mod.entity.ModServerPlayer
 import su.plo.slib.mod.event.server.ServerStoppingEvent
 import su.plo.slib.mod.extension.toMcGameProfile
-import su.plo.slib.mod.logging.Log4jLogger
+import su.plo.slib.mod.mixin.accessor.ProfileCacheAccessor
+import su.plo.slib.mod.mixin.accessor.ProfileCacheEntryAccessor
 import su.plo.slib.mod.permission.ModPermissionSupplier
 import su.plo.slib.mod.scheduler.ModServerScheduler
 import su.plo.slib.mod.world.ModServerWorld
@@ -41,21 +41,22 @@ import java.util.UUID
 import java.util.function.Function
 import kotlin.time.Duration.Companion.seconds
 
-//? if >=1.21.9 {
-/*import com.mojang.authlib.GameProfile
-*///?}
-
 object ModServerLib : McServerLib {
 
     var baseLoggerName: String = "slib"
 
     override val baseLogger: McLogger = McLazyLogger { baseLoggerName }
 
-    init {
-        McLoggerFactory.supplier = McLoggerFactory.Supplier { name -> Log4jLogger(name) }
-    }
+    private var boundServer: MinecraftServer? = null
 
-    lateinit var minecraftServer: MinecraftServer
+    var minecraftServer: MinecraftServer
+        get() = checkNotNull(boundServer) { "MinecraftServer is not initialized yet" }
+        set(value) {
+            boundServer = value
+        }
+
+    val isBound: Boolean
+        get() = boundServer != null
 
     private val worldByInstance: MutableMap<ServerLevel, McServerWorld> = Maps.newConcurrentMap()
     private val playerById: MutableMap<UUID, McServerPlayer> = Maps.newConcurrentMap()
@@ -138,35 +139,26 @@ object ModServerLib : McServerLib {
     }
 
     override fun getGameProfile(playerId: UUID): McGameProfile? {
+        getPlayerById(playerId)?.let { return it.gameProfile }
+
         //? if >=1.21.9 {
-        /*return minecraftServer.services().nameToIdCache.get(playerId)
-            .map {
-                minecraftServer.services().profileResolver.fetchById(playerId)
-                    .orElse(GameProfile(it.id, it.name))
-            }
-            .map { it.toMcGameProfile() }
-            .orElse(null)
-        *///?} elif >=1.17.1 {
+        /*return minecraftServer.services().nameToIdCache.get(playerId).orElse(null)?.toMcGameProfile()
+        *///?} else {
         return minecraftServer.profileCache?.get(playerId)?.orElse(null)?.toMcGameProfile()
-        //?} else {
-        /*return minecraftServer.profileCache.get(playerId)?.toMcGameProfile()
-        *///?}
+        //?}
     }
 
     override fun getGameProfile(name: String): McGameProfile? {
+        getPlayerByName(name)?.let { return it.gameProfile }
+
         //? if >=1.21.9 {
-        /*return minecraftServer.services().nameToIdCache.get(name)
-            .map {
-                minecraftServer.services().profileResolver.fetchByName(name)
-                    .orElse(GameProfile(it.id, it.name))
-            }
-            .map { it.toMcGameProfile() }
-            .orElse(null)
-        *///?} elif >=1.17.1 {
-        return minecraftServer.profileCache?.get(name)?.orElse(null)?.toMcGameProfile()
-        //?} else {
-        /*return minecraftServer.profileCache.get(name)?.toMcGameProfile()
-        *///?}
+        /*val profileCache = minecraftServer.services().nameToIdCache as? ProfileCacheAccessor
+        *///?} else {
+        val profileCache = minecraftServer.profileCache as? ProfileCacheAccessor
+        //?}
+        val entry = profileCache?.slib_getProfilesByName()?.get(name.lowercase()) as? ProfileCacheEntryAccessor
+
+        return entry?.slib_getProfile()?.toMcGameProfile()
     }
 
     private fun worldsCleanupTick() {
@@ -201,14 +193,14 @@ object ModServerLib : McServerLib {
     }
 
     private fun loadVanishIntegrations() {
-        //? if fabric && >=1.18.2 {
+        //? if fabric {
         try {
             Class.forName("me.drex.vanish.api.VanishAPI")
             su.plo.slib.mod.integration.MeliusVanishIntegration.register()
             baseLogger.info("Melius Vanish integration attached")
         } catch (_: ClassNotFoundException) {
         }
-        //?} elif (forge || neoforge) && >=1.18.2 {
+        //?} else {
         /*try {
             Class.forName("redstonedubstep.mods.vanishmod.VanishUtil")
             su.plo.slib.mod.integration.VanishModIntegration.register()
@@ -216,6 +208,12 @@ object ModServerLib : McServerLib {
         } catch (_: ClassNotFoundException) {
         }
         *///?}
+    }
+
+    fun onServerStopped() {
+        boundServer = null
+        worldByInstance.clear()
+        playerById.clear()
     }
 
     private fun onShutdown() {

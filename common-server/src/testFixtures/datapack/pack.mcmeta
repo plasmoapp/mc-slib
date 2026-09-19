@@ -1,0 +1,9 @@
+{
+  "pack": {
+    "description": "slib command smoke test",
+    "pack_format": 48,
+    "supported_formats": [48, 81],
+    "min_format": 48,
+    "max_format": 9999
+  }
+}

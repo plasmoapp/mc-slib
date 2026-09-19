@@ -6,6 +6,9 @@ import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.GameProfileArgument
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument
+import net.minecraft.commands.arguments.coordinates.Coordinates
+import net.minecraft.commands.arguments.coordinates.Vec3Argument
+import net.minecraft.world.phys.Vec3
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McEntitiesArgumentResolver
@@ -59,11 +62,22 @@ class ModBrigadierArguments : McArgumentTypes.Provider {
         }
 
     override fun position(): ArgumentType<ServerPos3dResolver> =
-        argumentResolver(BlockPosArgument.blockPos()) { coordinates ->
+        positionResolver(Vec3Argument.vec3(false)) { coordinates, stack -> coordinates.getPosition(stack) }
+
+    override fun blockPosition(): ArgumentType<ServerPos3dResolver> =
+        positionResolver(BlockPosArgument.blockPos()) { coordinates, stack ->
+            Vec3.atLowerCornerOf(coordinates.getBlockPos(stack))
+        }
+
+    private fun positionResolver(
+        nativeType: ArgumentType<Coordinates>,
+        resolve: (Coordinates, CommandSourceStack) -> Vec3,
+    ): ArgumentType<ServerPos3dResolver> =
+        argumentResolver(nativeType) { coordinates ->
             ServerPos3dResolver { source ->
                 val stack = source.getInstance<CommandSourceStack>()
-                val position = coordinates.getPosition(stack)
-                val rotation = coordinates.getRotation(stack)
+                val position = resolve(coordinates, stack)
+                val rotation = stack.rotation
 
                 val world = stack.level?.let { serverLib.getWorld(it) }
                     ?: (source.executor as? McServerEntity)?.world

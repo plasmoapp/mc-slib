@@ -20,6 +20,9 @@ dependencies {
     testImplementation(libs.minestom)
     testImplementation(testFixtures(project(":common-server")))
 
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
     testImplementation(libs.log4j.core)
     testImplementation(libs.slf4j.log4j12)
 
@@ -31,6 +34,10 @@ dependencies {
 tasks {
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
     register<JavaExec>("runServer") {

@@ -8,8 +8,8 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import su.plo.slib.api.chat.component.McTextComponent
-import su.plo.slib.api.chat.converter.MessageTextConverter
 import su.plo.slib.api.command.brigadier.CustomArgumentType
+import su.plo.slib.api.command.brigadier.McTextMessage
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
@@ -18,13 +18,15 @@ class UuidArgumentType : CustomArgumentType<UUID, String> {
 
     override fun useNativeSuggestions(): Boolean = false
 
-    private val invalidUuid = SimpleCommandExceptionType(
-        MessageTextConverter.converter().convert(
-            McTextComponent.translatable(
-                "argument.uuid.invalid",
+    private val invalidUuid by lazy {
+        SimpleCommandExceptionType(
+            McTextMessage.of(
+                McTextComponent.translatable(
+                    "argument.uuid.invalid",
+                )
             )
         )
-    )
+    }
 
     override fun parse(reader: StringReader): UUID {
         val input = reader.readString()

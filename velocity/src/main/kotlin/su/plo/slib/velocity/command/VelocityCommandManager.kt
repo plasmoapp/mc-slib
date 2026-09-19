@@ -8,13 +8,16 @@ import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.proxy.McProxyLib
 import su.plo.slib.api.proxy.command.McProxyCommand
 import su.plo.slib.api.proxy.event.command.McProxyCommandExecuteEvent
 import su.plo.slib.command.AbstractCommandManager
-import su.plo.slib.command.copyFor
-import su.plo.slib.command.proxied
+import su.plo.slib.command.brigadier.applyEach
+import su.plo.slib.command.brigadier.collectBrigadierCommands
+import su.plo.slib.command.brigadier.copyFor
+import su.plo.slib.command.brigadier.proxied
 import su.plo.slib.velocity.command.brigadier.VelocityBrigadierSource
 import su.plo.slib.velocity.extension.textConverter
 
@@ -62,16 +65,23 @@ class VelocityCommandManager(
             proxyServer.commandManager.register(name, velocityCommand)
         }
 
-        registerBrigadierCommands { command, _ ->
-            @Suppress("UNCHECKED_CAST")
-            val brigadierCommand = BrigadierCommand(
-                command.proxied(
-                    VelocityBrigadierSource::from,
-                    { it.toMc() },
+        collectBrigadierCommands(McBrigadierRegistry.Phase.RUNTIME)
+            .applyEach(logger, logRegisteredCommands) { (node, _, aliases) ->
+                val brigadierCommand = BrigadierCommand(
+                    node.proxied(
+                        logger,
+                        VelocityBrigadierSource::from,
+                        { it.toMc() },
+                    )
                 )
-            )
-            proxyServer.commandManager.register(brigadierCommand)
-        }
+
+                proxyServer.commandManager.register(
+                    proxyServer.commandManager.metaBuilder(brigadierCommand)
+                        .aliases(*aliases.toTypedArray())
+                        .build(),
+                    brigadierCommand,
+                )
+            }
 
         registered = true
     }

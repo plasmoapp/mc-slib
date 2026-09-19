@@ -6,7 +6,6 @@ import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.api.server.world.McServerWorld
-import su.plo.slib.mod.extension.level
 import java.util.UUID
 
 open class ModServerEntity<E : Entity>(
