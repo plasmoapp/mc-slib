@@ -3,7 +3,9 @@
 package su.plo.slib.paper.command
 
 import io.papermc.paper.command.brigadier.Commands
+import io.papermc.paper.plugin.configuration.PluginMeta
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -27,7 +29,7 @@ class PaperCommandManager(
 
             try {
                 if (!isCommandHandlerBootstrapped) registrar.collectAndApply(logger, logRegisteredCommands)
-                registerBasicCommands(registrar)
+                registerBasicCommands(loader.pluginMeta, registrar)
             } catch (e: Throwable) {
                 logger.error("Failed to register commands", e)
             }
@@ -42,10 +44,16 @@ class PaperCommandManager(
     }
 
     @Synchronized
-    private fun registerBasicCommands(registrar: Commands) {
-        registerCommands { name, command, _ ->
+    private fun registerBasicCommands(pluginMeta: PluginMeta, registrar: Commands) {
+        registerCommands { name, command, namespace ->
             try {
+                val namespacePluginMeta = Bukkit.getPluginManager().plugins
+                    .firstOrNull { it.name.equals(namespace, true) }
+                    ?.pluginMeta
+                    ?: pluginMeta
+
                 registrar.register(
+                    namespacePluginMeta,
                     name,
                     null,
                     emptyList(),
