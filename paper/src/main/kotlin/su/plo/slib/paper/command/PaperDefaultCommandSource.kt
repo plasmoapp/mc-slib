@@ -5,8 +5,7 @@ import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.permission.PermissionTristate
 import su.plo.slib.paper.PaperServerLib
-import su.plo.slib.paper.util.extension.sendActionBar
-import su.plo.slib.paper.util.extension.sendMessage
+import su.plo.slib.paper.util.extension.toAdventure
 
 class PaperDefaultCommandSource(
     private val minecraftServer: PaperServerLib,
@@ -14,11 +13,11 @@ class PaperDefaultCommandSource(
 ) : McCommandSource {
 
     override fun sendMessage(text: McTextComponent) {
-        source.sendMessage(minecraftServer, this, text)
+        source.sendMessage(text.toAdventure(minecraftServer, this))
     }
 
     override fun sendActionBar(text: McTextComponent) {
-        source.sendActionBar(minecraftServer, this, text)
+        source.sendActionBar(text.toAdventure(minecraftServer, this))
     }
 
     override val language: String

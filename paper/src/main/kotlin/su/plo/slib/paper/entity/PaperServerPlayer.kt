@@ -1,7 +1,5 @@
 package su.plo.slib.paper.entity
 
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -12,8 +10,7 @@ import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
 import su.plo.slib.paper.PaperServerLib
-import su.plo.slib.paper.util.extension.sendActionBar
-import su.plo.slib.paper.util.extension.sendMessage
+import su.plo.slib.paper.util.extension.toAdventure
 import su.plo.slib.permission.PermissionSupplier
 
 class PaperServerPlayer(
@@ -61,11 +58,11 @@ class PaperServerPlayer(
         }
 
     override fun sendMessage(text: McTextComponent) {
-        instance.sendMessage(minecraftServer, this, text)
+        instance.sendMessage(text.toAdventure(minecraftServer, this))
     }
 
     override fun sendActionBar(text: McTextComponent) {
-        instance.sendActionBar(minecraftServer, this, text)
+        instance.sendActionBar(text.toAdventure(minecraftServer, this))
     }
 
     override fun hasPermission(permission: String) =
@@ -80,12 +77,7 @@ class PaperServerPlayer(
     }
 
     override fun kick(reason: McTextComponent) {
-        val json = minecraftServer.textConverter.convertToJson(this, reason)
-        val component = GsonComponentSerializer.gson().deserialize(json)
-
-        val textReason = LegacyComponentSerializer.legacySection().serialize(component)
-
-        instance.kickPlayer(textReason)
+        instance.kick(reason.toAdventure(minecraftServer, this))
     }
 
     override fun canSee(player: McServerPlayer): Boolean =
