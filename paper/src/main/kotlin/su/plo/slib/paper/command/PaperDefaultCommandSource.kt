@@ -14,11 +14,11 @@ class PaperDefaultCommandSource(
 ) : McCommandSource {
 
     override fun sendMessage(text: McTextComponent) {
-        source.sendMessage(minecraftServer, text)
+        source.sendMessage(minecraftServer, this, text)
     }
 
     override fun sendActionBar(text: McTextComponent) {
-        source.sendActionBar(minecraftServer, text)
+        source.sendActionBar(minecraftServer, this, text)
     }
 
     override val language: String

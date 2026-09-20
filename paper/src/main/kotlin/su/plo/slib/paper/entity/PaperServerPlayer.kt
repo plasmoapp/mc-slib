@@ -11,10 +11,10 @@ import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
 import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.entity.player.McServerPlayer
-import su.plo.slib.permission.PermissionSupplier
 import su.plo.slib.paper.PaperServerLib
 import su.plo.slib.paper.util.extension.sendActionBar
 import su.plo.slib.paper.util.extension.sendMessage
+import su.plo.slib.permission.PermissionSupplier
 
 class PaperServerPlayer(
     private val loader: JavaPlugin,
@@ -61,11 +61,11 @@ class PaperServerPlayer(
         }
 
     override fun sendMessage(text: McTextComponent) {
-        instance.sendMessage(minecraftServer, text)
+        instance.sendMessage(minecraftServer, this, text)
     }
 
     override fun sendActionBar(text: McTextComponent) {
-        instance.sendActionBar(minecraftServer, text)
+        instance.sendActionBar(minecraftServer, this, text)
     }
 
     override fun hasPermission(permission: String) =

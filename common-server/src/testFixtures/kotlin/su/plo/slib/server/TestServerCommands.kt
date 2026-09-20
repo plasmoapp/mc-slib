@@ -276,6 +276,19 @@ fun registerCommands() {
         )
 
         registry.register(
+            literalCommand("brigadier-translated-feedback") {
+                executes {
+                    source.sendFeedback(
+                        McTextComponent.translatable(
+                            FEEDBACK_COMMAND_KEY,
+                            McTextComponent.literal("translated"),
+                        )
+                    )
+                }
+            }
+        )
+
+        registry.register(
             literalCommand("brigadier-silent-feedback") {
                 executes {
                     logger.info("Silent check: silent=${source.isSilent}")
