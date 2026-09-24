@@ -12,9 +12,6 @@ import su.plo.slib.api.permission.PermissionManager
  * Permission registered later still resolves to its [PermissionDefault],
  * but permission handlers such as LuckPerms never see it.
  *
- * Wildcard permissions (containing `*`) and permissions without a `namespace.` prefix
- * can't be declared on every platform and should only be used as defaults.
- *
  * Register the listener as early as possible, from the constructor of your plugin or mod.
  */
 object McPermissionsRegisterEvent
