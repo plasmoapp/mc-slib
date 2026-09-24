@@ -10,6 +10,7 @@ import net.minestom.server.event.player.PlayerPluginMessageEvent
 import net.minestom.server.event.player.PlayerSpawnEvent
 import net.minestom.server.instance.Instance
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.event.permission.McPermissionsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
@@ -80,6 +81,7 @@ class MinestomServerLib @JvmOverloads constructor(
     override val configsFolder: File = dataDirectory
 
     fun onInitialize() {
+        McPermissionsRegisterEvent.invoker.onPermissionsRegister(permissionManager)
         commandManager.registerCommands()
 
         McPlayerVisibilityCheckEvent.registerListener { viewer, target ->

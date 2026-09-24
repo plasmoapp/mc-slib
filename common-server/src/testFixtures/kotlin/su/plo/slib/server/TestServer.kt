@@ -2,9 +2,11 @@ package su.plo.slib.server
 
 import su.plo.slib.api.command.McCommand
 import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.event.permission.McPermissionsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.api.permission.PermissionDefault
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
 import su.plo.slib.api.server.event.player.McPlayerRegisterChannelsEvent
@@ -23,6 +25,11 @@ class TestServer(
         serverLib = minecraftServer
         registerCommands()
 
+        McPermissionsRegisterEvent.registerListener { permissions ->
+            permissions.register("slib.test", PermissionDefault.OP)
+            logger.info("Permission 'slib.test' registered")
+        }
+
         McPlayerJoinEvent.registerListener { player ->
             logger.info("Player ${player.name} joined the server")
         }
@@ -33,8 +40,7 @@ class TestServer(
 
         McPlayerRegisterChannelsEvent.registerListener { player, channels ->
             logger.info(
-                "(${player.name}'s permissions) slib: {}; slib.test: {}",
-                player.getPermission("slib"),
+                "(${player.name}'s permissions) slib.test: {}",
                 player.getPermission("slib.test"),
             )
 

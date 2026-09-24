@@ -335,6 +335,14 @@ public abstract interface class su/plo/slib/api/event/command/McCommandsRegister
 	public abstract fun onCommandsRegister (Lsu/plo/slib/api/command/McCommandManager;Lsu/plo/slib/api/McLib;)V
 }
 
+public final class su/plo/slib/api/event/permission/McPermissionsRegisterEvent : su/plo/slib/api/event/GlobalEvent {
+	public static final field INSTANCE Lsu/plo/slib/api/event/permission/McPermissionsRegisterEvent;
+}
+
+public abstract interface class su/plo/slib/api/event/permission/McPermissionsRegisterEvent$Callback {
+	public abstract fun onPermissionsRegister (Lsu/plo/slib/api/permission/PermissionManager;)V
+}
+
 public final class su/plo/slib/api/event/player/McPlayerJoinEvent : su/plo/slib/api/event/GlobalEvent {
 	public static final field INSTANCE Lsu/plo/slib/api/event/player/McPlayerJoinEvent;
 }
@@ -440,6 +448,7 @@ public final class su/plo/slib/api/permission/PermissionManager {
 	public final fun clear ()V
 	public final fun getNoPermissionMessage ()Lsu/plo/slib/api/chat/component/McTextComponent;
 	public final fun getPermissionDefault (Ljava/lang/String;)Lsu/plo/slib/api/permission/PermissionDefault;
+	public final fun getRegisteredPermissions ()Ljava/util/Set;
 	public final fun register (Ljava/lang/String;Lsu/plo/slib/api/permission/PermissionDefault;)V
 	public final fun setNoPermissionMessage (Lsu/plo/slib/api/chat/component/McTextComponent;)V
 	public final fun unregister (Ljava/lang/String;)Z

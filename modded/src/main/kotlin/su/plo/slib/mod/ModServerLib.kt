@@ -65,7 +65,7 @@ object ModServerLib : McServerLib {
 
     private val worldFactory = Function<ServerLevel, ModServerWorld> { ModServerWorld(it) }
 
-    private val permissionSupplier = ModPermissionSupplier(this)
+    internal val permissionSupplier = ModPermissionSupplier(this)
 
     override val serverTranslator = ServerTranslatorFactory.createTranslator()
         .also { IntegrationLoader.loadAdventureTranslator(it) }

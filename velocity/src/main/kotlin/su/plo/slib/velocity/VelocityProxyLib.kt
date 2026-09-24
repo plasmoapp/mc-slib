@@ -8,6 +8,7 @@ import com.velocitypowered.api.event.player.ServerPostConnectEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
+import su.plo.slib.api.event.permission.McPermissionsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLogger
@@ -67,6 +68,8 @@ class VelocityProxyLib @JvmOverloads constructor(
 
     init {
         loadServers()
+
+        McPermissionsRegisterEvent.invoker.onPermissionsRegister(permissionManager)
 
         // register commands
         McProxyCommandsRegisterEvent.invoker.onCommandsRegister(commandManager, this)

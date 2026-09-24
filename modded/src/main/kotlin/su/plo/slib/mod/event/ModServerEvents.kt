@@ -6,6 +6,7 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
 import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.server.event.command.McServerCommandsRegisterEvent
+import su.plo.slib.api.event.permission.McPermissionsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.mod.ModServerLib
@@ -27,6 +28,8 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent
+import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent
+import su.plo.slib.mod.permission.NeoForgePermissions
 *///?}
 
 /**
@@ -39,6 +42,7 @@ class ModServerEvents private constructor() {
     init {
         ServerLifecycleEvents.SERVER_STARTING.register {
             ModServerLib.minecraftServer = it
+            firePermissionsRegister()
         }
         ServerLifecycleEvents.SERVER_STARTED.register { fireServerStarted(it) }
         ServerLifecycleEvents.SERVER_STOPPING.register { fireServerStopping(it) }
@@ -62,6 +66,16 @@ class ModServerEvents private constructor() {
     @SubscribeEvent
     fun onServerAboutToStart(event: ServerAboutToStartEvent) {
         ModServerLib.minecraftServer = event.server
+    }
+
+    @SubscribeEvent
+    fun onPermissionNodesGather(event: PermissionGatherEvent.Nodes) {
+        firePermissionsRegister()
+        NeoForgePermissions.registerNodes(
+            event,
+            ModServerLib.permissionManager,
+            ModServerLib.permissionSupplier::getPermissionDefault,
+        )
     }
 
     @SubscribeEvent
@@ -100,6 +114,10 @@ class ModServerEvents private constructor() {
     private fun fireServerStarted(minecraftServer: MinecraftServer) {
         ModServerLib.onInitialize(minecraftServer)
         ServerStartedEvent.invoker.onServerStarted(minecraftServer)
+    }
+
+    private fun firePermissionsRegister() {
+        McPermissionsRegisterEvent.invoker.onPermissionsRegister(ModServerLib.permissionManager)
     }
 
     private fun fireServerStopping(minecraftServer: MinecraftServer) {

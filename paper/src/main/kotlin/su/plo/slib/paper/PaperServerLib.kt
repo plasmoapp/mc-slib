@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.WorldUnloadEvent
 import org.bukkit.plugin.java.JavaPlugin
 import su.plo.slib.api.entity.player.McGameProfile
+import su.plo.slib.api.event.permission.McPermissionsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.event.player.McPlayerVisibilityCheckEvent
@@ -84,6 +85,7 @@ class PaperServerLib @JvmOverloads constructor(
     override val configsFolder: File = loader.dataFolder.parentFile
 
     fun onInitialize() {
+        McPermissionsRegisterEvent.invoker.onPermissionsRegister(permissionManager)
         commandManager.registerCommands(loader)
         loader.server.pluginManager.registerEvents(RegisterChannelHandler(this), loader)
         loader.server.pluginManager.registerEvents(this, loader)

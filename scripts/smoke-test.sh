@@ -40,6 +40,7 @@ case "$ENV_TYPE" in
           "Command 'brigadier-redirect' registered"
           "Message from main thread"
           "Channel handler registered: slib:channels/test"
+          "Permission 'slib.test' registered"
         )
         FORBIDDEN_PATTERNS+=(
           "not registered in the mod loader networking"
@@ -115,11 +116,18 @@ case "$ENV_TYPE" in
               "Block position: ServerPos3d\\(world=$POSITION_WORLD, x=100.0, y=64.0, z=-32.0,"
             )
         fi
+
+        if [[ "$COMMAND" == *neoforge* ]]; then
+            PATTERNS+=(
+              "PermissionAPI nodes: \\[slib\\.test\\]"
+            )
+        fi
         ;;
     proxy)
         PATTERNS=(
           "Listening on"
           "Command 'ping' registered"
+          "Permission 'slib.test' registered"
           "Command 'brigadier-ping' registered"
           "Command 'brigadier-custom-type' registered"
           "Command 'brigadier-server-translation' registered"

@@ -10,6 +10,7 @@ import net.md_5.bungee.api.event.ServerSwitchEvent
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.event.EventHandler
+import su.plo.slib.api.event.permission.McPermissionsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLogger
@@ -70,6 +71,8 @@ class BungeeProxyLib @JvmOverloads constructor(
 
     init {
         loadServers()
+
+        McPermissionsRegisterEvent.invoker.onPermissionsRegister(permissionManager)
 
         // register commands
         McProxyCommandsRegisterEvent.invoker.onCommandsRegister(commandManager, this)

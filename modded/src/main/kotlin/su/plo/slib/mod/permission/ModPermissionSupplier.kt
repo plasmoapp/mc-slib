@@ -15,6 +15,10 @@ class ModPermissionSupplier(
     override fun hasPermission(player: Any, permission: String): Boolean {
         require(player is ServerPlayer) { "player is not " + ServerPlayer::class.java }
 
+        return getPermission(player, permission).booleanValue(getPermissionDefault(player, permission))
+    }
+
+    fun getPermissionDefault(player: ServerPlayer, permission: String): Boolean {
         val permissionDefault = minecraftServerLib.permissionManager.getPermissionDefault(permission)
         //? if >=1.21.9 {
         /*val isOp = minecraftServerLib.minecraftServer.playerList.isOp(player.nameAndId())
@@ -22,7 +26,7 @@ class ModPermissionSupplier(
         val isOp = minecraftServerLib.minecraftServer.playerList.isOp(player.gameProfile)
         //?}
 
-        return getPermission(player, permission).booleanValue(permissionDefault.getValue(isOp))
+        return permissionDefault.getValue(isOp)
     }
 
     override fun getPermission(player: Any, permission: String): PermissionTristate {
@@ -31,10 +35,7 @@ class ModPermissionSupplier(
         //? if fabric {
         return FabricPermissionsProvider.getPermission(player, permission)
         //?} else {
-        /*val permissionNode = PermissionAPI.getRegisteredNodes().find { it.nodeName == permission } ?: return PermissionTristate.UNDEFINED
-        val value = permissionNode.defaultResolver.resolve(player, player.uuid) as? Boolean
-
-        return PermissionTristate.fromBoolean(value)
+        /*return NeoForgePermissions.getPermission(player, permission)
         *///?}
     }
 }

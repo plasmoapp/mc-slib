@@ -10,9 +10,11 @@ import su.plo.slib.api.command.McCommandSource
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.command.brigadier.McTextMessage
 import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
+import su.plo.slib.api.event.permission.McPermissionsRegisterEvent
 import su.plo.slib.api.event.player.McPlayerJoinEvent
 import su.plo.slib.api.event.player.McPlayerQuitEvent
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.api.permission.PermissionDefault
 import su.plo.slib.api.proxy.command.McProxyCommand
 import su.plo.slib.api.proxy.event.command.McProxyCommandsRegisterEvent
 import su.plo.slib.proxy.command.TranslatedArgumentType
@@ -30,6 +32,11 @@ class TestProxy {
     private var logger = McLoggerFactory.createLogger("TestProxy")
 
     init {
+        McPermissionsRegisterEvent.registerListener { permissions ->
+            permissions.register("slib.test", PermissionDefault.OP)
+            logger.info("Permission 'slib.test' registered")
+        }
+
         McPlayerJoinEvent.registerListener { player ->
             logger.info("Player ${player.name} joined the server")
         }

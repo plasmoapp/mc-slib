@@ -14,6 +14,12 @@ class PermissionManager {
     private val defaultPermissionByName: MutableMap<String, PermissionDefault?> = Maps.newHashMap()
 
     /**
+     * Gets a snapshot of the names of all registered universal permissions.
+     */
+    val registeredPermissions: Set<String>
+        get() = defaultPermissionByName.keys.toSet()
+
+    /**
      * Gets or sets "no permission" message.
      */
     var noPermissionMessage = McTextComponent
