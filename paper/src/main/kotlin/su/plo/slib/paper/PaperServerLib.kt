@@ -35,7 +35,6 @@ import su.plo.slib.paper.entity.PaperServerPlayer
 import su.plo.slib.paper.extension.addChannel
 import su.plo.slib.paper.extension.toMcGameProfileOrNull
 import su.plo.slib.paper.integration.PaperVanishIntegration
-import su.plo.slib.paper.integration.PremiumVanishIntegration
 import su.plo.slib.paper.permission.PaperPermissionSupplier
 import su.plo.slib.paper.scheduler.PaperServerScheduler
 import su.plo.slib.paper.util.SchedulerUtil
@@ -100,24 +99,7 @@ class PaperServerLib @JvmOverloads constructor(
             !viewerPlayer.canSee(targetPlayer)
         }
 
-        val visibilityEventsSupported = try {
-            Class.forName("org.bukkit.event.player.PlayerHideEntityEvent")
-            Class.forName("org.bukkit.event.player.PlayerShowEntityEvent")
-            true
-        } catch (_: ClassNotFoundException) {
-            false
-        }
-
-        val hasPremiumVanish = loader.server.pluginManager.getPlugin("SuperVanish") != null ||
-            loader.server.pluginManager.getPlugin("PremiumVanish") != null
-
-        if (hasPremiumVanish) {
-            loader.server.pluginManager.registerEvents(PremiumVanishIntegration(this), loader)
-            baseLogger.info("PremiumVanish/SuperVanish event listener attached")
-        } else if (visibilityEventsSupported) {
-            loader.server.pluginManager.registerEvents(PaperVanishIntegration(this, loader), loader)
-            baseLogger.info("Paper vanish integration attached")
-        }
+        loader.server.pluginManager.registerEvents(PaperVanishIntegration(this, loader), loader)
     }
 
     fun onShutdown() {
