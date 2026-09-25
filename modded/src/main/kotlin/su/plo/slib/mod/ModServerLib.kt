@@ -199,6 +199,8 @@ object ModServerLib : McServerLib {
             su.plo.slib.mod.integration.MeliusVanishIntegration.register()
             baseLogger.info("Melius Vanish integration attached")
         } catch (_: ClassNotFoundException) {
+        } catch (e: LinkageError) {
+            baseLogger.warn("Failed to attach Melius Vanish integration: {}", e.toString())
         }
         //?} else {
         /*try {
@@ -206,6 +208,8 @@ object ModServerLib : McServerLib {
             su.plo.slib.mod.integration.VanishModIntegration.register()
             baseLogger.info("VanishMod integration attached")
         } catch (_: ClassNotFoundException) {
+        } catch (e: LinkageError) {
+            baseLogger.warn("Failed to attach VanishMod integration: {}", e.toString())
         }
         *///?}
     }

@@ -88,6 +88,8 @@ class VelocityProxyLib @JvmOverloads constructor(
             proxyServer.eventManager.register(plugin, PremiumVanishIntegration(this))
             baseLogger.info("PremiumVanish integration attached")
         } catch (_: ClassNotFoundException) {
+        } catch (e: LinkageError) {
+            baseLogger.warn("Failed to attach PremiumVanish integration: {}", e.toString())
         }
 
         try {
@@ -95,6 +97,8 @@ class VelocityProxyLib @JvmOverloads constructor(
             proxyServer.eventManager.register(plugin, SayanVanishIntegration(this))
             baseLogger.info("SayanVanish integration attached")
         } catch (_: ClassNotFoundException) {
+        } catch (e: LinkageError) {
+            baseLogger.warn("Failed to attach SayanVanish integration: {}", e.toString())
         }
     }
 

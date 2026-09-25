@@ -91,6 +91,8 @@ class BungeeProxyLib @JvmOverloads constructor(
             proxyServer.pluginManager.registerListener(loader, PremiumVanishIntegration(this))
             baseLogger.info("PremiumVanish integration attached")
         } catch (_: ClassNotFoundException) {
+        } catch (e: LinkageError) {
+            baseLogger.warn("Failed to attach PremiumVanish integration: {}", e.toString())
         }
 
         try {
@@ -98,6 +100,8 @@ class BungeeProxyLib @JvmOverloads constructor(
             proxyServer.pluginManager.registerListener(loader, SayanVanishIntegration(this))
             baseLogger.info("SayanVanish integration attached")
         } catch (_: ClassNotFoundException) {
+        } catch (e: LinkageError) {
+            baseLogger.warn("Failed to attach SayanVanish integration: {}", e.toString())
         }
     }
 
