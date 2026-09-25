@@ -12,6 +12,7 @@ su.plo.slib.api.entity
 su.plo.slib.api.entity.player
 su.plo.slib.api.event
 su.plo.slib.api.event.command
+su.plo.slib.api.event.permission
 su.plo.slib.api.event.player
 su.plo.slib.api.language
 su.plo.slib.api.logging
