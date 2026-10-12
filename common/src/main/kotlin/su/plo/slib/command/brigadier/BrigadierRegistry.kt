@@ -5,24 +5,37 @@ import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
 import su.plo.slib.api.logging.McLogger
+import su.plo.slib.api.logging.McLoggerFactory
+
+private val logger = McLoggerFactory.createLogger("slib")
 
 data class RegisteredBrigadierCommand(
     val node: LiteralCommandNode<McBrigadierSource>,
     val description: String?,
     val aliases: List<String>,
+    val registrant: McBrigadierCommandsRegisterEvent.Callback,
 )
 
 class BrigadierRegistry(
-    override val phase: McBrigadierRegistry.Phase,
-) : McBrigadierRegistry {
+    val phase: McBrigadierRegistry.Phase,
+) {
     private val commands = mutableListOf<RegisteredBrigadierCommand>()
     private val takenNames = mutableSetOf<String>()
 
     val registeredCommands: List<RegisteredBrigadierCommand>
         get() = commands.toList()
 
+    fun collectFrom(registrant: McBrigadierCommandsRegisterEvent.Callback) {
+        try {
+            registrant.onCommandsRegister(RegistrantScope(registrant))
+        } catch (e: Throwable) {
+            logger.error("Failed to build brigadier commands in {}", registrant, e)
+        }
+    }
+
     @Synchronized
-    override fun register(
+    private fun register(
+        registrant: McBrigadierCommandsRegisterEvent.Callback,
         command: LiteralCommandNode<McBrigadierSource>,
         description: String?,
         aliases: Collection<String>,
@@ -33,12 +46,32 @@ class BrigadierRegistry(
         }
 
         takenNames.addAll(names)
-        commands.add(RegisteredBrigadierCommand(command, description, aliases.toList()))
+        commands.add(RegisteredBrigadierCommand(command, description, aliases.toList(), registrant))
+    }
+
+    private inner class RegistrantScope(
+        private val registrant: McBrigadierCommandsRegisterEvent.Callback,
+    ) : McBrigadierRegistry {
+        override val phase: McBrigadierRegistry.Phase
+            get() = this@BrigadierRegistry.phase
+
+        override fun register(
+            command: LiteralCommandNode<McBrigadierSource>,
+            description: String?,
+            aliases: Collection<String>,
+        ) = register(registrant, command, description, aliases)
     }
 }
 
-fun collectBrigadierCommands(phase: McBrigadierRegistry.Phase): BrigadierRegistry =
-    BrigadierRegistry(phase).also { McBrigadierCommandsRegisterEvent.invoker.onCommandsRegister(it) }
+fun collectBrigadierCommands(
+    phase: McBrigadierRegistry.Phase,
+    shouldCollect: (McBrigadierCommandsRegisterEvent.Callback) -> Boolean = { true },
+): BrigadierRegistry =
+    BrigadierRegistry(phase).also { registry ->
+        McBrigadierCommandsRegisterEvent.listeners
+            .filter(shouldCollect)
+            .forEach(registry::collectFrom)
+    }
 
 fun BrigadierRegistry.applyEach(
     logger: McLogger,

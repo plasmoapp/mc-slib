@@ -1,24 +1,30 @@
 package su.plo.slib.api.event
 
+import java.util.Collections
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.function.Function
 
 abstract class GlobalEvent<T> (
-    private val invokerSupplier: Function<Collection<T>, T>
+    invokerSupplier: Function<Collection<T>, T>
 ) {
-    private val listeners: MutableSet<T> = CopyOnWriteArraySet()
+    private val registeredListeners: MutableSet<T> = CopyOnWriteArraySet()
 
-    val invoker = invokerSupplier.apply(listeners)
+    /**
+     * A read-only view of the currently registered listeners.
+     */
+    val listeners: Collection<T> = Collections.unmodifiableSet(registeredListeners)
+
+    val invoker = invokerSupplier.apply(registeredListeners)
 
     fun registerListener(listener: T) {
-        if (listeners.add(listener)) invokerSupplier.apply(listeners)
+        registeredListeners.add(listener)
     }
 
     fun unregisterListener(listener: T) {
-        if (listeners.remove(listener)) invokerSupplier.apply(listeners)
+        registeredListeners.remove(listener)
     }
 
     fun clearListeners() {
-        listeners.clear()
+        registeredListeners.clear()
     }
 }

@@ -11,7 +11,7 @@ import org.bukkit.plugin.Plugin
 // causing full server crash due to classloader errors when trying to run `requires` on command of disabled plugin
 //
 // to prevent that, we're checking if plugin is actually enabled here
-internal class PaperPluginBinding(private val owner: PluginMeta) {
+internal class PaperPluginBinding(val owner: PluginMeta) {
     @Volatile
     private var plugin: Plugin? = null
 

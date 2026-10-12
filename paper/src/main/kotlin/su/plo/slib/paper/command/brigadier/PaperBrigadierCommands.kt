@@ -12,9 +12,11 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType as PaperCustomArgumentType
 import io.papermc.paper.plugin.configuration.PluginMeta
+import io.papermc.paper.plugin.provider.classloader.ConfiguredPluginClassLoader
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.command.brigadier.McBrigadierRegistry
 import su.plo.slib.api.command.brigadier.McBrigadierSource
+import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
 import su.plo.slib.api.logging.McLogger
 import su.plo.slib.command.brigadier.applyEach
 import su.plo.slib.command.brigadier.collectBrigadierCommands
@@ -39,16 +41,23 @@ internal fun Commands.collectAndApply(
     logger: McLogger,
     logRegistered: Boolean,
 ) {
-    val binding = PaperPluginBinding(owner)
+    val bindings = HashMap<String, PaperPluginBinding>()
+
+    fun bindingOf(registrant: McBrigadierCommandsRegisterEvent.Callback): PaperPluginBinding {
+        val registrantMeta = registrant.owningPluginMeta() ?: owner
+        return bindings.getOrPut(registrantMeta.name) { PaperPluginBinding(registrantMeta) }
+    }
 
     val phase =
         if (PaperServerLib.instanceOrNull == null) McBrigadierRegistry.Phase.BOOTSTRAP
         else McBrigadierRegistry.Phase.RUNTIME
 
-    collectBrigadierCommands(phase)
-        .applyEach(logger, logRegistered) { (node, description, aliases) ->
+    collectBrigadierCommands(phase) { !bindingOf(it).isUnbound() }
+        .applyEach(logger, logRegistered) { (node, description, aliases, registrant) ->
+            val binding = bindingOf(registrant)
+
             register(
-                owner,
+                binding.owner,
                 node.proxied(
                     logger,
                     { sourceStack ->
@@ -64,6 +73,9 @@ internal fun Commands.collectAndApply(
             )
         }
 }
+
+private fun McBrigadierCommandsRegisterEvent.Callback.owningPluginMeta(): PluginMeta? =
+    (javaClass.classLoader as? ConfiguredPluginClassLoader)?.configuration
 
 private fun parseLanguage(source: Any?): String {
     val sourceStack = source as? CommandSourceStack ?: parsingSourceStack.get()?.get()

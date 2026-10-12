@@ -315,6 +315,7 @@ public abstract class su/plo/slib/api/event/GlobalEvent {
 	public fun <init> (Ljava/util/function/Function;)V
 	public final fun clearListeners ()V
 	public final fun getInvoker ()Ljava/lang/Object;
+	public final fun getListeners ()Ljava/util/Collection;
 	public final fun registerListener (Ljava/lang/Object;)V
 	public final fun unregisterListener (Ljava/lang/Object;)V
 }
