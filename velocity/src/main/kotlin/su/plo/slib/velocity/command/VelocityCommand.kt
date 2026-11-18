@@ -21,7 +21,7 @@ class VelocityCommand(
     }
 
     override fun suggest(invocation: SimpleCommand.Invocation) =
-        command.suggest(commandManager.getCommandSource(invocation.source()), invocation.arguments())
+        command.suggest(commandManager.getCommandSource(invocation.source()), invocation.arguments().ifEmpty { arrayOf("") })
 
     override fun hasPermission(invocation: SimpleCommand.Invocation) =
         command.hasPermission(commandManager.getCommandSource(invocation.source()), null)

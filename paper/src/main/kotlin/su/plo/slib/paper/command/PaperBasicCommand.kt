@@ -29,7 +29,7 @@ class PaperBasicCommand internal constructor(
 
     override fun suggest(commandSourceStack: CommandSourceStack, args: Array<String>): Collection<String> =
         if (binding.isUnbound()) emptyList()
-        else command.suggest(commandManager.getCommandSource(commandSourceStack.sender), args)
+        else command.suggest(commandManager.getCommandSource(commandSourceStack.sender), args.ifEmpty { arrayOf("") })
 
     override fun canUse(sender: CommandSender): Boolean =
         !binding.isUnbound() && command.hasPermission(commandManager.getCommandSource(sender), null)
