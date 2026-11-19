@@ -71,7 +71,9 @@ fun <S, PARSED, NATIVE> RequiredArgumentBuilder<S, PARSED>.buildCustom(
         isFork,
         suggestionsProvider ?:
             if (!type.useNativeSuggestions()) {
-                SuggestionProvider<S> { context, builder -> type.listSuggestions(context, builder) }
+                SuggestionProvider<S> { context, builder ->
+                    type.listSuggestions(context.copyFor(sourceFactory(context.source)), builder)
+                }
             } else {
                 null
             },

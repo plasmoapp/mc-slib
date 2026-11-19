@@ -112,12 +112,13 @@ internal class PaperArgumentTypeAdapter<PARSED : Any, NATIVE : Any>(
             throw e.localizedFor(parseLanguage(source))
         }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <S : Any> listSuggestions(
         context: CommandContext<S>,
         builder: SuggestionsBuilder,
     ): CompletableFuture<Suggestions> =
         if (delegate.useNativeSuggestions()) nativeType.listSuggestions(context, builder)
-        else delegate.listSuggestions(context, builder)
+        else delegate.listSuggestions((context as CommandContext<CommandSourceStack>).toMc(), builder)
 }
 
 fun CommandContext<CommandSourceStack>.toMc(): CommandContext<McBrigadierSource> =
