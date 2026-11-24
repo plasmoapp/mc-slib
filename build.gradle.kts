@@ -109,7 +109,6 @@ allprojects {
         maven("https://repo.papermc.io/repository/maven-public/")
 
         maven("https://repo.plasmoverse.com/snapshots")
-        maven("https://repo.plo.su")
 
         maven("https://jitpack.io/")
 
