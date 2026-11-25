@@ -25,6 +25,13 @@ case "$ENV_TYPE" in
             *)          POSITION_WORLD="[a-zA-Z0-9_.]+World@[0-9a-f]+" ;;
         esac
 
+        # modded 26.4+ only accepts permission requirements, so commands with raw requires fail to register.
+        RAW_REQUIRES_REJECTED=0
+        if [[ "$COMMAND" =~ modded:([0-9.]+)- ]] \
+            && [[ "$(printf '%s\n' 26.4 "${BASH_REMATCH[1]}" | sort -V | head -1)" == "26.4" ]]; then
+            RAW_REQUIRES_REJECTED=1
+        fi
+
         PATTERNS=(
           "Done \\(.*\\)!"
           "Command 'ping' registered"
@@ -62,12 +69,11 @@ case "$ENV_TYPE" in
           "brigadier-literal-after-argument 21 double"
           "brigadier-redirect again again 5"
           "brigadier-redirect fork again 6"
-          "brigadier-unbound-requires"
-          "brigadier-denied-requires literal"
-          "brigadier-denied-requires argument 7"
+          "brigadier-requirement-true"
+          "brigadier-requirement-false"
+          "brigadier-requirement-op"
+          "brigadier-requirement-not-op"
           "brigadier-silent-feedback"
-          "brigadier-denied-requires"
-          "brigadier-denied-requires argument 8"
           "brigadier-multi-arg 7 abc"
           "brigadier-intermediate-custom-arg 1 2 3 \"unclosed"
         )
@@ -86,27 +92,69 @@ case "$ENV_TYPE" in
           "Literal after argument: 42"
           "Redirect: 5"
           "Redirect: 6"
-          "Unbound requires guard survived parsing"
-          "Denied requires checked: literal"
-          "Denied requires checked: argument"
+          "Permission requirement passed: TRUE, silent=false"
+          "Permission requirement passed: FALSE, silent=false"
+          "Permission requirement passed: OP, silent=false"
+          "Permission requirement passed: NOT_OP, silent=false"
           "Silent check feedback"
-          "Unknown or incomplete command"
-          "Incorrect argument for command"
           "Expected integer"
           "Unclosed quoted string"
         )
 
+        if [[ $RAW_REQUIRES_REJECTED -eq 1 ]]; then
+            PATTERNS+=(
+              "Failed to register command 'brigadier-unbound-requires'"
+              "Failed to register command 'brigadier-denied-requires'"
+              "Command node 'brigadier-denied-requires literal': raw requires predicates are not supported"
+              "Failed to load function slibtest:unbound_requires"
+            )
+            COMMAND_INPUTS+=(
+              "brigadier-unbound-requires"
+              "brigadier-denied-requires literal"
+              "brigadier-denied-requires argument 7"
+            )
+            COMMAND_OUTPUT_PATTERNS+=(
+              "Unknown or incomplete command"
+              "Unknown or incomplete command"
+              "Unknown or incomplete command"
+            )
+        else
+            COMMAND_INPUTS+=(
+              "brigadier-unbound-requires"
+              "brigadier-denied-requires literal"
+              "brigadier-denied-requires argument 7"
+              "brigadier-denied-requires"
+              "brigadier-denied-requires argument 8"
+            )
+            COMMAND_OUTPUT_PATTERNS+=(
+              "Unbound requires guard survived parsing"
+              "Denied requires checked: literal"
+              "Denied requires checked: argument"
+              "Unknown or incomplete command"
+              "Incorrect argument for command"
+            )
+        fi
+
         # minestom has no datapacks, so it never hits bootstrap phase.
         if [[ "$COMMAND" != *minestom* ]]; then
             PATTERNS+=(
-              "Requirement of the command node 'brigadier-unbound-requires' threw before the server was initialized"
               "Silent check: silent=true"
               "Multi-arg: a=21, b=34"
+              "Permission requirement passed: FALSE, silent=true"
             )
-            FORBIDDEN_PATTERNS+=(
-              "Failed to load function"
-              "Whilst parsing command"
-            )
+            if [[ $RAW_REQUIRES_REJECTED -eq 1 ]]; then
+                FORBIDDEN_PATTERNS+=(
+                  "Failed to load function slibtest:(test|macro)"
+                )
+            else
+                PATTERNS+=(
+                  "Requirement of the command node 'brigadier-unbound-requires' threw before the server was initialized"
+                )
+                FORBIDDEN_PATTERNS+=(
+                  "Failed to load function"
+                  "Whilst parsing command"
+                )
+            fi
             COMMAND_INPUTS+=(
               "execute positioned 100.5 64 -31.75 run brigadier-position-selector ~ ~ ~"
               "execute positioned 100.5 64 -31.75 run brigadier-block-position-selector ~ ~ ~"

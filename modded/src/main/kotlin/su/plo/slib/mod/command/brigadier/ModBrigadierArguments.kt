@@ -21,6 +21,12 @@ import su.plo.slib.api.server.entity.McServerEntity
 import su.plo.slib.api.server.position.ServerPos3d
 import su.plo.slib.mod.ModServerLib
 import su.plo.slib.mod.extension.toMcGameProfile
+//? if >=26.4 {
+/*import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.suggestion.Suggestions
+import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import java.util.concurrent.CompletableFuture
+*///?}
 
 class ModBrigadierArguments : McArgumentTypes.Provider {
     private val serverLib by lazy { ModServerLib }
@@ -101,5 +107,13 @@ class ModBrigadierArguments : McArgumentTypes.Provider {
             override val nativeType = nativeType
 
             override fun parse(reader: StringReader) = resolverFactory(nativeType.parse(reader))
+
+            //? if >=26.4 {
+            /*override fun <C> listSuggestions(
+                context: CommandContext<C>,
+                builder: SuggestionsBuilder,
+            ): CompletableFuture<Suggestions> =
+                nativeType.listNativeSuggestions(context, builder)
+            *///?}
         }
 }

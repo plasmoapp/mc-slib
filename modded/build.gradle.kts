@@ -103,7 +103,7 @@ dependencies {
     "loomDevelopmentDependencies"(testFixtures(project(":common-server")))
 
     if (isFabric) {
-        "modImplementation"("net.fabricmc:fabric-loader:0.18.4")
+        "modImplementation"("net.fabricmc:fabric-loader:${findProperty("deps.fabric_loader") ?: "0.18.4"}")
 
         val fabricApiVersion = property("deps.fabric_api") as String
 
@@ -118,11 +118,13 @@ dependencies {
 
         if (stonecutter.eval(minecraftVersion, ">=26.1")) {
             fabricApiModules("permission-api-v1")
+        }
 
+        if (stonecutter.eval(minecraftVersion, ">=26.1 <26.4")) {
             "modImplementation"("me.lucko:fabric-permissions-api:0.6.3+26.1-SNAPSHOT") {
                 isTransitive = false
             }
-        } else {
+        } else if (stonecutter.eval(minecraftVersion, "<26.1")) {
             libs.fabric.permissions.also {
                 "modCompileOnly"(it) { isTransitive = false }
             }

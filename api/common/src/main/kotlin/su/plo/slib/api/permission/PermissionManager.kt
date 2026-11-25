@@ -1,8 +1,8 @@
 package su.plo.slib.api.permission
 
-import com.google.common.collect.Maps
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.chat.style.McTextStyle
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Manages universal permissions.
@@ -11,7 +11,7 @@ import su.plo.slib.api.chat.style.McTextStyle
  */
 class PermissionManager {
 
-    private val defaultPermissionByName: MutableMap<String, PermissionDefault?> = Maps.newHashMap()
+    private val defaultPermissionByName: MutableMap<String, PermissionDefault> = ConcurrentHashMap()
 
     /**
      * Gets a snapshot of the names of all registered universal permissions.
@@ -59,9 +59,8 @@ class PermissionManager {
      * @param name The name of the permission to retrieve.
      * @return The default value of the permission, or [PermissionDefault.OP] if the permission does not exist.
      */
-    fun getPermissionDefault(name: String): PermissionDefault {
-        return defaultPermissionByName.getOrDefault(name, DEFAULT_PERMISSION)!!
-    }
+    fun getPermissionDefault(name: String): PermissionDefault =
+        defaultPermissionByName.getOrDefault(name, DEFAULT_PERMISSION)
 
     companion object {
         @JvmStatic

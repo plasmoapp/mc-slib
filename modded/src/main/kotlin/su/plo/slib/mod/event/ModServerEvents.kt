@@ -21,6 +21,9 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents
 import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
+//? if >=26.4 {
+/*import su.plo.slib.mod.permission.FabricPermissionDefaults
+*///?}
 //?} else {
 /*import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.bus.api.SubscribeEvent
@@ -56,6 +59,10 @@ class ModServerEvents private constructor() {
         S2CConfigurationChannelEvents.REGISTER.register(RegisterChannelHandler.ConfigHandler)
 
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ -> fireRegisterCommands(dispatcher) }
+
+        //? if >=26.4 {
+        /*FabricPermissionDefaults.register()
+        *///?}
     }
     //?} else {
     /*init {

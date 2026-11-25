@@ -14,6 +14,9 @@ import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
  *
  * Commands have to be buildable without runtime state.
  * Resolve anything that depends on the plugin or mod being initialized inside `executes` bodies.
+ *
+ * Gate nodes with [McRequirements] instead of raw `requires` lambdas.
+ * Raw lambdas still work everywhere except modded servers since Minecraft 26.4, command will fail to register there.
  */
 interface McBrigadierRegistry {
     /**
@@ -109,8 +112,13 @@ interface McBrigadierRegistry {
          * On Paper, it is the bootstrap-owned `LifecycleEvents.COMMANDS` firing.
          *
          * Nothing platform-specific is initialized yet:
-         * [McBrigadierSource.isBound] is `false` for sources in this phase,
-         * and `requires` predicates are invoked while functions are parsed.
+         * [McBrigadierSource.isBound] is `false` for sources in this phase.
+         *
+         * Datapack functions are compiled against these commands once,
+         * without a sender, and `requires` predicates are tested during that compilation.
+         * [McRequirements] predicates always pass there,
+         * so a function line can use a command whatever the permission's default is.
+         * Running the function doesn't test them again.
          */
         BOOTSTRAP,
 

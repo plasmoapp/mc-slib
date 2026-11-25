@@ -27,6 +27,7 @@ class TestServer(
 
         McPermissionsRegisterEvent.registerListener { permissions ->
             permissions.register("slib.test", PermissionDefault.OP)
+            PermissionDefault.entries.forEach { permissions.register(requirementPermission(it), it) }
             logger.info("Permission 'slib.test' registered")
         }
 

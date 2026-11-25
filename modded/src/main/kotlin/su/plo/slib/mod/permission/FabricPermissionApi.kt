@@ -1,15 +1,16 @@
+@file:Suppress("UnstableApiUsage")
+
 package su.plo.slib.mod.permission
 
 //? if fabric && >=26.1 {
 /*import net.fabricmc.fabric.api.permission.v1.PermissionContextOwner
 import net.fabricmc.fabric.api.permission.v1.PermissionNode
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import su.plo.slib.api.permission.PermissionTristate
 import java.util.Optional
 import java.util.concurrent.ConcurrentHashMap
 
-internal object FabricPermissionApi : FabricPermissions {
+object FabricPermissionApi : FabricPermissions {
     private val nodeByPermission = ConcurrentHashMap<String, Optional<PermissionNode<Boolean>>>()
 
     override fun getPermission(player: ServerPlayer, permission: String): PermissionTristate {
@@ -24,11 +25,7 @@ internal object FabricPermissionApi : FabricPermissions {
     }
 
     private fun createNode(permission: String): PermissionNode<Boolean>? {
-        val namespace = permission.substringBefore('.', "")
-        val path = permission.substringAfter('.', "")
-        if (namespace.isEmpty() || path.isEmpty()) return null
-
-        val identifier = ResourceLocation.tryBuild(namespace, path) ?: return null
+        val identifier = permission.toPermissionKey() ?: return null
 
         return PermissionNode.of(identifier)
     }

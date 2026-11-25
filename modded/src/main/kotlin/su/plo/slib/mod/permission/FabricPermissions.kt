@@ -6,11 +6,14 @@ import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.permission.PermissionTristate
 import su.plo.slib.mod.ModServerLib
 
-internal interface FabricPermissions {
+//? if >=26.1
+ /*import net.minecraft.resources.ResourceLocation*/
+
+interface FabricPermissions {
     fun getPermission(player: ServerPlayer, permission: String): PermissionTristate
 }
 
-internal object FabricPermissionsProvider {
+object FabricPermissionsProvider {
     private val logger = McLoggerFactory.createLogger(ModServerLib.baseLogger, "FabricPermissionsProvider")
 
     private val backends: List<FabricPermissions> by lazy {
@@ -18,7 +21,9 @@ internal object FabricPermissionsProvider {
             //? if >=26.1 {
             /*if (isClassPresent("net.fabricmc.fabric.api.permission.v1.PermissionEvents")) add(FabricPermissionApi)
             *///?}
+            //? if <26.4 {
             if (isClassPresent("me.lucko.fabric.api.permissions.v0.Permissions")) add(LuckoPermissionsApi)
+            //?}
         }
 
         if (backends.isEmpty()) {
@@ -45,4 +50,14 @@ internal object FabricPermissionsProvider {
             false
         }
 }
+
+//? if >=26.1 {
+/*fun String.toPermissionKey(): ResourceLocation? {
+    val namespace = substringBefore('.', "")
+    val path = substringAfter('.', "")
+    if (namespace.isEmpty() || path.isEmpty()) return null
+
+    return ResourceLocation.tryBuild(namespace, path)
+}
+*///?}
 //?}

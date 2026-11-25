@@ -11,7 +11,7 @@ import su.plo.slib.api.permission.PermissionTristate
 import java.util.Optional
 import java.util.concurrent.ConcurrentHashMap
 
-internal object NeoForgePermissions {
+object NeoForgePermissions {
     @Volatile
     private var nodeByPermission: Map<String, PermissionNode<Boolean>> = emptyMap()
 

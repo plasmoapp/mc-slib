@@ -8,6 +8,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
+import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.tree.ArgumentCommandNode
 import com.mojang.brigadier.tree.CommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
@@ -15,8 +16,10 @@ import com.mojang.brigadier.tree.RootCommandNode
 import su.plo.slib.api.command.brigadier.CustomArgumentType
 import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.logging.McLogger
+import su.plo.slib.util.joinToOneLine
 import java.util.IdentityHashMap
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Predicate
 
 private val notBoundCommandException = SimpleCommandExceptionType(
     LiteralMessage("This command is not available yet, the server is still starting")
@@ -55,9 +58,22 @@ fun <S> LiteralCommandNode<McBrigadierSource>.proxied(
     argumentTypeMapper: (ArgumentType<*>) -> ArgumentType<*>? = { null },
     sourceUnwrapper: (McBrigadierSource) -> S = { it.getInstance() },
     isUnbound: () -> Boolean = { false },
+    requirementMapper: (requirement: Predicate<McBrigadierSource>, proxied: Predicate<S>) -> Predicate<S>? =
+        { _, proxied -> proxied },
+    suggestionsMapper: (SuggestionProvider<S>) -> SuggestionProvider<S> = { it },
+    suggestMappedCustomTypes: Boolean = false,
 ): LiteralCommandNode<S> =
-    CommandNodeProxy(logger, sourceFactory, contextFactory, argumentTypeMapper, sourceUnwrapper, isUnbound)
-        .proxy(this) as LiteralCommandNode<S>
+    CommandNodeProxy(
+        logger,
+        sourceFactory,
+        contextFactory,
+        argumentTypeMapper,
+        sourceUnwrapper,
+        isUnbound,
+        requirementMapper,
+        suggestionsMapper,
+        suggestMappedCustomTypes,
+    ).proxy(this, emptyList()) as LiteralCommandNode<S>
 
 private class CommandNodeProxy<S>(
     private val logger: McLogger,
@@ -66,24 +82,34 @@ private class CommandNodeProxy<S>(
     private val argumentTypeMapper: (ArgumentType<*>) -> ArgumentType<*>?,
     private val sourceUnwrapper: (McBrigadierSource) -> S,
     private val isUnbound: () -> Boolean,
+    private val requirementMapper: (Predicate<McBrigadierSource>, Predicate<S>) -> Predicate<S>?,
+    private val suggestionsMapper: (SuggestionProvider<S>) -> SuggestionProvider<S>,
+    private val suggestMappedCustomTypes: Boolean,
 ) {
     private val proxies = IdentityHashMap<CommandNode<McBrigadierSource>, CommandNode<S>>()
 
-    fun proxy(node: CommandNode<McBrigadierSource>): CommandNode<S> {
+    fun proxy(node: CommandNode<McBrigadierSource>, parentPath: List<String>): CommandNode<S> {
         proxies[node]?.let { return it }
+
+        val path = parentPath + node.name
 
         val redirect = node.redirect?.let { target ->
             require(target !is RootCommandNode) {
                 "Command node '${node.name}' redirects to a root node, which can't be proxied"
             }
-            proxy(target)
+            proxy(target, path)
         }
         proxies[node]?.let { return it }
 
-        val proxy = node.toProxyNode(redirect)
+        val proxy =
+            try {
+                node.toProxyNode(redirect)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Command node '${path.joinToString(" ")}': ${e.message}", e)
+            }
         proxies[node] = proxy
 
-        node.children.forEach { proxy.addChild(proxy(it)) }
+        node.children.forEach { proxy.addChild(proxy(it, path)) }
 
         return proxy
     }
@@ -119,8 +145,8 @@ private class CommandNodeProxy<S>(
         requirement?.let { requirement ->
             val warned = AtomicBoolean()
 
-            node.requires { sourceStack ->
-                if (isUnbound()) return@requires false
+            val proxiedRequirement = Predicate<S> { sourceStack ->
+                if (isUnbound()) return@Predicate false
 
                 val source = sourceFactory(sourceStack)
 
@@ -137,6 +163,8 @@ private class CommandNodeProxy<S>(
                     }
                 }
             }
+
+            requirementMapper(requirement, proxiedRequirement)?.let { node.requires(it) }
         }
 
         command?.let { command ->
@@ -157,11 +185,18 @@ private class CommandNodeProxy<S>(
         if (this is ArgumentCommandNode<McBrigadierSource, *>) {
             val node = node as RequiredArgumentBuilder<S, *>
             if (this.customSuggestions != null) {
-                node.suggests { context, builder ->
-                    if (isUnbound()) return@suggests builder.buildFuture()
+                node.suggests(suggestionsMapper { context, builder ->
+                    if (isUnbound()) return@suggestionsMapper builder.buildFuture()
 
                     val context = contextFactory(context)
                     listSuggestions(context, builder)
+                })
+            } else if (suggestMappedCustomTypes && mappedArgumentType != null && type is CustomArgumentType<*, *>) {
+                val type = type as CustomArgumentType<*, *>
+                if (!type.useNativeSuggestions()) {
+                    node.suggests(suggestionsMapper { context, builder ->
+                        type.listSuggestions(contextFactory(context), builder)
+                    })
                 }
             }
         }
@@ -185,7 +220,7 @@ private fun warnUnboundRequirementFailure(
             Requirement of the command node '{}' threw before the server was initialized, treating the node as visible.
             Requirements run while datapack functions are parsed, so they must not depend on runtime state,
             check it inside executes instead
-        """.trim().lines().joinToString(" "),
+        """.joinToOneLine(),
         node.name,
         e,
     )
