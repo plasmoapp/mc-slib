@@ -17,6 +17,10 @@ import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.McServerLib
 import java.util.concurrent.CompletableFuture
 import java.util.function.Predicate
+//? if >=26.4 {
+/*import net.minecraft.commands.arguments.StringArgument
+import su.plo.slib.mod.command.brigadier.toServerSuggestion
+*///?}
 
 class ModCommand(
     private val minecraftServer: McServerLib,
@@ -31,6 +35,17 @@ class ModCommand(
         label: String
     ): LiteralCommandNode<CommandSourceStack> {
         val root = dispatcher.root
+        //? if >=26.4 {
+        /*// hasPermission(source, args) can't be a tree requirement since 26.4
+        val literal = LiteralArgumentBuilder.literal<CommandSourceStack>(label)
+            .executes(this)
+            .build()
+        val defaultArgs =
+            RequiredArgumentBuilder.argument<CommandSourceStack, String>("args", StringArgument.greedyString())
+                .suggests(toServerSuggestion())
+                .executes(this)
+                .build()
+        *///?} else {
         val literal = LiteralArgumentBuilder.literal<CommandSourceStack>(label)
             .requires(this)
             .executes(this)
@@ -40,6 +55,7 @@ class ModCommand(
                 .suggests(this)
                 .executes(this)
                 .build()
+        //?}
         literal.addChild(defaultArgs)
 
         root.addChild(literal)

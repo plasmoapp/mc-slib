@@ -245,6 +245,18 @@ public abstract interface class su/plo/slib/api/command/brigadier/McBrigadierSou
 	public fun sendFeedback (Lsu/plo/slib/api/chat/component/McTextComponent;)V
 }
 
+public final class su/plo/slib/api/command/brigadier/McRequirements {
+	public static final field INSTANCE Lsu/plo/slib/api/command/brigadier/McRequirements;
+	public static final fun permission (Ljava/lang/String;)Ljava/util/function/Predicate;
+}
+
+public final class su/plo/slib/api/command/brigadier/McRequirements$Permission : java/util/function/Predicate {
+	public final fun getPermission ()Ljava/lang/String;
+	public synthetic fun test (Ljava/lang/Object;)Z
+	public fun test (Lsu/plo/slib/api/command/brigadier/McBrigadierSource;)Z
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class su/plo/slib/api/command/brigadier/McTextMessage : com/mojang/brigadier/Message {
 	public static final field Companion Lsu/plo/slib/api/command/brigadier/McTextMessage$Companion;
 	public synthetic fun <init> (Lsu/plo/slib/api/chat/component/McTextComponent;Lkotlin/jvm/internal/DefaultConstructorMarker;)V

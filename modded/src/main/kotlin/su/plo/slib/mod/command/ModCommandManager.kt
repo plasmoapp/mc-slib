@@ -17,6 +17,11 @@ import su.plo.slib.command.brigadier.copyFor
 import su.plo.slib.command.brigadier.proxied
 import su.plo.slib.mod.command.brigadier.ModBrigadierSource
 import su.plo.slib.mod.mixin.accessor.CommandSourceStackAccessor
+//? if >=26.4 {
+/*import su.plo.slib.mod.command.brigadier.toSerializableArgumentOrThrow
+import su.plo.slib.mod.command.brigadier.toServerSuggestion
+import su.plo.slib.mod.permission.toCommandRequirement
+*///?}
 
 //? if >=1.21.10 {
 /*import su.plo.slib.mod.mixin.accessor.ServerPlayerCommandSourceAccessor
@@ -38,11 +43,23 @@ class ModCommandManager(
 
         collectBrigadierCommands(phase)
             .applyEach(logger, logRegisteredCommands) { (node, _, aliases) ->
+                //? if >=26.4 {
+                /*val proxied = node.proxied(
+                    logger,
+                    ModBrigadierSource::from,
+                    { it.toMc() },
+                    { it.toSerializableArgumentOrThrow() },
+                    requirementMapper = { requirement, _ -> requirement.toCommandRequirement() },
+                    suggestionsMapper = { it.toServerSuggestion() },
+                    suggestMappedCustomTypes = true,
+                )
+                *///?} else {
                 val proxied = node.proxied(
                     logger,
                     ModBrigadierSource::from,
                     { it.toMc() },
                 )
+                //?}
 
                 dispatcher.root.addChild(proxied)
                 aliases.forEach { alias -> dispatcher.root.addChild(proxied.copyLiteral(alias)) }

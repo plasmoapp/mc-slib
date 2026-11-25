@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import su.plo.slib.api.command.brigadier.CustomArgumentType
+import su.plo.slib.api.command.brigadier.McBrigadierSource
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.api.server.command.brigadier.McGameProfilesArgumentResolver
 import java.util.concurrent.CompletableFuture
@@ -41,6 +42,10 @@ class NestedGameProfilesArgumentType :
         context: CommandContext<S>,
         builder: SuggestionsBuilder,
     ): CompletableFuture<Suggestions> {
+        check(context.source is McBrigadierSource) {
+            "Expected McBrigadierSource in suggestions context, got ${context.source?.let { it::class.java.name }}"
+        }
+
         if (!EVERYONE.startsWith(builder.remaining, ignoreCase = true)) {
             return super.listSuggestions(context, builder)
         }

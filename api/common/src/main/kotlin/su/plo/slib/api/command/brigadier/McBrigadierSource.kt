@@ -38,6 +38,9 @@ interface McBrigadierSource {
      *
      * `requires` predicates run during parsing,
      * so they must not depend on state that only exists once the plugin or mod is initialized.
+     *
+     * Raw `requires` lambdas are deprecated in favor of [McRequirements]:
+     * they are not supported on modded servers since Minecraft 26.4, where such a command fails to register.
      */
     val isBound: Boolean
         get() = true

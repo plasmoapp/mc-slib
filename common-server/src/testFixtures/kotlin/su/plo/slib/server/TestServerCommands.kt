@@ -9,15 +9,18 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import dev.apehum.mcdsl.command.literalCommand
 import su.plo.slib.api.chat.component.McTextComponent
 import su.plo.slib.api.command.brigadier.McBrigadierSource
+import su.plo.slib.api.command.brigadier.McRequirements
 import su.plo.slib.api.command.brigadier.McTextMessage
 import su.plo.slib.api.event.command.McBrigadierCommandsRegisterEvent
 import su.plo.slib.api.logging.McLoggerFactory
+import su.plo.slib.api.permission.PermissionDefault
 import su.plo.slib.api.server.McServerLib
 import su.plo.slib.api.server.command.brigadier.McArgumentTypes
 import su.plo.slib.server.command.NestedGameProfilesArgumentType
 import su.plo.slib.server.command.NestedGameProfilesTarget
 import su.plo.slib.server.command.TranslatedArgumentType
 import su.plo.slib.server.command.UuidArgumentType
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 
 private val registered = AtomicBoolean()
@@ -275,6 +278,36 @@ fun registerCommands() {
             }
         )
 
+        PermissionDefault.entries.forEach { permissionDefault ->
+            registry.register(
+                literalCommand(requirementCommandName(permissionDefault)) {
+                    requires(McRequirements.permission(requirementPermission(permissionDefault)))
+
+                    executes {
+                        logger.info("Permission requirement passed: {}, silent={}", permissionDefault, source.isSilent)
+                    }
+                }
+            )
+        }
+
+        registry.register(
+            LiteralArgumentBuilder.literal<McBrigadierSource>("brigadier-suggestion-context")
+                .then(
+                    RequiredArgumentBuilder.argument<McBrigadierSource, UUID>("uuid", UuidArgumentType())
+                        .then(
+                            RequiredArgumentBuilder.argument<McBrigadierSource, String>("value", StringArgumentType.word())
+                                .suggests { context, builder ->
+                                    val uuid = context.getArgument("uuid", Any::class.java)
+
+                                    builder.suggest("${uuid.javaClass.simpleName}:${context.source.isBound}")
+                                    builder.buildFuture()
+                                }
+                                .executes { Command.SINGLE_SUCCESS }
+                        )
+                )
+                .build()
+        )
+
         registry.register(
             literalCommand("brigadier-translated-feedback") {
                 executes {
@@ -299,3 +332,9 @@ fun registerCommands() {
         )
     }
 }
+
+fun requirementCommandName(permissionDefault: PermissionDefault): String =
+    "brigadier-requirement-" + permissionDefault.name.lowercase().replace('_', '-')
+
+fun requirementPermission(permissionDefault: PermissionDefault): String =
+    "slibtest.requirement_" + permissionDefault.name.lowercase()

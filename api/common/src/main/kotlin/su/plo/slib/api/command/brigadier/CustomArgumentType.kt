@@ -37,12 +37,15 @@ interface CustomArgumentType<PARSED, NATIVE> : ArgumentType<PARSED> {
      * Suggestions of the [nativeType].
      *
      * Override to implement custom suggestions, along with [useNativeSuggestions] set to `false`.
+     *
+     * When called by the library, the [context] source is always [McBrigadierSource].
+     * Calling `super.listSuggestions` delegates to the [nativeType] with the platform's own source.
      */
     override fun <S> listSuggestions(
         context: CommandContext<S>,
         builder: SuggestionsBuilder,
     ): CompletableFuture<Suggestions> =
-        nativeType.listSuggestions(context, builder)
+        nativeType.listSuggestions(context.forNativeType(nativeType), builder)
 
     /**
      * This is controlled client-side and can't be changed server-side.
@@ -50,4 +53,12 @@ interface CustomArgumentType<PARSED, NATIVE> : ArgumentType<PARSED> {
     @ApiStatus.NonExtendable
     override fun getExamples(): Collection<String> =
         nativeType.examples
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun <S> CommandContext<S>.forNativeType(nativeType: ArgumentType<*>): CommandContext<Any> {
+    val source = source
+    if (nativeType is CustomArgumentType<*, *> || source !is McBrigadierSource) return this as CommandContext<Any>
+
+    return (this as CommandContext<Any>).copyFor(source.getInstance<Any>())
 }

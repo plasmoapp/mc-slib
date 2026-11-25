@@ -22,6 +22,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar
 //? if neoforge {
 /*import su.plo.slib.api.logging.McLoggerFactory
 import su.plo.slib.api.server.channel.McServerChannelRegistry
+import su.plo.slib.util.joinToOneLine
 *///?}
 
 class ModChannelManager : McServerChannelManager {
@@ -112,7 +113,7 @@ class ModChannelManager : McServerChannelManager {
             """
                 Channel {} is not registered in the mod loader networking.
                 Register it with McServerChannelRegistry.register from your mod entrypoint.
-            """.trim().lines().joinToString(" ")
+            """.joinToOneLine()
 
         private val clientHandlers: MutableMap<ResourceLocation, IPayloadHandler<ByteArrayPayload>> = HashMap()
         private val registeredPayloads: MutableSet<ResourceLocation> = HashSet()

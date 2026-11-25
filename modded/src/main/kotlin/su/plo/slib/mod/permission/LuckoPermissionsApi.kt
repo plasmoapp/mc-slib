@@ -1,6 +1,6 @@
 package su.plo.slib.mod.permission
 
-//? if fabric {
+//? if fabric && <26.4 {
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.fabricmc.fabric.api.util.TriState
 import net.minecraft.server.level.ServerPlayer
